@@ -5,7 +5,7 @@
 package controller.Owner;
 
 import com.google.gson.Gson;
-import dao.GuideLineDAO;
+
 import dao.PenaltyDao;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
-import model.Guideline;
+
 import model.Penalty;
 
 /**
