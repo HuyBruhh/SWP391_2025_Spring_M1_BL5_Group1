@@ -8,10 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-/**
- *
- * @author ASUS
- */
+
 
 public class MyDAO extends DBContext{
     public Connection con = null;

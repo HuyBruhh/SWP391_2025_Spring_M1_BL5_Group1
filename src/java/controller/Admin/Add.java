@@ -13,10 +13,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-/**
- *
- * @author pc
- */
+
 @WebServlet(name = "Add", urlPatterns = {"/addAccount"})
 public class Add extends HttpServlet {
 

@@ -16,10 +16,7 @@ import java.io.IOException;
 
 import model.Rule;
 
-/**
- *
- * @author DAT
- */
+
 @WebServlet(name = "InsertRuleControler", urlPatterns = {"/insertRule"})
 public class InsertRuleControler extends HttpServlet {
 

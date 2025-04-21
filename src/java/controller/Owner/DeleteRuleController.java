@@ -13,10 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-/**
- *
- * @author DAT
- */
+
 @WebServlet(name = "DeleteRuleController", urlPatterns = {"/deleteRule"})
 public class DeleteRuleController extends HttpServlet {
 

@@ -17,10 +17,7 @@ import java.util.ArrayList;
 
 import model.Penalty;
 
-/**
- *
- * @author DAT
- */
+
 @WebServlet(name = "PenaltyListController", urlPatterns = {"/penaltys"})
 public class PenaltyListController extends HttpServlet {
 

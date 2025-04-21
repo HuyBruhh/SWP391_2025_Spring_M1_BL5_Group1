@@ -8,10 +8,7 @@ package model;
 import jakarta.annotation.Nullable;
 import java.util.Date;
 
-/**
- *
- * @author Admin
- */
+
 public class usage {
     private int usageID;
     private int roomID;

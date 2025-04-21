@@ -4,10 +4,7 @@
  */
 package model;
 
-/**
- *
- * @author Creep
- */
+
 public class ReqType {
     private int  reqTypeId;
     private String typeName;

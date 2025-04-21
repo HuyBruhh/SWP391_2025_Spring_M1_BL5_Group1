@@ -15,10 +15,7 @@ import java.util.Set;
 import dao.DBContext;
 import model.UserDetail;
 
-/**
- *
- * @author Admin
- */
+
 public class SecurityListDAO extends DBContext {
 
     public List<SecurityList> getSeList() {

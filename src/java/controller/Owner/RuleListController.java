@@ -15,10 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import model.Rule;
 
-/**
- *
- * @author DAT
- */
+
 @WebServlet(name = "RuleListController", urlPatterns = {"/ruleList"})
 public class RuleListController extends HttpServlet {
 

@@ -15,10 +15,7 @@ import dao.DBContext;
 import model.RulePenChart;
 
 
-/**
- *
- * @author Admin
- */
+
 public class SecurityDAO extends DBContext {
 
     public List<RenterPenChart> getTopPenRenter() {

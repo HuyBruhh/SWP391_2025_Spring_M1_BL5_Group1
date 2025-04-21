@@ -16,10 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import model.Account;
 
-/**
- *
- * @author pc
- */
+
 @WebServlet(name="Manage", urlPatterns={"/manage"})
 public class Manage extends HttpServlet {
    

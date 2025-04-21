@@ -6,10 +6,7 @@ package model;
 
 
 
-/**
- *
- * @author ASUS
- */
+
 public class SeRoom {
     private int roomID;
     private int roomFloor;

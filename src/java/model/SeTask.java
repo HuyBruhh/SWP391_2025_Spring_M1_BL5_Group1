@@ -7,10 +7,7 @@ package model;
 
 import java.sql.Date;
 
-/**
- *
- * @author ASUS
- */
+
 public class SeTask {
     private int taskID;
     private int from;

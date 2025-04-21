@@ -4,10 +4,7 @@
  */
 package model;
 
-/**
- *
- * @author quanb
- */
+
 public class Slider {
     private int sliderId;
     private String sliderName;

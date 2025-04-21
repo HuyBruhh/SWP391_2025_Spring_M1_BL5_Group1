@@ -14,10 +14,7 @@ import java.io.IOException;
 import model.Guideline;
 import model.Rule;
 
-/**
- *
- * @author DAT
- */
+
 @WebServlet(name = "UpdateRuleController", urlPatterns = {"/updateRule"})
 public class UpdateRuleController extends HttpServlet {
 

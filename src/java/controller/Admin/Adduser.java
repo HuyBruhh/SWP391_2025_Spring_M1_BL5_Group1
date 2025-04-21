@@ -16,10 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.Date;
 import model.UserDetail;
 
-/**
- *
- * @author pc
- */
+
 @WebServlet(name="Adduser", urlPatterns={"/adduser"})
 public class Adduser extends HttpServlet {
    

@@ -15,10 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.regex.Pattern;
 
-/**
- *
- * @author pc
- */
+
 @WebServlet(name="Edit", urlPatterns={"/edac"})
 public class Edit extends HttpServlet {
    

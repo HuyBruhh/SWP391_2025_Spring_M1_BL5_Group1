@@ -35,9 +35,8 @@ public class RegisterDAO extends DBContext {
                 n = 1;
             }
         } catch (SQLException ex) {
-
+            ex.printStackTrace();
         }
-
         return n;
     }
 
@@ -63,7 +62,7 @@ public class RegisterDAO extends DBContext {
                 }
             }
         } catch (SQLException ex) {
-
+            ex.printStackTrace();
         }
         return userID;
     }
@@ -84,7 +83,7 @@ public class RegisterDAO extends DBContext {
                 listAccount.add(account);
             }
         } catch (SQLException ex) {
-
+            ex.printStackTrace();
         }
         return listAccount;
     }
@@ -111,12 +110,10 @@ public class RegisterDAO extends DBContext {
             pre.setString(7, user.getUserAvatar());
             n = pre.executeUpdate();
         } catch (SQLException ex) {
-
+            ex.printStackTrace();
         }
         return n;
     }
-
-   
 
     public static void main(String[] args) {
         RegisterDAO dao = new RegisterDAO();        

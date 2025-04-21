@@ -6,10 +6,7 @@ package model;
 
 
 
-/**
- *
- * @author ASUS
- */
+
 public class RenterListSE {
 
     private int userID;

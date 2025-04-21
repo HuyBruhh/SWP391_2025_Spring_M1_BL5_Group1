@@ -16,10 +16,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-/**
- *
- * @author pc
- */
+
 @WebServlet(name = "ChangeRoleServlet", urlPatterns = {"/changeRole"})
 public class ChangeRoleServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;

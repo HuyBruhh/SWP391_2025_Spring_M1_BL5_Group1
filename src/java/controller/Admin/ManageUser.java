@@ -15,10 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import model.User;
 
-/**
- *
- * @author pc
- */
+
 @WebServlet(name = "ManageUser", urlPatterns = {"/manageUser"})
 public class ManageUser extends HttpServlet {
 

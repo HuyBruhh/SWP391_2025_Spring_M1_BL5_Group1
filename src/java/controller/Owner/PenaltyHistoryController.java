@@ -15,10 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import model.Penalty;
 
-/**
- *
- * @author DAT
- */
+
 @WebServlet(name = "PenaltyHistoryController", urlPatterns = {"/penaltyHistory"})
 public class PenaltyHistoryController extends HttpServlet {
 

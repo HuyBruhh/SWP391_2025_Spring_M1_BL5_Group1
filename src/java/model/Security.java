@@ -6,10 +6,7 @@ package model;
 
 import model.*;
 
-/**
- *
- * @author ASUS
- */
+
 public class Security {
     private int seID;
     private int userID;

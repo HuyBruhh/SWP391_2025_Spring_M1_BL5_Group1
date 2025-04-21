@@ -15,10 +15,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.UserDetail;
 
-/**
- *
- * @author pc
- */
 @WebServlet(name="EditUser", urlPatterns={"/Edituser"})
 public class EditUser extends HttpServlet {
    

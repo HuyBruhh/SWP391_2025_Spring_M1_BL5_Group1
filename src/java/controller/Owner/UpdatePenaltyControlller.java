@@ -22,10 +22,7 @@ import model.Room;
 import model.Rooms;
 import model.Rule;
 
-/**
- *
- * @author admin
- */
+
 @WebServlet(name = "UpdatePenaltyControlller", urlPatterns = {"/updatePenalty"})
 public class UpdatePenaltyControlller extends HttpServlet {
 

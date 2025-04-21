@@ -18,10 +18,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.Base64;
 
-/**
- *
- * @author pc
- */
+
 @WebServlet(name = "UploadImage", urlPatterns = {"/uploadImage"})
 @MultipartConfig
 public class UploadImage extends HttpServlet {
