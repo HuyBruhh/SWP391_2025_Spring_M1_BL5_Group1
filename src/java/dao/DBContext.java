@@ -15,7 +15,7 @@ public class DBContext {
     public DBContext()
     {
         try{
-            String user="sa";
+            String user="ad";
             String pass="123";
             String url="jdbc:sqlserver://localhost:1433;databaseName=HL_Motel";
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
