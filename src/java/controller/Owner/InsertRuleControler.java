@@ -4,7 +4,8 @@
  */
 package controller.Owner;
 
-import com.google.gson.Gson;
+import com.sun.net.httpserver.HttpServer;
+
 import dao.RuleDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -12,32 +13,35 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
+
 import model.Rule;
 
 /**
  *
  * @author DAT
  */
-@WebServlet(name = "RuleListController", urlPatterns = {"/ruleList"})
-public class RuleListController extends HttpServlet {
+@WebServlet(name = "InsertRuleControler", urlPatterns = {"/insertRule"})
+public class InsertRuleControler extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        RuleDAO dbRule = new RuleDAO();
-        ArrayList<Rule> rules = dbRule.findAll();
-
-        req.setAttribute("rules", rules);
-
-        Gson gson = new Gson();
-        String jsonData = gson.toJson(rules);
-
-        req.setAttribute("dataList", jsonData);
-        req.getRequestDispatcher("Owner/rules-list.jsp").forward(req, resp);
+        req.getRequestDispatcher("Owner/add-rule.jsp").forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    }
 
+        String ruleName = req.getParameter("ruleName");
+        String img = req.getParameter("img");
+        String score = req.getParameter("score");
+        String penMoney = req.getParameter("penMoney");
+        Rule rule = new Rule();
+        rule.setRuleName(ruleName);
+        rule.setImg(img);
+        rule.setScoreChange(Integer.parseInt(score));
+        rule.setPenMoney(Double.parseDouble(penMoney));
+        RuleDAO dbRule = new RuleDAO();
+        dbRule.create(rule);
+        resp.sendRedirect("ruleList");
+    }
 }
