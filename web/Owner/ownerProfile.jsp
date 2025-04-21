@@ -165,21 +165,13 @@
                         <div class="col-md-8">
                             <div class="card mb-3">
                                 <div class="card-body">
-                                <% if (error != null) { %>
-                                <div class="error-message">
-                                    <div class="row mb-3">
-                                        <div class="col-sm-3">
-                                            <h6 class="mb-0" style="color: red">Error</h6>
-                                        </div>
-                                        <div class="col-sm-9 text-danger">
-                                            <p class="error-text"><%= error%></p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <%}%>
+
 
 
                                 <div class="row">
+                                                                                                                    <span class="text-danger">
+            <%= request.getAttribute("fullNameError") != null ? request.getAttribute("fullNameError") : "" %>
+        </span>
                                     <div class="col-sm-3">
                                         <h6 class="mb-0">Full Name</h6>
                                     </div>
@@ -198,6 +190,9 @@
                                 </div>
                                 <hr>
                                 <div class="row">
+                                                           <span class="text-danger">
+            <%= request.getAttribute("dobError") != null ? request.getAttribute("dobError") : "" %>
+        </span>
                                     <div class="col-sm-3">
                                         <h6 class="mb-0">Date of birth</h6>
                                     </div>
@@ -216,6 +211,9 @@
                                 </div>
                                 <hr>
                                 <div class="row">
+                                                                                                            <span class="text-danger">
+            <%= request.getAttribute("phoneError") != null ? request.getAttribute("phoneError") : "" %>
+        </span>
                                     <div class="col-sm-3">
                                         <h6 class="mb-0">Phone</h6>
                                     </div>
@@ -225,6 +223,9 @@
                                 </div>
                                 <hr>
                                 <div class="row">
+                                                                                                                    <span class="text-danger">
+            <%= request.getAttribute("addressError") != null ? request.getAttribute("addressError") : "" %>
+        </span>
                                     <div class="col-sm-3">
                                         <h6 class="mb-0">Address</h6>
                                     </div>

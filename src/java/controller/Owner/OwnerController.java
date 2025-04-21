@@ -24,6 +24,8 @@ import jakarta.servlet.http.Part;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.Base64;
 import model.*;
 import org.json.simple.JSONArray;
@@ -160,22 +162,41 @@ public class OwnerController extends HttpServlet {
         String phone = request.getParameter("phone");
         String address = request.getParameter("address");
 
-        if (fullName == null || fullName.isEmpty() || fullName.isBlank() || fullName.trim().isEmpty()) {
+ if (fullName == null || fullName.isEmpty() || fullName.trim().isEmpty()) {
+        hasError = true;
+        request.setAttribute("fullNameError", "Tên đầy đủ là bắt buộc.");
+    }
+    
+    // Kiểm tra số điện thoại
+    if (phone == null || phone.length() != 10 || !phone.startsWith("0") || !phone.matches("[0-9]+")) {
+        hasError = true;
+        request.setAttribute("phoneError", "Số điện thoại không hợp lệ.");
+    }
+    
+    // Kiểm tra địa chỉ
+    if (address == null || address.isEmpty() || address.trim().isEmpty()) {
+        hasError = true;
+        request.setAttribute("addressError", "Địa chỉ là bắt buộc.");
+    }
+    
+    // Kiểm tra ngày sinh (độ tuổi)
+    if (dob != null) {
+        LocalDate birthDate = LocalDate.parse(dob);
+        int age = Period.between(birthDate, LocalDate.now()).getYears();
+        if (age < 18) {
             hasError = true;
-        } else if (phone == null || phone.length() != 10 || !phone.startsWith("0") || !phone.matches("[0-9]+")) {
-            hasError = true;
-        } else if (address == null || address.isEmpty() || address.isBlank()) {
-            hasError = true;
+            request.setAttribute("dobError", "Bạn phải ít nhất 18 tuổi.");
         }
+    }
+    
+    if (hasError) {
+        request.setAttribute("error", "Vui lòng sửa các lỗi.");
+                    request.getRequestDispatcher("OwnerController?service=ownerProfile").forward(request, response);
+    } else {
+        int update = dao.updateOwnerProfile(new User(15, fullName, gender, dob, address, phone));
+                    request.getRequestDispatcher("OwnerController?service=ownerProfile").forward(request, response);
+    }
 
-        if (hasError) {
-            request.setAttribute("error", "Invalid input information. Please check again.");
-            request.getRequestDispatcher("OwnerController?service=ownerProfile").forward(request, response);
-        } else {
-            int update = dao.updateOwnerProfile(new User(15, fullName, gender, dob, address, phone));
-
-            request.getRequestDispatcher("OwnerController?service=ownerProfile").forward(request, response);
-        }
     }
 
     private void updateRoomItem(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
