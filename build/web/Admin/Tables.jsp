@@ -1,10 +1,9 @@
-
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
     <head>
-         <meta charset="utf-8" />
+        <meta charset="utf-8" />
         <link rel="icon" href="favicon.png">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
@@ -14,6 +13,25 @@
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
         <link href="AdminCSS/css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <style>
+            .is-valid {
+                border-color: #28a745 !important;
+                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
+                background-repeat: no-repeat;
+                background-position: right calc(.375em + .1875rem) center;
+                background-size: calc(.75em + .375rem) calc(.75em + .375rem);
+                padding-right: calc(1.5em + .75rem);
+            }
+            
+            .is-invalid {
+                border-color: #dc3545 !important;
+                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='%23dc3545' viewBox='-2 -2 7 7'%3e%3cpath stroke='%23dc3545' d='M0 0l3 3m0-3L0 3'/%3e%3ccircle r='.5'/%3e%3ccircle cx='3' r='.5'/%3e%3ccircle cy='3' r='.5'/%3e%3ccircle cx='3' cy='3' r='.5'/%3e%3c/svg%3E");
+                background-repeat: no-repeat;
+                background-position: right calc(.375em + .1875rem) center;
+                background-size: calc(.75em + .375rem) calc(.75em + .375rem);
+                padding-right: calc(1.5em + .75rem);
+            }
+        </style>
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -79,7 +97,14 @@
                                 Manage Account
                             </div>
                             <div class="card-body">
-                               
+                                <!-- Hiển thị thông báo thành công nếu có -->
+                                <c:if test="${not empty sessionScope.successMessage}">
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                        ${sessionScope.successMessage}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                        <% session.removeAttribute("successMessage"); %>
+                                    </div>
+                                </c:if>
 
                                 <br>
                                 <table id="datatablesSimple" border="1">
@@ -112,7 +137,7 @@
                                                 </c:if></td>
 
                                             <td>
-                                                <a href="#" data-bs-toggle="modal" data-bs-target="#editModal" data-email="${acc.userMail}" style="margin-right: 10px">
+                                                <a href="#" onclick="setModalFields('${acc.userMail}', '${acc.userRole}')" data-bs-toggle="modal" data-bs-target="#editModal" style="margin-right: 10px">
                                                     <i class="fa-regular fa-pen-to-square"></i>
                                                 </a>
 
@@ -129,33 +154,52 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Edit Modal -->
                     <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="editModalLabel">Edit Account</h5>
-                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <c:if test="${not empty errorMessage}">
-                                        <div class="alert alert-danger">${errorMessage}</div>
+                                    <c:if test="${not empty sessionScope.errorMessage}">
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                            ${sessionScope.errorMessage}
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                            <% session.removeAttribute("errorMessage"); %>
+                                        </div>
                                     </c:if>
                                     <form id="editAccountForm" action="edac" method="post">
-                                        <div class="form-group">
-                                            <label for="emailInput">Email address</label>
-                                            <input type="email" name="email" class="form-control" id="emailInput" aria-describedby="emailHelp">
-                                            <label for="passwordInput">Pasword:</label>
-                                            <input type="password" name="password" placeholder="Abcdefg1"class="form-control" id="passwordInput" aria-describedby="emailHelp" required><!-- comment -->
-                                            <label for="roleInput">Role:</label>
-                                            <input type="number" name="role" placeholder="Role: 1,2,3" class="form-control" id="roleInput" aria-describedby="emailHelp" required><br>
-                                            <input type="submit" value="Save" name="save" />
+                                        <div class="form-group mb-3">
+                                            <label for="emailInput" class="form-label">Email address</label>
+                                            <input type="email" name="email" class="form-control" id="emailInput" value="${sessionScope.editEmail}" readonly>
                                         </div>
-                                        <!-- Additional form fields can go here -->
+                                        
+                                        <div class="form-group mb-3">
+                                            <label for="passwordInput" class="form-label">Password:</label>
+                                            <input type="password" name="password" class="form-control" id="passwordInput" required>
+                                            <div class="form-text">
+                                                Password must contain at least 8 characters, including at least one letter, one number, and one special character (!@#$%^&*).
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label for="roleInput" class="form-label">Role:</label>
+                                            <select class="form-select" name="role" id="roleInput" required>
+                                                <option value="1" ${sessionScope.editRole == '1' ? 'selected' : ''}>Renter</option>
+                                                <option value="2" ${sessionScope.editRole == '2' ? 'selected' : ''}>Owner</option>
+                                                <option value="3" ${sessionScope.editRole == '3' ? 'selected' : ''}>Security</option>
+                                                <option value="4" ${sessionScope.editRole == '4' ? 'selected' : ''}>Admin</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="mt-3">
+                                            <button type="submit" class="btn btn-primary" name="save">Save Changes</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        </div>
                                     </form>
                                 </div>
-
                             </div>
                         </div>
                     </div>
@@ -166,56 +210,39 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="addAccountModalLabel">Add Account</h5>
-                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
                                     <form id="addAccountForm" action="addAccount" method="get">
-                                        <div class="form-group">
-                                            <label for="addEmailInput">Email address</label>
-                                            <input type="email" name="email" class="form-control" id="addEmailInput" aria-describedby="emailHelp" required>
+                                        <div class="form-group mb-3">
+                                            <label for="addEmailInput" class="form-label">Email address</label>
+                                            <input type="email" name="email" class="form-control" id="addEmailInput" required>
                                         </div>
-                                        <div class="form-group">
-                                            <label for="addPasswordInput">Password</label>
-                                            <input type="password" name="password" placeholder="Abcdefg1" class="form-control" id="addPasswordInput" aria-describedby="emailHelp" required>
+                                        <div class="form-group mb-3">
+                                            <label for="addPasswordInput" class="form-label">Password</label>
+                                            <input type="password" name="password" class="form-control" id="addPasswordInput" required>
+                                            <div class="form-text">
+                                                Password must contain at least 8 characters, including at least one letter, one number, and one special character (!@#$%^&*).
+                                            </div>
                                         </div>
-                                        <div class="form-group">
-                                            <label for="addRoleInput">Role</label>
-                                            <input type="number" name="role" placeholder="Role: 1,2,3" class="form-control" id="addRoleInput" aria-describedby="emailHelp" required>
+                                        <div class="form-group mb-3">
+                                            <label for="addRoleInput" class="form-label">Role</label>
+                                            <select class="form-select" name="role" id="addRoleInput" required>
+                                                <option value="1">Renter</option>
+                                                <option value="2">Owner</option>
+                                                <option value="3">Security</option>
+                                                <option value="4">Admin</option>
+                                            </select>
                                         </div>
-                                        <button type="submit" value="Add" name="add" class="btn btn-primary" style="width: 70px">Add</button>
+                                        <button type="submit" value="Add" name="add" class="btn btn-primary">Add Account</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                                     </form>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- js modal -->
-                    <script>
-                        <% if (request.getAttribute("errorMessage") != null) { %>
-                        $('#editModal').modal('show');
-                        <% } %>
-
-                        $(document).ready(function () {
-                            $('#editModal').on('show.bs.modal', function (event) {
-                                var button = $(event.relatedTarget); // Button that triggered the modal
-                                var email = button.data('email'); // Extract email from data-* attributes
-                                var password = button.data('password'); // Extract password from data-* attributes
-                                var role = button.data('role'); // Extract role from data-* attributes
-
-                                var modal = $(this);
-                                modal.find('.modal-body #emailInput').val(email); // Populate the email input field
-                                modal.find('.modal-body #passwordInput').val(password); // Populate the password input field
-                                modal.find('.modal-body #roleInput').val(role); // Populate the role input field
-                            });
-                            $('#addAccountModal').on('show.bs.modal', function (event) {
-                                var modal = $(this);
-                                modal.find('.modal-body').find('input').val('');
-                            });
-                        });
-                    </script>
                 </main>
+
                 <footer class="py-4 bg-light mt-auto">
                     <div class="container-fluid px-4">
                         <div class="d-flex align-items-center justify-content-between small">
@@ -231,11 +258,77 @@
             </div>
         </div>
 
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-    <script src="AdminCSS/js/scripts.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
-    <script src="AdminCSS/js/datatables-simple-demo.js"></script>
-
-</body>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+        <script src="AdminCSS/js/scripts.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
+        <script src="AdminCSS/js/datatables-simple-demo.js"></script>
+        
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Kiểm tra nếu có lỗi thì hiển thị modal
+                <% if (session.getAttribute("errorMessage") != null) { %>
+                    // Sử dụng Bootstrap 5 để hiển thị modal
+                    var editModal = new bootstrap.Modal(document.getElementById('editModal'));
+                    editModal.show();
+                <% } %>
+                
+                // Kiểm tra mật khẩu khi người dùng nhập
+                var passwordInput = document.getElementById('passwordInput');
+                if (passwordInput) {
+                    passwordInput.addEventListener('input', function() {
+                        validatePassword(this);
+                    });
+                }
+                
+                var addPasswordInput = document.getElementById('addPasswordInput');
+                if (addPasswordInput) {
+                    addPasswordInput.addEventListener('input', function() {
+                        validatePassword(this);
+                    });
+                }
+            });
+            
+            function validatePassword(input) {
+                var password = input.value;
+                var regex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/;
+                var isValid = regex.test(password);
+                
+                // Hiển thị trạng thái validation
+                if (password.length > 0) {
+                    if (isValid) {
+                        input.classList.remove('is-invalid');
+                        input.classList.add('is-valid');
+                    } else {
+                        input.classList.remove('is-valid');
+                        input.classList.add('is-invalid');
+                    }
+                } else {
+                    input.classList.remove('is-valid');
+                    input.classList.remove('is-invalid');
+                }
+            }
+            
+            // Hàm để đặt giá trị cho các trường khi mở modal edit
+            function setModalFields(email, role) {
+                document.getElementById('emailInput').value = email;
+                document.getElementById('roleInput').value = role;
+                // Lưu giá trị vào session storage để có thể truy cập sau khi trang tải lại
+                sessionStorage.setItem('editEmail', email);
+                sessionStorage.setItem('editRole', role);
+            }
+            
+            // Khôi phục giá trị từ session storage khi trang tải lại
+            window.onload = function() {
+                const storedEmail = sessionStorage.getItem('editEmail');
+                const storedRole = sessionStorage.getItem('editRole');
+                
+                if (storedEmail) {
+                    document.getElementById('emailInput').value = storedEmail;
+                }
+                if (storedRole) {
+                    document.getElementById('roleInput').value = storedRole;
+                }
+            };
+        </script>
+    </body>
 </html>

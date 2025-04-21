@@ -97,7 +97,9 @@
                             <br>
                             <div class="form-group">
                                 <label for="description" class="form-label">Description:</label>
-                                <input type="text" id="description" name="description" class="form-control" required>
+                                <input type="text" id="description" name="description" class="form-control" 
+                                       required pattern=".*[a-zA-Z]+.*"
+                                       title="Mô tả phải có ít nhất một chữ cái">
                             </div>
                             <br>
                             <div class="form-group">
@@ -135,31 +137,6 @@
                 </footer>
             </div>
         </div>
-        <!--        <script>
-                    var dateInput = document.getElementById("penDate");
-        
-                    dateInput.addEventListener("input", function () {
-                        var currentDate = new Date();
-                        var dd = currentDate.getDate();
-                        var mm = currentDate.getMonth() + 1; // Tháng bắt đầu từ 0
-                        var yyyy = currentDate.getFullYear();
-        
-                        if (dd < 10) {
-                            dd = '0' + dd;
-                        }
-                        if (mm < 10) {
-                            mm = '0' + mm;
-                        }
-        
-                        var currentDateStr = yyyy + '-' + mm + '-' + dd;
-        
-                        if (dateInput.value > currentDateStr) {
-                            dateInput.setCustomValidity("Date cannot be greater than today");
-                        } else {
-                            dateInput.setCustomValidity("");
-                        }
-                    });
-                </script>-->
         <script>
             var dateInput = document.getElementById("penDate");
 
@@ -193,6 +170,15 @@
                     dateInput.setCustomValidity("Chỉ được chọn ngày trong vòng 3 ngày trở lại.");
                 } else {
                     dateInput.setCustomValidity("");
+                }
+            });
+        </script>
+        <script>
+            document.getElementById("description").addEventListener("input", function () {
+                const maxLen = 200;
+                if (this.value.length > maxLen) {
+                    alert("❗ Mô tả không được vượt quá " + maxLen + " ký tự.");
+                    this.value = this.value.slice(0, maxLen);
                 }
             });
         </script>
