@@ -1,8 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
-
 package controller.Admin;
 
 import dao.DAO;
@@ -70,56 +65,52 @@ public class Edit extends HttpServlet {
         String spassword = request.getParameter("password");
         String srole = request.getParameter("role");
         String smail = request.getParameter("email");
-        System.out.println("Email: " + smail);
-        System.out.println("Password: " + spassword);
-        System.out.println("Role: " + srole);
-        response.setContentType("text/html;charset=UTF-8");
- response.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-
+        
+        // Lưu lại giá trị đã nhập vào session để hiển thị lại
+        request.getSession().setAttribute("editEmail", smail);
+        request.getSession().setAttribute("editRole", srole);
+        // Không lưu password vì lý do bảo mật
+        
         try {
             int role = Integer.parseInt(srole);
-             if (role < 1 || role > 3) {
-                throw new IllegalArgumentException("Role must be between 1 and 3.");
+            if (role < 1 || role > 4) {  // Phạm vi role từ 1-4
+                request.getSession().setAttribute("errorMessage", "Role must be between 1 and 4.");
+                response.sendRedirect("manage");  // Chuyển hướng về trang manage để hiển thị modal
+                return;
             }
+            
             if (!isValidPassword(spassword)) {
-                
-                request.setAttribute("errorMessage", "Password must contain at least 8 characters, including uppercase letters and numbers.");
-                request.getRequestDispatcher("Admin/Tables.jsp").forward(request, response);
-            } else {
-              
-                DAO dao = new DAO();
-                dao.editAccount(smail, spassword, srole);
-
-               
-                response.sendRedirect("manage");
+                request.getSession().setAttribute("errorMessage", "Password must contain at least 8 characters, including at least one letter, one number, and one special character (!@#$%^&*).");
+                response.sendRedirect("manage");  // Chuyển hướng về trang manage để hiển thị modal
+                return;
             }
+            
+            // Nếu validate thành công
+            DAO dao = new DAO();
+            dao.editAccount(smail, spassword, srole);
+            
+            // Thêm thông báo thành công
+            request.getSession().setAttribute("successMessage", "Account updated successfully!");
+            response.sendRedirect("manage");
+            
+        } catch (NumberFormatException e) {
+            request.getSession().setAttribute("errorMessage", "Invalid role format. Must be a number.");
+            response.sendRedirect("manage");
         } catch (Exception e) {
-           
-            e.printStackTrace(); 
-            request.setAttribute("errorMessage", "An error occurred while updating the account. Please try again.");
-            request.getRequestDispatcher("Admin/Tables.jsp").forward(request, response);
+            e.printStackTrace();
+            request.getSession().setAttribute("errorMessage", "An error occurred while updating the account: " + e.getMessage());
+            response.sendRedirect("manage");
         }
-          
-     
-        
     }
-        private boolean isValidPassword(String password) {
-        if (password.length() < 8) {
-            return false;
-        }
-        boolean hasLetter = false;
-        boolean hasDigit = false;
-        for (char c : password.toCharArray()) {
-            if (Character.isLetter(c)) {
-                hasLetter = true;
-            } else if (Character.isDigit(c)) {
-                hasDigit = true;
-            }
-            if (hasLetter && hasDigit) {return true;
-            }
-        }
-        return false;
+    
+    private boolean isValidPassword(String password) {
+        // Regex để kiểm tra mật khẩu:
+        // - Tối thiểu 8 ký tự
+        // - Ít nhất một chữ cái
+        // - Ít nhất một số
+        // - Ít nhất một ký tự đặc biệt (!@#$%^&*)
+        String regex = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*]).{8,}$";
+        return Pattern.compile(regex).matcher(password).matches();
     }
 
     /** 
@@ -130,5 +121,4 @@ public class Edit extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
 }
