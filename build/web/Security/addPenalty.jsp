@@ -135,26 +135,62 @@
                 </footer>
             </div>
         </div>
+        <!--        <script>
+                    var dateInput = document.getElementById("penDate");
+        
+                    dateInput.addEventListener("input", function () {
+                        var currentDate = new Date();
+                        var dd = currentDate.getDate();
+                        var mm = currentDate.getMonth() + 1; // Tháng bắt đầu từ 0
+                        var yyyy = currentDate.getFullYear();
+        
+                        if (dd < 10) {
+                            dd = '0' + dd;
+                        }
+                        if (mm < 10) {
+                            mm = '0' + mm;
+                        }
+        
+                        var currentDateStr = yyyy + '-' + mm + '-' + dd;
+        
+                        if (dateInput.value > currentDateStr) {
+                            dateInput.setCustomValidity("Date cannot be greater than today");
+                        } else {
+                            dateInput.setCustomValidity("");
+                        }
+                    });
+                </script>-->
         <script>
             var dateInput = document.getElementById("penDate");
 
             dateInput.addEventListener("input", function () {
                 var currentDate = new Date();
-                var dd = currentDate.getDate();
-                var mm = currentDate.getMonth() + 1; // Tháng bắt đầu từ 0
-                var yyyy = currentDate.getFullYear();
+                var maxPastDate = new Date();
+                maxPastDate.setDate(currentDate.getDate() - 3); // Giới hạn lùi tối đa 3 ngày
 
-                if (dd < 10) {
-                    dd = '0' + dd;
-                }
-                if (mm < 10) {
-                    mm = '0' + mm;
+                // Format ngày hiện tại và ngày quá khứ thành yyyy-mm-dd
+                function formatDate(date) {
+                    var dd = date.getDate();
+                    var mm = date.getMonth() + 1; // Tháng bắt đầu từ 0
+                    var yyyy = date.getFullYear();
+
+                    if (dd < 10) {
+                        dd = '0' + dd;
+                    }
+                    if (mm < 10) {
+                        mm = '0' + mm;
+                    }
+
+                    return yyyy + '-' + mm + '-' + dd;
                 }
 
-                var currentDateStr = yyyy + '-' + mm + '-' + dd;
+                var currentDateStr = formatDate(currentDate);
+                var maxPastDateStr = formatDate(maxPastDate);
 
                 if (dateInput.value > currentDateStr) {
-                    dateInput.setCustomValidity("Date cannot be greater than today");
+                    dateInput.setCustomValidity("Ngày phạt không được lớn hơn ngày hôm nay.");
+                } else if (dateInput.value < maxPastDateStr) {
+                    dateInput.setCustomValidity("Chỉ được chọn ngày trong vòng 3 ngày trở lại.");
                 } else {
                     dateInput.setCustomValidity("");
                 }
