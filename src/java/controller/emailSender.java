@@ -187,8 +187,8 @@ public class emailSender extends HttpServlet {
 
     private boolean sendEmail(String recipient, String code) throws UnsupportedEncodingException {
         // Email account information
-        String email = "cuongntthe173555@fpt.edu.vn";
-        String appPassword = "mids kchv fitq nsjo";
+        String email = "huyphqhe170146@fpt.edu.vn";
+        String appPassword = "hnvm cprk dgio llqh";
         String smtpHost = "smtp.gmail.com";
         int smtpPort = 587;
 
