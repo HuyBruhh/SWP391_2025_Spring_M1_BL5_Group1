@@ -132,7 +132,10 @@ public class OwnerController extends HttpServlet {
 
     private void getOwnerProfile(HttpServletRequest request, HttpServletResponse response, int flag) throws ServletException, IOException {
         RoomDAO dao = new RoomDAO();
-        User ownerProfile = dao.getOwnerProfileByID(15);
+                HttpSession session = request.getSession();
+int userID = (int) session.getAttribute("userID");
+
+        User ownerProfile = dao.getOwnerProfileByID(userID);
         request.setAttribute("ownerProfile", ownerProfile);
         if (flag == 0) {
             request.getRequestDispatcher("Owner/ownerProfile.jsp").forward(request, response);
@@ -144,9 +147,11 @@ public class OwnerController extends HttpServlet {
     private void updateAvatar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         RoomDAO dao = new RoomDAO();
         Part photo = request.getPart("img");
+                        HttpSession session = request.getSession();
+int userID = (int) session.getAttribute("userID");
         byte[] avatar_raw = convertInputStreamToByteArray(photo.getInputStream());
         String avatar = Base64.getEncoder().encodeToString(avatar_raw);
-        int updateAvatar = dao.updateAvatar(new User(15, avatar));
+        int updateAvatar = dao.updateAvatar(new User(userID, avatar));
         request.getRequestDispatcher("OwnerController?service=editOwnerProfile").forward(request, response);
     }
 
@@ -161,7 +166,8 @@ public class OwnerController extends HttpServlet {
         String gender = request.getParameter("gender");
         String phone = request.getParameter("phone");
         String address = request.getParameter("address");
-
+                        HttpSession session = request.getSession();
+int userID = (int) session.getAttribute("userID");
  if (fullName == null || fullName.isEmpty() || fullName.trim().isEmpty()) {
         hasError = true;
         request.setAttribute("fullNameError", "Tên đầy đủ là bắt buộc.");
@@ -193,7 +199,7 @@ public class OwnerController extends HttpServlet {
         request.setAttribute("error", "Vui lòng sửa các lỗi.");
                     request.getRequestDispatcher("OwnerController?service=ownerProfile").forward(request, response);
     } else {
-        int update = dao.updateOwnerProfile(new User(15, fullName, gender, dob, address, phone));
+        int update = dao.updateOwnerProfile(new User(userID, fullName, gender, dob, address, phone));
                     request.getRequestDispatcher("OwnerController?service=ownerProfile").forward(request, response);
     }
 
