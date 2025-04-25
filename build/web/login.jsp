@@ -46,7 +46,11 @@
                     <input type="radio" name="yea" value="" />
                 </form>
 
-               
+               <div class="form1">
+                    <div class="button">
+                        <a href="forgotPassword.jsp"><input type="button" value="Forgot password"></a>
+                    </div>
+                </div>
                 <div class="form1">
                     <div class="button">
                         <a href="GuestController"><input type="button" value="Back to Home"></a>

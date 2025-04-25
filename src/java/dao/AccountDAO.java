@@ -267,7 +267,7 @@ public class AccountDAO extends MyDAO {
     }
         public static void main(String[] args) {
         AccountDAO dao = new AccountDAO();
-        int userID = dao.getUserIdByEmail("maingoctu@gmail.com");
+        int userID = dao.getUserIdByEmail("huyphqhe170146@fpt.edu.vn");
             System.out.println(userID);
     }
 }

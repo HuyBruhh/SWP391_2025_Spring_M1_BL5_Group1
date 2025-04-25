@@ -85,14 +85,15 @@
         <form action="newPassword" method="POST">
             <div class="form-group">
                 <h4 class="text-password">New Password:</h4>
-                <input type="password" name="password" required>
-                <div id="passwordError"></div>
+                <input type="password" name="password" id="password" required>
+                <div id="passwordError" style="color: red;"></div>
             </div>
             <div class="form-group">
                 <h4 class="text-password">Confirm Password:</h4>
-                <input type="password" name="newpassword" required>
-                <div id="repasswordError"></div>
+                <input type="password" name="confirmPassword" id="confirmPassword" required>
+                <div id="confirmPasswordError" style="color: red;"></div>
             </div>
+            <input type="hidden" name="email" value="${email}">
             <div class="reset">
                 <input type="submit" value="Reset Password" id="submitButton">
             </div>
@@ -102,5 +103,44 @@
             </div>
         </form>
     </div>              
+    <script>
+        document.getElementById("submitButton").addEventListener("click", function(event) {
+            var password = document.getElementById("password").value;
+            var confirmPassword = document.getElementById("confirmPassword").value;
+            var passwordError = document.getElementById("passwordError");
+            var confirmPasswordError = document.getElementById("confirmPasswordError");
+
+            passwordError.textContent = "";
+            confirmPasswordError.textContent = "";
+
+            // Ki?m tra ch? ch?a d?u cách ho?c tr?ng
+            if (!password || !confirmPassword || password.trim() === "" || confirmPassword.trim() === "") {
+                passwordError.textContent = "Password cannot be empty or only spaces.";
+                event.preventDefault();
+                return;
+            }
+
+            // Ki?m tra d?u cách ? ??u ho?c cu?i
+            if (password !== password.trim() || confirmPassword !== confirmPassword.trim()) {
+                passwordError.textContent = "Password cannot have leading or trailing spaces.";
+                event.preventDefault();
+                return;
+            }
+
+            // Ki?m tra ??nh d?ng m?t kh?u
+            if (!password.match(/^(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/)) {
+                passwordError.textContent = "Password must be at least 8 characters long, include at least one number, one letter, and one special character.";
+                event.preventDefault();
+                return;
+            }
+
+            // Ki?m tra m?t kh?u và xác nh?n m?t kh?u có kh?p không
+            if (password !== confirmPassword) {
+                confirmPasswordError.textContent = "Passwords do not match.";
+                event.preventDefault();
+                return;
+            }
+        });
+    </script>
 </body>
 </html>

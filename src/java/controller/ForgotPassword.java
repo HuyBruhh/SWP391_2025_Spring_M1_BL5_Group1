@@ -50,7 +50,7 @@ public class ForgotPassword extends HttpServlet {
         
         
         
-        if (email != null || !email.equals("")) {
+        if (email != null && !email.equals("")) {
             for (int i = 0; i < otpvalueLength; i++) {
                 char c = string.charAt(rand.nextInt(string.length()));
                 randomOtp = randomOtp + c;    
@@ -63,7 +63,6 @@ public class ForgotPassword extends HttpServlet {
             
             String to = email;
             
-            
             // Get the session object
             Properties props = new Properties();
             props.put("mail.smtp.host", "smtp.gmail.com");
@@ -73,19 +72,20 @@ public class ForgotPassword extends HttpServlet {
             props.put("mail.smtp.port", "465");
             Session session = Session.getDefaultInstance(props, new javax.mail.Authenticator() {
                 protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication("cuongntthe173555@fpt.edu.vn", "mids kchv fitq nsjo");
+                    return new PasswordAuthentication("huyphqhe170146@fpt.edu.vn", "hnvm cprk dgio llqh");
                 }
             });
             try {
                 MimeMessage message = new MimeMessage(session);
-                message.setFrom(new InternetAddress(email, "Admin"));
+                message.setFrom(new InternetAddress("huyphqhe170146@fpt.edu.vn", "Admin"));
                 message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
-                message.setSubject("Request to reset password ");
-                message.setText("Please don't share OTP code with anyone, OTP code exist in 5 minute");
-                message.setText("Hi, for security, please verify your account with the OPT below. " 
-                        + "Your OTP is ==========>" + randomOtp + "<========== Click the link to enter otp: " + "http://localhost:9999/SWP391.E.BL5.G5/enterotp.jsp");
+                message.setSubject("Request to reset password");
+                message.setText("Please don't share OTP code with anyone, OTP code exists for 5 minutes.\n" +
+                        "Hi, for security, please verify your account with the OTP below.\n" +
+                        "Your OTP is ==========>" + randomOtp + "<==========\n" +
+                        "Click the link to enter OTP: http://localhost:8080/SWP391_2025_Spring_M1_BL5_Group1/enterotp.jsp");
                 Transport.send(message);
-                System.out.println("message sent successfully");
+                System.out.println("Message sent successfully");
             } catch (MessagingException e) {
                 e.printStackTrace();
             }
