@@ -1,5 +1,4 @@
-
-
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!doctype html>
 <html lang="en">
     <head>
@@ -15,17 +14,11 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-
         <link rel="stylesheet" href="fonts/icomoon/style.css">
         <link rel="stylesheet" href="fonts/flaticon/font/flaticon.css">
-
         <link rel="stylesheet" href="css/tiny-slider.css">
         <link rel="stylesheet" href="css/aos.css">
         <link rel="stylesheet" href="css/style.css">
-
-
-
-
 
         <!-- Favicons -->
         <link rel="shortcut icon" href="images/favicon.png">
@@ -48,25 +41,23 @@
 
         <title>HoLa Motel</title>
         <style>
-            /* Override text color */
             body {
-                color: #000; /* Black text */
+                color: #000;
             }
-
-            /* Style labels to be black */
             label {
-                color: #000; /* Black text */
-
+                color: #000;
             }
             .bg-image {
-                
                 height: 100px;
-                width: 1920px; 
+                width: 1920px;
+            }
+            .error-message {
+                color: red;
+                font-size: 0.9em;
             }
         </style>
     </head>
     <body>
-
         <div class="site-mobile-menu site-navbar-target">
             <div class="site-mobile-menu-header">
                 <div class="site-mobile-menu-close">
@@ -81,92 +72,120 @@
                 <div class="menu-bg-wrap">
                     <div class="site-navigation">
                         <a href="addnews" class="logo m-0 float-start">Owner</a>
-
-                        <jsp:include page = "navbar.jsp"></jsp:include>
-
+                        <jsp:include page="navbar.jsp"></jsp:include>
                         <a href="#" class="burger light me-auto float-end mt-1 site-menu-toggle js-menu-toggle d-inline-block d-lg-none" data-toggle="collapse" data-target="#main-navbar">
                             <span></span>
                         </a>
-
                     </div>
                 </div>
             </div>
         </nav>
 
-                        <div class="hero page-inner overlay" style="background-image: url('images/hero_bg_3.jpg');">
-                            <div class="container">
-                                <div class="row justify-content-center align-items-center">
-                                    <div class="col-lg-9 text-center mt-5">
-                                        <h1 class="heading" data-aos="fade-up">Add News</h1>
+        <div class="hero page-inner overlay" style="background-image: url('images/hero_bg_3.jpg');">
+            <div class="container">
+                <div class="row justify-content-center align-items-center">
+                    <div class="col-lg-9 text-center mt-5">
+                        <h1 class="heading" data-aos="fade-up">Add News</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
         <div class="container my-5">
             <h2>Add News</h2>
-            <form action="addnews" method="post" enctype="multipart/form-data">
+            <c:if test="${not empty error}">
+                <div class="alert alert-danger" role="alert">
+                    ${error}
+                </div>
+            </c:if>
+            <form action="addnews" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
                 <div class="mb-3">
                     <label for="title" class="form-label">Title</label>
-                    <input type="text" class="form-control" id="title"  name="title" required>
+                    <input type="text" class="form-control" id="title" name="title" maxlength="100" required>
+                    <span id="titleError" class="error-message"></span>
                 </div>
                 <div class="mb-3">
                     <label for="description" class="form-label">Description</label>
-                    <textarea class="form-control" id="description" name="description" rows="5" required></textarea>
-
+                    <textarea class="form-control" id="description" name="description" rows="5" maxlength="500" required></textarea>
+                    <span id="descriptionError" class="error-message"></span>
                 </div>
                 <div class="mb-3">
                     <label for="image" class="form-label">Upload Image</label>
                     <input id="fileInput" type="file" class="form-control" name="image" accept="image/jpeg, image/png" required>
-                    <span id="fileError" style="color: red;"></span>
+                    <span id="fileError" class="error-message"></span>
                 </div>
                 <div class="mb-3">
                     <label for="createAt" class="form-label">Create at:</label>
-                    <input type="date" class="form-control" id="createAt" name="createAt" required readonly="">
+                    <input type="date" class="form-control" id="createAt" name="createAt" required readonly>
                 </div>
-
-                <button type="submit" class="btn btn-primary" onclick="return validateFile()">Submit</button>
-                <a href="displayNews" class="btn btn-primary"> Back to list</a>
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <a href="displayNews" class="btn btn-primary">Back to list</a>
             </form>
+
             <script>
-
+                // Set current date for createAt
                 const today = new Date().toISOString().split('T')[0];
-
                 document.getElementById('createAt').value = today;
-            </script>
-               <script>
-                    function validateFile() {
-                        const fileInput = document.getElementById('fileInput');
-                        const fileError = document.getElementById('fileError');
-                        fileError.textContent = ''; // Clear previous errors
 
-                        if (!fileInput.files || fileInput.files.length === 0) {
-                            fileError.textContent = 'Please select a file.';
-                            return false;
-                        }
+                function validateForm() {
+                    let isValid = true;
+                    const title = document.getElementById('title').value.trim();
+                    const description = document.getElementById('description').value.trim();
+                    const fileInput = document.getElementById('fileInput');
+                    const titleError = document.getElementById('titleError');
+                    const descriptionError = document.getElementById('descriptionError');
+                    const fileError = document.getElementById('fileError');
 
+                    // Reset error messages
+                    titleError.textContent = '';
+                    descriptionError.textContent = '';
+                    fileError.textContent = '';
+
+                    // Validate Title
+                    if (!title) {
+                        titleError.textContent = 'Title is required.';
+                        isValid = false;
+                    } else if (title.length > 100) {
+                        titleError.textContent = 'Title must not exceed 100 characters.';
+                        isValid = false;
+                    }
+
+                    // Validate Description
+                    if (!description) {
+                        descriptionError.textContent = 'Description is required.';
+                        isValid = false;
+                    } else if (description.length > 500) {
+                        descriptionError.textContent = 'Description must not exceed 500 characters.';
+                        isValid = false;
+                    }
+
+                    // Validate File
+                    if (!fileInput.files || fileInput.files.length === 0) {
+                        fileError.textContent = 'Please select a file.';
+                        isValid = false;
+                    } else {
                         const file = fileInput.files[0];
                         const allowedTypes = ['image/jpeg', 'image/png'];
                         const maxSize = 1 * 1024 * 1024; // 1 MB
 
                         if (!allowedTypes.includes(file.type)) {
                             fileError.textContent = 'Only JPEG and PNG files are allowed.';
-                            return false;
+                            isValid = false;
                         }
 
                         if (file.size > maxSize) {
                             fileError.textContent = 'File size must be less than 1 MB.';
-                            return false;
+                            isValid = false;
                         }
-
-                        return true;
                     }
-                </script>
-            
+
+                    return isValid;
+                }
+            </script>
         </div>
+
         <div class="site-footer">
             <div class="container">
-
                 <div class="row">
                     <div class="col-lg-4">
                         <div class="widget">
@@ -177,8 +196,8 @@
                                 <li><a href="tel://11234567890">+1(123)-456-7890</a></li>
                                 <li><a href="mailto:info@mydomain.com">info@mydomain.com</a></li>
                             </ul>
-                        </div> <!-- /.widget -->
-                    </div> <!-- /.col-lg-4 -->
+                        </div>
+                    </div>
                     <div class="col-lg-4">
                         <div class="widget">
                             <h3>Sources</h3>
@@ -198,8 +217,8 @@
                                 <li><a href="#">FAQ</a></li>
                                 <li><a href="#">Creative</a></li>
                             </ul>
-                        </div> <!-- /.widget -->
-                    </div> <!-- /.col-lg-4 -->
+                        </div>
+                    </div>
                     <div class="col-lg-4">
                         <div class="widget">
                             <h3>Links</h3>
@@ -208,7 +227,6 @@
                                 <li><a href="#">About us</a></li>
                                 <li><a href="#">Contact us</a></li>
                             </ul>
-
                             <ul class="list-unstyled social">
                                 <li><a href="#"><span class="icon-instagram"></span></a></li>
                                 <li><a href="#"><span class="icon-twitter"></span></a></li>
@@ -217,30 +235,19 @@
                                 <li><a href="#"><span class="icon-pinterest"></span></a></li>
                                 <li><a href="#"><span class="icon-dribbble"></span></a></li>
                             </ul>
-                        </div> <!-- /.widget -->
-                    </div> <!-- /.col-lg-4 -->
-                </div> <!-- /.row -->
-
-                <div class="row mt-5">
-                    <div class="col-12 text-center">
-                        <!-- 
-**==========
-NOTE: 
-Please don't remove this copyright link unless you buy the license here https://untree.co/license/  
-**==========
-                        -->
-
-                        <p>Copyright &copy;<script>document.write(new Date().getFullYear());</script>. All Rights Reserved. &mdash; Designed with love by <a href="https://untree.co">Untree.co</a> <!-- License information: https://untree.co/license/ -->
-                        </p>
-
+                        </div>
                     </div>
                 </div>
-            </div> <!-- /.container -->
-        </div> <!-- /.site-footer -->
+                <div class="row mt-5">
+                    <div class="col-12 text-center">
+                        <p>Copyright ©<script>document.write(new Date().getFullYear());</script>. All Rights Reserved. — Designed with love by <a href="https://untree.co">Untree.co</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
         <div id="preloader"></div>
-
 
         <script src="js/bootstrap.bundle.min.js"></script>
         <script src="js/tiny-slider.js"></script>
@@ -248,9 +255,6 @@ Please don't remove this copyright link unless you buy the license here https://
         <script src="js/navbar.js"></script>
         <script src="js/counter.js"></script>
         <script src="js/custom.js"></script>
-
-
-        <!-- JavaScript Libraries -->
         <script src="lib/jquery/jquery.min.js"></script>
         <script src="lib/jquery/jquery-migrate.min.js"></script>
         <script src="lib/popper/popper.min.js"></script>
@@ -258,9 +262,6 @@ Please don't remove this copyright link unless you buy the license here https://
         <script src="lib/easing/easing.min.js"></script>
         <script src="lib/owlcarousel/owl.carousel.min.js"></script>
         <script src="lib/scrollreveal/scrollreveal.min.js"></script>
-
-
-        <!-- Template Main Javascript File -->
         <script src="js/main_owner.js"></script>
     </body>
 </html>

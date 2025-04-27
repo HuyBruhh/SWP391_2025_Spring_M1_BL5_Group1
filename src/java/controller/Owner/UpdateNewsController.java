@@ -49,36 +49,57 @@ public class UpdateNewsController extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        int id = Integer.parseInt(request.getParameter("id"));
-        String title = request.getParameter("newTitle");
-        String description = request.getParameter("description");
-        Part imagePart = request.getPart("img");
-        String createAt = request.getParameter("createAt");
-        if (title == null || title.isEmpty() || description == null || description.isEmpty() || imagePart == null || createAt == null || createAt.isEmpty()) {
-            request.setAttribute("error", "All fields are required.");
-            request.getRequestDispatcher("Owner/EditNews.jsp").forward(request, response);
-            return;
-        }
+   @Override
+protected void doPost(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+    int id = Integer.parseInt(request.getParameter("id"));
+    String title = request.getParameter("newTitle");
+    String description = request.getParameter("description");
+    Part imagePart = request.getPart("img");
+    String createAt = request.getParameter("createAt");
 
-        byte[] photo = convertInputStreamToByteArray(imagePart.getInputStream());
-        String imgBase64 = Base64.getEncoder().encodeToString(photo);
-
-        NewDAO dao = new NewDAO();
-        News news = new News(title, description, imgBase64, createAt);
-        news.setNewId(id);
-        int result = dao.updateNews(news);
-        if (result > 0) {
-            response.sendRedirect("displayNews");
-        } else {
-            request.setAttribute("errorMessage", "Error updating news");
-            RequestDispatcher dispatcher = request.getRequestDispatcher("Owner/Editnews.jsp");
-            dispatcher.forward(request, response);
-        }
-
+    // Validation
+    StringBuilder error = new StringBuilder();
+    if (title == null || title.trim().isEmpty()) {
+        error.append("Title is required.<br>");
+    } else if (title.length() > 100) {
+        error.append("Title must not exceed 100 characters.<br>");
     }
+
+    if (description == null || description.trim().isEmpty()) {
+        error.append("Description is required.<br>");
+    } else if (description.length() > 500) {
+        error.append("Description must not exceed 500 characters.<br>");
+    }
+
+    if (imagePart == null) {
+        error.append("Image is required.<br>");
+    }
+
+    if (createAt == null || createAt.trim().isEmpty()) {
+        error.append("Create date is required.<br>");
+    }
+
+    if (error.length() > 0) {
+        request.setAttribute("error", error.toString());
+        request.getRequestDispatcher("Owner/EditNews.jsp").forward(request, response);
+        return;
+    }
+
+    byte[] photo = convertInputStreamToByteArray(imagePart.getInputStream());
+    String imgBase64 = Base64.getEncoder().encodeToString(photo);
+
+    NewDAO dao = new NewDAO();
+    News news = new News(title, description, imgBase64, createAt);
+    news.setNewId(id);
+    int result = dao.updateNews(news);
+    if (result > 0) {
+        response.sendRedirect("displayNews");
+    } else {
+        request.setAttribute("errorMessage", "Error updating news");
+        request.getRequestDispatcher("Owner/EditNews.jsp").forward(request, response);
+    }
+}
 
     /**
      * Handles the HTTP <code>POST</code> method.

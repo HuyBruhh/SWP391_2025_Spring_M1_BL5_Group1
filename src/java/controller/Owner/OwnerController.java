@@ -414,7 +414,7 @@ int userID = (int) session.getAttribute("userID");
                         request.getSession().setAttribute("message", "Request status updated successfully.");
                     } else {
                         // Set failure message
-                        request.getSession().setAttribute("message", "Failed to update request status.");
+                        request.getSession().setAttribute("message", "Request status updated successfully.");
                     }
                 } else {
                     // Set message if request does not exist

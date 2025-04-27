@@ -1,90 +1,75 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
-
 package controller.Owner;
 
 import dao.EditNewsDAO;
-import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.News;
+import java.io.IOException;
+import java.net.URLEncoder;
 
-
-@WebServlet(name="deleteNewsController", urlPatterns={"/deleteNews"})
+@WebServlet(name = "DeleteNewsController", urlPatterns = {"/deleteNews"})
 public class DeleteNewsController extends HttpServlet {
-   
-    /** 
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet deleteNewsController</title>");  
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet deleteNewsController at " + request.getContextPath () + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    } 
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
-     * Handles the HTTP <code>GET</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        processRequest(request, response);
-    } 
-
-    /** 
-     * Handles the HTTP <code>POST</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-       int newsId = Integer.parseInt(request.getParameter("newsId"));
-        
-        News news = new News();
-        news.setNewId(newsId);
-        
-       
-        EditNewsDAO dao = new EditNewsDAO();
-        int result = dao.DeleteNews(news);
-        request.getRequestDispatcher("displayNews").forward(request, response);
+            throws ServletException, IOException {
+        response.sendRedirect("displayNews");
     }
 
-    /** 
-     * Returns a short description of the servlet.
-     * @return a String containing servlet description
-     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            int newsId = Integer.parseInt(request.getParameter("newsId"));
+            
+            News news = new News();
+            news.setNewId(newsId);
+
+            EditNewsDAO dao = new EditNewsDAO();
+            int result = dao.DeleteNews(news);
+
+            // Lấy các tham số phân trang và tìm kiếm
+            String index = request.getParameter("index");
+            String pageSize = request.getParameter("pageSize");
+            String search = request.getParameter("search");
+
+            // Xây dựng URL chuyển hướng
+            StringBuilder redirectUrl = new StringBuilder("displayNews");
+            boolean hasParams = false;
+
+            if (index != null && !index.isEmpty()) {
+                redirectUrl.append(hasParams ? "&" : "?").append("index=").append(index);
+                hasParams = true;
+            }
+            if (pageSize != null && !pageSize.isEmpty()) {
+                redirectUrl.append(hasParams ? "&" : "?").append("pageSize=").append(pageSize);
+                hasParams = true;
+            }
+            if (search != null && !search.isEmpty()) {
+                redirectUrl.append(hasParams ? "&" : "?").append("search=").append(URLEncoder.encode(search, "UTF-8"));
+                hasParams = true;
+            }
+
+            // Thêm thông báo
+            if (result > 0) {
+                redirectUrl.append(hasParams ? "&" : "?").append("success=News+deleted+successfully");
+            } else {
+                redirectUrl.append(hasParams ? "&" : "?").append("error=Failed+to+delete+news");
+            }
+
+            response.sendRedirect(redirectUrl.toString());
+        } catch (NumberFormatException e) {
+            response.sendRedirect("displayNews?error=Invalid+news+ID");
+        } catch (Exception e) {
+            response.sendRedirect("displayNews?error=An+error+occurred+while+deleting+news");
+        }
+    }
+
     @Override
     public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
+        return "Servlet for deleting news";
+    }
 }
