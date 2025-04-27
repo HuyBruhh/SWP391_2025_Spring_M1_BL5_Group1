@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import dao.RenterDAO;
-
+import dao.RequestDAO;
 import java.lang.reflect.Type;
 import dao.RoomDAO;
 import dao.UserDAO;
@@ -24,8 +24,6 @@ import jakarta.servlet.http.Part;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.time.LocalDate;
-import java.time.Period;
 import java.util.Base64;
 import model.*;
 import org.json.simple.JSONArray;
@@ -80,6 +78,24 @@ public class OwnerController extends HttpServlet {
             updateAvatar(request, response);
         } else if (service.equals("roomDetail")) {
             roomDetail(request, response, 0);
+        } else if (service.equals("editRoom")) {
+            roomDetail(request, response, 1);
+        } else if (service.equals("deleteItem")) {
+            deleteItem(request, response);
+        } else if (service.equals("addItem")) {
+            addItem(request, response);
+        } else if (service.equals("updateRoomDetail")) {
+            updateRoomDetail(request, response);
+        } else if (service.equals("updateRoomItem")) {
+            updateRoomItem(request, response);
+        } else if (service.equals("listrequest")) {
+            requestList(request, response, 0);
+        } else if (service.equals("changereqstatus")) {
+            requestList(request, response, 1);
+        } else if (service.equals("updateRoomStatus")) {
+            updateRoomStatus(request, response);
+        } else if (service.equals("setUnderRepair")) {
+            setUnderRepair(request, response);
         }
     }
 
@@ -128,12 +144,40 @@ public class OwnerController extends HttpServlet {
         }
     }
 
-    
+    private void deleteItem(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        RoomDAO dao = new RoomDAO();
+        int roomID = Integer.parseInt(request.getParameter("roomID"));
+        int itemID = Integer.parseInt(request.getParameter("itemID"));
+        int remove = dao.deleteRoomItem(roomID, itemID);
+        request.getRequestDispatcher("OwnerController?service=editRoom").forward(request, response);
+    }
+
+    private void addItem(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        RoomDAO dao = new RoomDAO();
+        String itemName = request.getParameter("itemName");
+        int roomID = Integer.parseInt(request.getParameter("roomID"));
+        int quantity = Integer.parseInt(request.getParameter("quantity").trim());
+        int itemID = dao.getItemIDOrQuantityByItemName(itemName, 0, 0);
+        RoomDetailSe roomDetail = dao.getRoomDetail(roomID);
+
+        String[] listItemName = roomDetail.getItemName();
+        for (String string : listItemName) {
+            if (string.equalsIgnoreCase(itemName)) {
+                int newQuantity = dao.getItemIDOrQuantityByItemName(itemName, 1, roomID) + quantity;
+                int updateQuantity = dao.updateItemQuantity(roomID, itemID, newQuantity);
+                request.getRequestDispatcher("OwnerController?service=editRoom").forward(request, response);
+                return;
+            }
+        }
+        int addItem = dao.addRoomItem(roomID, itemID, quantity);
+        request.getRequestDispatcher("OwnerController?service=editRoom").forward(request, response);
+    }
 
     private void getOwnerProfile(HttpServletRequest request, HttpServletResponse response, int flag) throws ServletException, IOException {
         RoomDAO dao = new RoomDAO();
-                HttpSession session = request.getSession();
-int userID = (int) session.getAttribute("userID");
+                        HttpSession session = request.getSession();
+
+        int userID = (int) session.getAttribute("userID");
 
         User ownerProfile = dao.getOwnerProfileByID(userID);
         request.setAttribute("ownerProfile", ownerProfile);
@@ -147,15 +191,73 @@ int userID = (int) session.getAttribute("userID");
     private void updateAvatar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         RoomDAO dao = new RoomDAO();
         Part photo = request.getPart("img");
-                        HttpSession session = request.getSession();
+                                HttpSession session = request.getSession();
 int userID = (int) session.getAttribute("userID");
         byte[] avatar_raw = convertInputStreamToByteArray(photo.getInputStream());
         String avatar = Base64.getEncoder().encodeToString(avatar_raw);
-        int updateAvatar = dao.updateAvatar(new User(userID, avatar));
+        int updateAvatar = dao.updateAvatar(new User(15, avatar));
         request.getRequestDispatcher("OwnerController?service=editOwnerProfile").forward(request, response);
     }
 
-    
+    private void updateRoomDetail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        RoomDAO dao = new RoomDAO();
+        List<Rooms> listRoom = dao.getRooms();
+        int roomID = Integer.parseInt(request.getParameter("roomID"));
+        RoomDetailSe roomDetail = dao.getRoomDetail(roomID);
+        int currentRoomNumber = roomDetail.getRoomNumber();
+        double roomFee = 0;
+        int roomNumber = 0;
+
+        try {
+            roomNumber = Integer.parseInt(request.getParameter("roomNumber").trim());
+            if (roomNumber <= 0) {
+                request.setAttribute("error", "Invalid room number");
+                request.getRequestDispatcher("OwnerController?service=editRoom&roomID=" + roomID).forward(request, response);
+                return;
+            }
+            if (!dao.isExistRoomNumber(roomNumber)) {
+                if (roomNumber != dao.getCurrentRoomNumber(roomID)) {
+                    request.setAttribute("error", "Room number is exist!!!");
+                    request.getRequestDispatcher("OwnerController?service=editRoom&roomID=" + roomID).forward(request, response);
+                    return;
+                }
+            }
+
+        } catch (NumberFormatException e) {
+            request.setAttribute("error", "Invalid room number");
+            request.getRequestDispatcher("OwnerController?service=editRoom&roomID=" + roomID).forward(request, response);
+            return;
+        }
+
+        try {
+            roomFee = Double.parseDouble(request.getParameter("roomFee").trim());
+            if (roomFee <= 0) {
+                request.setAttribute("error", "Room Fee have to great than 0!!!");
+                request.getRequestDispatcher("OwnerController?service=editRoom&roomID=" + roomID).forward(request, response);
+                return;
+            }
+        } catch (NumberFormatException e) {
+            request.setAttribute("error", "Invalid room fee");
+            request.getRequestDispatcher("OwnerController?service=editRoom&roomID=" + roomID).forward(request, response);
+            return;
+        }
+
+        Part photo = request.getPart("roomImg");
+        String contentType = photo.getContentType();
+        byte[] roomImg_raw = null;
+        String roomImg = null;
+        if (!contentType.equals("image/jpeg")) {
+            request.setAttribute("error", "Invalid room image");
+            request.getRequestDispatcher("OwnerController?service=editRoom&roomID=" + roomID).forward(request, response);
+            return;
+        } else {
+            roomImg_raw = convertInputStreamToByteArray(photo.getInputStream());
+            roomImg = Base64.getEncoder().encodeToString(roomImg_raw);
+        }
+
+        int updateRoomDetail = dao.updateRoomDetail(roomID, roomFee, roomImg, roomNumber);
+        request.getRequestDispatcher("OwnerController?service=roomDetail").forward(request, response);
+    }
 
     private void updateOwnerProfile(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         RoomDAO dao = new RoomDAO();
@@ -168,41 +270,22 @@ int userID = (int) session.getAttribute("userID");
         String address = request.getParameter("address");
                         HttpSession session = request.getSession();
 int userID = (int) session.getAttribute("userID");
- if (fullName == null || fullName.isEmpty() || fullName.trim().isEmpty()) {
-        hasError = true;
-        request.setAttribute("fullNameError", "Tên đầy đủ là bắt buộc.");
-    }
-    
-    // Kiểm tra số điện thoại
-    if (phone == null || phone.length() != 10 || !phone.startsWith("0") || !phone.matches("[0-9]+")) {
-        hasError = true;
-        request.setAttribute("phoneError", "Số điện thoại không hợp lệ.");
-    }
-    
-    // Kiểm tra địa chỉ
-    if (address == null || address.isEmpty() || address.trim().isEmpty()) {
-        hasError = true;
-        request.setAttribute("addressError", "Địa chỉ là bắt buộc.");
-    }
-    
-    // Kiểm tra ngày sinh (độ tuổi)
-    if (dob != null) {
-        LocalDate birthDate = LocalDate.parse(dob);
-        int age = Period.between(birthDate, LocalDate.now()).getYears();
-        if (age < 18) {
+        if (fullName == null || fullName.isEmpty() || fullName.isBlank() || fullName.trim().isEmpty()) {
             hasError = true;
-            request.setAttribute("dobError", "Bạn phải ít nhất 18 tuổi.");
+        } else if (phone == null || phone.length() != 10 || !phone.startsWith("0") || !phone.matches("[0-9]+")) {
+            hasError = true;
+        } else if (address == null || address.isEmpty() || address.isBlank()) {
+            hasError = true;
         }
-    }
-    
-    if (hasError) {
-        request.setAttribute("error", "Vui lòng sửa các lỗi.");
-                    request.getRequestDispatcher("OwnerController?service=ownerProfile").forward(request, response);
-    } else {
-        int update = dao.updateOwnerProfile(new User(userID, fullName, gender, dob, address, phone));
-                    request.getRequestDispatcher("OwnerController?service=ownerProfile").forward(request, response);
-    }
 
+        if (hasError) {
+            request.setAttribute("error", "Invalid input information. Please check again.");
+            request.getRequestDispatcher("OwnerController?service=ownerProfile").forward(request, response);
+        } else {
+            int update = dao.updateOwnerProfile(new User(15, fullName, gender, dob, address, phone));
+
+            request.getRequestDispatcher("OwnerController?service=ownerProfile").forward(request, response);
+        }
     }
 
     private void updateRoomItem(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -301,7 +384,55 @@ int userID = (int) session.getAttribute("userID");
         return "Short description";
     }// </editor-fold>
 
- 
+    private void requestList(HttpServletRequest request, HttpServletResponse response, int flag) throws ServletException, IOException {
+    RequestDAO requestDAO = new RequestDAO();
+    
+    if (flag == 0) {
+        // Get the list of all requests
+        List<RequestList> requests = requestDAO.getAllRequest();
+        // Store the list in the request scope
+        request.setAttribute("requests", requests);
+        // Forward to the JSP page
+        request.getRequestDispatcher("Owner/OwnerRequest.jsp").forward(request, response);
+    } else if (flag == 1) {
+        // REQUEST STATUS UPDATE
+        String rawRequestId = request.getParameter("requestId");
+        String status = request.getParameter("status");
+
+        if (rawRequestId != null && status != null && (status.equals("Accepted") || status.equals("Denied"))) {
+            try {
+                int requestId = Integer.parseInt(rawRequestId);
+                // Fetch the current request
+                RequestList currentRequest = requestDAO.getRequestByID(requestId);
+
+                if (currentRequest != null && "Pending".equals(currentRequest.getResStatus())) {
+                    // Update the request status
+                    boolean updateSuccess = requestDAO.updateRequestStatus(status, requestId);
+
+                    if (updateSuccess) {
+                        // Set success message
+                       // request.getSession().setAttribute("message", "Request status updated successfully.");
+                    } else {
+                        // Set failure message
+                        //request.getSession().setAttribute("message", "Failed to update request status.");
+                    }
+                } else {
+                    // Set message if request was already updated
+                   // request.getSession().setAttribute("message", "Request has already been updated or does not exist.");
+                }
+            } catch (NumberFormatException e) {
+                // Handle invalid request ID format
+               // request.getSession().setAttribute("message", "Invalid request ID format.");
+            }
+        } else {
+            // Set message if status is invalid
+          //  request.getSession().setAttribute("message", "Invalid status provided.");
+        }
+
+        // Redirect back to the list page
+         request.getRequestDispatcher("OwnerController?service=listrequest").forward(request, response);
+    }
+}
 
     private void updateRoomStatus(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         RoomDAO dao = new RoomDAO();
