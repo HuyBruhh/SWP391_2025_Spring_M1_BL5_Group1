@@ -399,38 +399,38 @@ int userID = (int) session.getAttribute("userID");
         String rawRequestId = request.getParameter("requestId");
         String status = request.getParameter("status");
 
-        if (rawRequestId != null && status != null && (status.equals("Accepted") || status.equals("Denied"))) {
+        if (rawRequestId != null && status != null) {
             try {
                 int requestId = Integer.parseInt(rawRequestId);
                 // Fetch the current request
                 RequestList currentRequest = requestDAO.getRequestByID(requestId);
 
-                if (currentRequest != null && "Pending".equals(currentRequest.getResStatus())) {
-                    // Update the request status
+                if (currentRequest != null) {
+                    // Update the request status regardless of the current state
                     boolean updateSuccess = requestDAO.updateRequestStatus(status, requestId);
 
                     if (updateSuccess) {
                         // Set success message
-                       // request.getSession().setAttribute("message", "Request status updated successfully.");
+                        request.getSession().setAttribute("message", "Request status updated successfully.");
                     } else {
                         // Set failure message
-                        //request.getSession().setAttribute("message", "Failed to update request status.");
+                        request.getSession().setAttribute("message", "Failed to update request status.");
                     }
                 } else {
-                    // Set message if request was already updated
-                   // request.getSession().setAttribute("message", "Request has already been updated or does not exist.");
+                    // Set message if request does not exist
+                    request.getSession().setAttribute("message", "Request not found.");
                 }
             } catch (NumberFormatException e) {
                 // Handle invalid request ID format
-               // request.getSession().setAttribute("message", "Invalid request ID format.");
+                request.getSession().setAttribute("message", "Invalid request ID format.");
             }
         } else {
-            // Set message if status is invalid
-          //  request.getSession().setAttribute("message", "Invalid status provided.");
+            // Set message if status or requestId is invalid
+            request.getSession().setAttribute("message", "Invalid request parameters.");
         }
 
         // Redirect back to the list page
-         request.getRequestDispatcher("OwnerController?service=listrequest").forward(request, response);
+        response.sendRedirect("OwnerController?service=listrequest");
     }
 }
 
