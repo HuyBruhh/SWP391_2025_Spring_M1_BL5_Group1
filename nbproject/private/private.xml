@@ -7,17 +7,6 @@
             <file>file:/D:/SWP391_2025_Spring_M1_BL5_Group1/web/Admin/Tables.jsp</file>
             <file>file:/D:/SWP391_2025_Spring_M1_BL5_Group1/src/java/controller/Admin/Manage.java</file>
         </group>
-        <group>
-            <file>file:/C:/Users/huyph/Documents/SWP_Iter2/SWP391_2025_Spring_M1_BL5_Group1/web/Owner/EditNews.jsp</file>
-            <file>file:/C:/Users/huyph/Documents/SWP_Iter2/SWP391_2025_Spring_M1_BL5_Group1/src/java/controller/Owner/editNewController.java</file>
-            <file>file:/C:/Users/huyph/Documents/SWP_Iter2/SWP391_2025_Spring_M1_BL5_Group1/src/java/controller/Owner/OwnerController.java</file>
-            <file>file:/C:/Users/huyph/Documents/SWP_Iter2/SWP391_2025_Spring_M1_BL5_Group1/web/Owner/Addnews.jsp</file>
-            <file>file:/C:/Users/huyph/Documents/SWP_Iter2/SWP391_2025_Spring_M1_BL5_Group1/src/java/controller/Owner/addNewController.java</file>
-            <file>file:/C:/Users/huyph/Documents/SWP_Iter2/SWP391_2025_Spring_M1_BL5_Group1/src/java/controller/Owner/DeleteNewsController.java</file>
-            <file>file:/C:/Users/huyph/Documents/SWP_Iter2/SWP391_2025_Spring_M1_BL5_Group1/web/change-password.jsp</file>
-            <file>file:/C:/Users/huyph/Documents/SWP_Iter2/SWP391_2025_Spring_M1_BL5_Group1/src/java/controller/Owner/UpdateNewsController.java</file>
-            <file>file:/C:/Users/huyph/Documents/SWP_Iter2/SWP391_2025_Spring_M1_BL5_Group1/src/java/dao/DBContext.java</file>
-            <file>file:/C:/Users/huyph/Documents/SWP_Iter2/SWP391_2025_Spring_M1_BL5_Group1/src/java/controller/Owner/displayNewController.java</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>
