@@ -10,6 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         .error-message { color: #FF0E0E; font-size: 0.9em; margin-top: 5px; display: block; }
+        .required-asterisk { color: red; font-weight: bold; margin-left: 2px;
         .password-input { position: relative; }
         .password-input::after {
             content: attr(data-placeholder);
@@ -33,7 +34,7 @@
             <form id="registerForm" action="emailSender" method="post">
                 <div class="user-details">
                     <div class="input-box">
-                        <span class="details">Full Name</span>
+                        <span class="details">Full Name <span class="required-asterisk">*</span></span>
                         <input type="text" placeholder="Enter your full name" name="username" id="username" required maxlength="30">
                         <span id="usernameError" class="error-message"></span>
                     </div>
@@ -46,32 +47,32 @@
                         </select>
                     </div>
                     <div class="input-box">
-                        <span class="details">Email</span>
+                        <span class="details">Email <span class="required-asterisk">*</span></span>
                         <input type="email" placeholder="Enter your email" name="email" id="email" required maxlength="100">
                         <span id="emailError" class="error-message"></span>
                     </div>
                     <div class="input-box">
-                        <span class="details">Phone Number</span>
+                        <span class="details">Phone Number <span class="required-asterisk">*</span></span>
                         <input type="text" placeholder="Enter your number" name="phone" id="phone" required maxlength="12">
                         <span id="phoneError" class="error-message"></span>
                     </div>
                     <div class="input-box">
-                        <span class="details">Birth Day</span>
+                        <span class="details">Date of birth</span>
                         <input type="date" name="dob" id="dob">
                         <span id="dobError" class="error-message"></span>
                     </div>
                     <div class="input-box">
-                        <span class="details">Password</span>
+                        <span class="details">Password <span class="required-asterisk">*</span></span>
                         <input type="password" placeholder="Enter your password" name="password" id="password" required maxlength="50">
                         <span id="passwordError" class="error-message"></span>
                     </div>
                     <div class="input-box">
-                        <span class="details">Address</span>
+                        <span class="details">Address <span class="required-asterisk">*</span></span>
                         <input type="text" placeholder="Enter your Address" name="address" id="address" required maxlength="50">
                         <span id="addressMessage" class="error-message"></span>
                     </div>
                     <div class="input-box">
-                        <span class="details">Confirm Password</span>
+                        <span class="details">Confirm Password <span class="required-asterisk">*</span></span>
                         <input type="password" placeholder="Confirm your password" name="repassword" id="repassword" required maxlength="50">
                         <span id="repasswordError" class="error-message"></span>
                     </div>

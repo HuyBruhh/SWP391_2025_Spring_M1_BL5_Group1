@@ -22,7 +22,8 @@
         <link rel="stylesheet" href="css/style.css">
 
         <style>
-            .error-message { color: red; font-size: 0.9em; margin-top: 5px; display: block; }
+            .error-message { color: red; font-size: 0.9em; margin-top: 5px; display: block;
+            .required-asterisk { color: red; font-weight: bold; margin-left: 2px;}
         </style>
     </head>
     <body>
@@ -43,20 +44,22 @@
                                 <div class="col-lg-8 col-11 mx-auto">
                                     <form method="post" action="changePassword">
                                         <div class="form-floating mb-4 p-0">
+                                            <h6>Old Password <span class="required-asterisk">*</span></h6>
                                             <input type="password" name="oldPassword" id="oldPassword" class="form-control" placeholder="Old password" required>
-                                            <label for="oldPassword">Old password</label>
+              
                                             <span id="oldPasswordError" class="error-message"></span>
                                         </div>
 
                                         <div class="form-floating p-0">
+                                             <h6>New Password <span class="required-asterisk">*</span></h6>
                                             <input type="password" name="password" id="password" class="form-control" placeholder="New password" required>
-                                            <label for="password">New password</label>
+                    
                                             <span id="passwordError" class="error-message"></span>
                                         </div>
                                         <br>
                                         <div class="form-floating p-0">
+                                            <h6>Confirm New Password <span class="required-asterisk">*</span></h6>
                                             <input type="password" name="rePassword" id="rePassword" class="form-control" placeholder="Repeat new password" required>
-                                            <label for="rePassword">Repeat new password</label>
                                             <span id="rePasswordError" class="error-message"></span>
                                         </div>
                                         <br>
