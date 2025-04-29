@@ -92,7 +92,7 @@
             }
             .cancel-link {
                 display: block;
-                margin-top: 10px;
+                margin-top: 11px;
                 color: #dc3545;
                 text-decoration: none;
                 transition: color 0.3s;

@@ -135,7 +135,8 @@
                         </div>
                         <div class="row mt-3">
                             <div class="col-md-12">
-                                <label>Address</label>
+                                <label>Permanent Address
+</label>
                                 <input type="text" class="form-control" value="<%= renterProfile.getUserAddress() %>" placeholder="Address" readonly="">
                             </div>                            
                         </div>
