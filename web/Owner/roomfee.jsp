@@ -186,36 +186,6 @@
                                                                                     <h4 class="card-title2">All Fee(s) history in this room</h4>
                                                                                     <h6 class="card-subtitle2">Latest Fee that created by user</h6>
                                                                                     <div class="row">
-                                                                                        <!--                                                                                                <div class="col-lg-6 col-md-12">
-                                                                                                                                                                                            <form method="post" action="searchrequest" class="w-100">
-                                                                                                                                                                                                <div class="row h-100" style="margin-bottom: 30px">
-                                                                                                                                                                                                <div class="col-12"> 
-                                                                                                                                                                                                <h6 class="main--title" style="padding-bottom: 0px; margin-bottom: 0px">&nbsp;Search:</h6>
-                                                                                        
-                                                                                                                                                                                                <div class="d-flex" >
-                                                                                                                                                                                                <button class="btn-search"><i class="fa-solid fa-magnifying-glass"></i></button>
-                                                                                                                                                                                                <input type="text" class="form-control w-75" name="txtSearch" placeholder="Enter name or mail" value="${param.txtSearch}">
-                                                                                                                                                                                                </div>
-                                                                                                                                                                                                </div>
-                                                                                                                                                                                                <div class="col-12">
-                                                                                                                                                                                                <div class="row">
-                                                                                                                                                                                                <div class="col-12 d-flex gap-3">
-                                                                                                                                                                                                Result Found: ${searchCount}
-                                                                                                                                                                                                </div>
-                                                                                                                                                                                                </div>
-                                                                                                                                                                                                </div>
-                                                                                                                                                                                                </div>
-                                                                                                                                                                                            </form>
-                                                                                                                                                                                        </div>-->
-                                                                                    <!--                                                                                                <div class="col-lg-6 col-md-12">
-                                                                                                                                                                                        <form method="get" action="filterrequest" class="w-100">
-                                                                                                                                                                                            <div class="row h-100" style="margin-bottom: 30px">
-                                                                                                                                                                                            <div class="col-12"> 
-                                                                                                                                                                                            <h6 class="main--title" style="padding-bottom: 0px; margin-bottom: 0px">&nbsp;Filter by status:</h6>
-                                                                                                                                                                                            <div class="d-flex">
-                                                                                                                                                                                            <button type="submit" class="btn btn-info" style="background: #666; color: #FFF" type="submit">Filter</button>
-                                                                                                                                                                                            <select name="status" class="form-control w-75">
-                                                                                                                                                                                            <option value="">All</option>
                                                                                     <c:forEach items="${allStatus}" var="st">
                                                                                         <option value="${st.resStatus}">${st.resStatus}</option>
                                                                                     </c:forEach>
@@ -231,7 +201,11 @@
                                                                             <a class="btn btn-primary" style="text-decoration: none; color: #FFF" href="addroomfee?id=${requestScope.roomID}"><i class="fa-solid fa-plus"></i></a>                                                                                                             
                                                                             <c:set var="page" value="${requestScope.page}"></c:set>
                                                                                 <div class="comment-widgets m-b-20">
-
+                                                                                    <c:if test="${not empty message}">
+    <div class="alert alert-success text-center" role="alert" style="margin-bottom: 20px; font-weight: bold;">
+        ${message}
+    </div>
+</c:if>
                                                                                     <div class="table-container">
                                                                                         <table>
                                                                                             <thead>
