@@ -77,7 +77,6 @@ public class RoomFeeController extends HttpServlet {
     request.setAttribute("billList", list);
 
     // 👉 Thêm dòng này để gửi thông báo sang JSP
-    request.setAttribute("message", "Add successfully");
 
     request.getRequestDispatcher("/Owner/roomfee.jsp").forward(request, response);
         
