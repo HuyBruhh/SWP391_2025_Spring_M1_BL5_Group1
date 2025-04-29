@@ -138,6 +138,20 @@ public class PaymentDAO extends DBContext {
         }
         return balance;
     }
+        public int updateRenterMoney(int renterID, double balance) {
+        int n = 0;
+        String sql = "UPDATE [dbo].[renter] set [balance] = ? where renterID = ?";
+        try {
+            PreparedStatement pre = connection.prepareStatement(sql);
+            pre.setDouble(1, balance);
+            pre.setInt(2, renterID);
+            n = pre.executeUpdate();
+        } catch (SQLException ex) {
+
+        }
+        return n;
+    }
+    
 
     public static void main(String[] args) {
         PaymentDAO dao = new PaymentDAO();
