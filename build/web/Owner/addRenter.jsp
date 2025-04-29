@@ -33,7 +33,7 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-        <!-- Stylesheets -->
+
         <link rel="stylesheet" href="fonts/icomoon/style.css">
         <link rel="stylesheet" href="fonts/flaticon/font/flaticon.css">
         <link rel="stylesheet" href="css/tiny-slider.css">
@@ -155,7 +155,7 @@
                     <div class="col-lg-4">
                         <div class="widget">
                             <h3>Contact</h3>
-                            <address>Thon 3 Thach Hoa Thach That Ha Noi</address>
+                            <address>Thon 5 Thach Hoa Thach That Ha Noi</address>
                             <ul class="list-unstyled links">
                                 <li><a href="tel://11234567890">+1(123)-456-7890</a></li>
                                 <li><a href="tel://11234567890">+1(123)-456-7890</a></li>
