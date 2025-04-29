@@ -5,6 +5,7 @@
 package controller.Guest;
 
 import dao.RoomDAO;
+import dao.SliderDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -59,8 +60,11 @@ public class GuestController extends HttpServlet {
 
     private void GuestHome(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         RoomDAO dao = new RoomDAO();
+        SliderDAO daol = new SliderDAO();
         List<Rooms> listRoom = dao.pagingRoom(1, 0);
+        List<Slider> sliders = daol.getAllSlider();
         request.setAttribute("listRoom", listRoom);
+        request.setAttribute("slider", sliders);
         request.getRequestDispatcher("Guest/GuestHome.jsp").forward(request, response);
     }
 
