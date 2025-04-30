@@ -110,7 +110,7 @@
                         <div class="container" >
                             <div class="menu-bg-wrap">
                                 <div class="site-navigation">
-                                    <a href="OwnerController?service=ownerProfile" class="logo m-0 float-start" style="text-decoration: none;">Profile</a>
+                                    <a href="OwnerController?service=OwnerHome" class="logo m-0 float-start" style="text-decoration: none;">Owner</a>
 
                                     <jsp:include page="navbar.jsp"></jsp:include>
 

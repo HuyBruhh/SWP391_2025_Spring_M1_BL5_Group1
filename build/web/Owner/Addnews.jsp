@@ -71,7 +71,7 @@
             <div class="container">
                 <div class="menu-bg-wrap">
                     <div class="site-navigation">
-                        <a href="addnews" class="logo m-0 float-start">Owner</a>
+                        <a href="OwnerController?service=OwnerHome" class="logo m-0 float-start">Owner</a>
                         <jsp:include page="navbar.jsp"></jsp:include>
                         <a href="#" class="burger light me-auto float-end mt-1 site-menu-toggle js-menu-toggle d-inline-block d-lg-none" data-toggle="collapse" data-target="#main-navbar">
                             <span></span>
