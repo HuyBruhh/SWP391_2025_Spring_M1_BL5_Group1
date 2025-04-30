@@ -56,6 +56,7 @@
                 <ul class="dropdown">
                     <li><a href="OwnerController?service=pagingRoom&index=1">List of rooms</a></li>
                     <li><a href="OwnerController?service=listrequest">List of Request</a></li>
+                    <li><a href="displayNews?service=displayNews">List of News</a></li>
                     
                 </ul>
             </li>               
@@ -66,7 +67,6 @@
                 <a href="#">Manage</a>
                 <ul class="dropdown">
                     <li><a href="ruleList?service=ruleList">Rule</a></li>
-                    <li><a href="displayNews?service=displayNews">News</a></li>
                     <li><a href="guidelines?service=guidelines">GuildLine</a></li>
                     <li><a href="penaltys?service=penaltys">Penalty</a></li>
                 </ul>

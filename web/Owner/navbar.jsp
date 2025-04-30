@@ -37,6 +37,7 @@
                 <ul class="dropdown">
                     <li><a href="OwnerController?service=pagingRoom&index=1">List of rooms</a></li>
                     <li><a href="OwnerController?service=listrequest">List of Request</a></li>
+                    <li><a href="ownernews">List of News</a></li>
                 </ul>
             </li>               
             <li><a class="<%= "addrenter".equals(service) ? "active" : "" %>" href="AddRenterController?service=addrenter">Add Renter</a></li>
@@ -45,7 +46,6 @@
                 <a href="#">Manage</a>
                 <ul class="dropdown">
                     <li><a href="ruleList?service=ruleList">Rule</a></li>
-                    <li><a href="ownernews">News</a></li>
                     <li><a href="guidelines?service=guidelines">GuildLine</a></li>
                     <li><a href="penaltys?service=penaltys">Penalty</a></li>
                     <li><a href="displayslider?service=displayslider">Slider</a></li>

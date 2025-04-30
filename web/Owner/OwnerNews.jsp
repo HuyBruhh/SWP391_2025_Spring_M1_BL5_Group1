@@ -22,7 +22,7 @@
     <meta name="twitter:url" content="" />
     <meta name="twitter:card" content="" />
 
-    <link rel="shortcut icon" href="${pageContext.request.contextPath}/images/favicon.png">
+    <link rel="shortcut icon" href="./images/favicon.png">
 
     <!-- Google Webfonts -->
     <link href='http://fonts.googleapis.com/css?family=Roboto:400,300,100,500' rel='stylesheet' type='text/css'>
@@ -31,55 +31,32 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- CSS Files (context-relative paths) -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/fonts/icomoon/style.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/fonts/flaticon/font/flaticon.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/tiny-slider.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/aos.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/RenterCSS/css/bootstrap.min.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/RenterCSS/css/bootstrap-icons.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/slick.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/RenterCSS/css/tooplate-little-fashion.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/RenterCSS/css/animate.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/RenterCSS/css/icomoon.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/RenterCSS/css/magnific-popup.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/RenterCSS/css/salvattore.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/RenterCSS/css/style.css">
-
+    <link rel="stylesheet" href="fonts/icomoon/style.css">
+    <link rel="stylesheet" href="fonts/flaticon/font/flaticon.css">
+    <link rel="stylesheet" href="css/tiny-slider.css">
+    <link rel="stylesheet" href="css/aos.css">
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="RenterCSS/css/animate.css">
+    <!-- Icomoon Icon Fonts-->
+    <link rel="stylesheet" href="RenterCSS/css/icomoon.css">
+    <!-- Magnific Popup -->
+    <link rel="stylesheet" href="RenterCSS/css/magnific-popup.css">
+    <!-- Salvattore -->
+    <link rel="stylesheet" href="RenterCSS/css/salvattore.css">
+    <!-- Theme Style -->
+    <link rel="stylesheet" href="RenterCSS/css/style.css">
+    <!-- Modernizr JS -->
+    <script src="RenterCSS/js/modernizr-2.6.2.min.js"></script>
+    <!-- FOR IE9 below -->
+    <!--[if lt IE 9]>
+    <script src="js/respond.min.js"></script>
+    <![endif]-->
     <style>
-        .news-card {
-            margin-bottom: 30px;
-            border: none;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-        }
-        .news-card:hover {
-            transform: translateY(-5px);
-        }
-        .news-card img {
+        .fh5co-board-img img {
             width: 100%;
             height: 200px;
             object-fit: cover;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
-        }
-        .news-card-body {
-            padding: 20px;
-        }
-        .news-card-title {
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-            color: #333;
-        }
-        .news-card-text {
-            font-size: 1rem;
-            color: #666;
-            margin-bottom: 10px;
-        }
-        .news-card-date {
-            font-size: 0.9rem;
-            color: #999;
         }
     </style>
 </head>
@@ -107,37 +84,37 @@
         </div>
     </nav>
 
-    <div class="hero page-inner overlay" style="background-image: url('${pageContext.request.contextPath}/images/hero_bg_1.jpg');">
+    <div class="hero page-inner overlay" style="background-image: url('images/hero_bg_1.jpg');">
         <div class="container">
             <div class="row justify-content-center align-items-center">
                 <div class="col-lg-9 text-center mt-5">
-                    <h1 class="heading" data-aos="fade-up">News</h1>
+                    <h1 class="heading">News</h1>
                     <nav aria-label="breadcrumb" data-aos-delay="200"></nav>
                 </div>
             </div>
         </div>
     </div>
 
-    <section class="section-padding">
+    <div id="fh5co-main">
         <div class="container">
             <div class="row">
-                <c:forEach items="${ListN}" var="n">
-                    <div class="col-lg-4 col-md-6 col-12 mb-4">
-                        <div class="card news-card">
-                            <a href="ownernewsdetails?id=${n.newId}" class="image-popup">
-                                <img src="data:image/jpg;base64,${n.img}" alt="News Image" class="card-img-top">
-                            </a>
-                            <div class="news-card-body">
-                                <h5 class="news-card-title">${n.newTitle}</h5>
-                                <p class="news-card-text">${n.description}</p>
-                                <p class="news-card-date">${n.createAt}</p>
+                <div id="fh5co-board" data-columns>
+                    <c:forEach items="${ListN}" var="n">
+                        <div class="item">
+                            <div class="animate-box">
+                                <a href="data:image/jpg;base64,${n.img}" class="image-popup fh5co-board-img" title="${n.description}">
+                                    <img src="data:image/jpg;base64,${n.img}" alt="News Image">
+                                </a>
                             </div>
+                            <div class="fh5co-desc"><a href="ownernewsdetails?id=${n.newId}">${n.newTitle}</a></div>
+                            <div class="fh5co-desc">${n.description}</div>
+                            <div class="fh5co-desc">${n.createAt}</div>
                         </div>
-                    </div>
-                </c:forEach>
+                    </c:forEach>
+                </div>
             </div>
         </div>
-    </section>
+    </div>
 
     <div class="site-footer">
         <div class="container">
@@ -201,23 +178,35 @@
         </div>
     </div>
 
-    <!-- JavaScript Files (context-relative paths) -->
-    <script src="${pageContext.request.contextPath}/RenterCSS/js/jquery.min.js"></script>
-    <script src="${pageContext.request.contextPath}/RenterCSS/js/bootstrap.bundle.min.js"></script>
-    <script src="${pageContext.request.contextPath}/RenterCSS/js/Headroom.js"></script>
-    <script src="${pageContext.request.contextPath}/RenterCSS/js/jQuery.headroom.js"></script>
-    <script src="${pageContext.request.contextPath}/RenterCSS/js/slick.min.js"></script>
-    <script src="${pageContext.request.contextPath}/RenterCSS/js/custom.js"></script>
-    <script src="${pageContext.request.contextPath}/js/bootstrap.bundle.min.js"></script>
-    <script src="${pageContext.request.contextPath}/js/tiny-slider.js"></script>
-    <script src="${pageContext.request.contextPath}/js/aos.js"></script>
-    <script src="${pageContext.request.contextPath}/js/navbar.js"></script>
-    <script src="${pageContext.request.contextPath}/js/counter.js"></script>
-    <script src="${pageContext.request.contextPath}/js/custom.js"></script>
-    <script src="${pageContext.request.contextPath}/RenterCSS/js/jquery.easing.1.3.js"></script>
-    <script src="${pageContext.request.contextPath}/RenterCSS/js/jquery.waypoints.min.js"></script>
-    <script src="${pageContext.request.contextPath}/RenterCSS/js/jquery.magnific-popup.min.js"></script>
-    <script src="${pageContext.request.contextPath}/RenterCSS/js/salvattore.min.js"></script>
-    <script src="${pageContext.request.contextPath}/RenterCSS/js/main.js"></script>
+    <!-- jQuery -->
+    <script src="RenterCSS/js/jquery.min.js"></script>
+    <!-- jQuery Easing -->
+    <script src="RenterCSS/js/jquery.easing.1.3.js"></script>
+    <!-- Bootstrap -->
+    <script src="RenterCSS/js/bootstrap.min.js"></script>
+    <!-- Waypoints -->
+    <script src="RenterCSS/js/jquery.waypoints.min.js"></script>
+    <!-- Magnific Popup -->
+    <script src="RenterCSS/js/jquery.magnific-popup.min.js"></script>
+    <!-- Salvattore -->
+    <script src="RenterCSS/js/salvattore.min.js"></script>
+    <!-- Main JS -->
+    <script src="RenterCSS/js/main.js"></script>
+    <!-- Initialize Magnific Popup -->
+    <script>
+        $(document).ready(function() {
+            $('.image-popup').magnificPopup({
+                type: 'image',
+                closeOnContentClick: true,
+                mainClass: 'mfp-img-mobile',
+                image: {
+                    verticalFit: true,
+                    titleSrc: function(item) {
+                        return item.el.attr('title');
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 </html>

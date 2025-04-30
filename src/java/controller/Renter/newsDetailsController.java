@@ -17,7 +17,7 @@ import java.util.List;
 import model.News;
 
 
-@WebServlet(name="newsDetailsController", urlPatterns={"/newsdetails"})
+@WebServlet(name="newsDetailsController", urlPatterns={"/news-details"})
 public class newsDetailsController extends HttpServlet {
    
     /** 
