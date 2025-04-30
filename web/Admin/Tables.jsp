@@ -63,10 +63,10 @@
                                 <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
                                 Account
                             </a>
-                            <a class="nav-link" href="selist">
+<!--                            <a class="nav-link" href="selist">
                                 <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
                                 Security List
-                            </a>
+                            </a>-->
                             <a class="nav-link" href="displayNews">
                                 <div class="sb-nav-link-icon"><i class="fas fa-newspaper"></i></div>
                                 News Management
@@ -107,14 +107,14 @@
                                 <table id="datatablesSimple" border="1">
                                     <thead>
                                         <th>Mail</th>
-                                        <th>Password</th>
+<!--                                        <th>Password</th>-->
                                         <th>Role</th>
                                         <th>Action</th>
                                     </thead>
                                     <c:forEach var="acc" items="${account}">
                                         <tr>
                                             <td>${acc.userMail}</td>
-                                            <td>${acc.userPassword}</td>
+<!--                                            <td>${acc.userPassword}</td>-->
                                             <td><c:if test="${acc.userRole == 1}">
                                                     Renter
                                                 </c:if>
@@ -131,9 +131,9 @@
                                                     DeActive
                                                 </c:if></td>
                                             <td>
-                                                <a href="#" onclick="setModalFields('${acc.userMail}', '${acc.userRole}')" data-bs-toggle="modal" data-bs-target="#editModal" style="margin-right: 10px">
+<!--                                                <a href="#" onclick="setModalFields('${acc.userMail}', '${acc.userRole}')" data-bs-toggle="modal" data-bs-target="#editModal" style="margin-right: 10px">
                                                     <i class="fa-regular fa-pen-to-square"></i>
-                                                </a>
+                                                </a>-->
                                                 <a href="changeRole?email=${acc.userMail}" onclick="return confirm('Are you sure you want to ban this user?')">DeActive</a>
                                             </td>
                                         </tr>
