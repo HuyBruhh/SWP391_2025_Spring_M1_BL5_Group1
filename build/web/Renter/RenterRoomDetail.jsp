@@ -7,6 +7,12 @@
     List<RentDetail> rentDetails = (List<RentDetail>) request.getAttribute("rentDetails");
     String message = (String) request.getAttribute("message");  
     Bill bill = (Bill) request.getAttribute("bill"); 
+Double livingTotal = (Double) request.getAttribute("livingTotal");
+    if (livingTotal == null) {
+        // nếu bạn không truyền livingTotal mà chỉ có bill thì dùng:
+        // livingTotal = (bill != null) ? bill.getTotal() : 0.0;
+        livingTotal = 0.0;
+    }
 %>
 <!doctype html>
 <html lang="en">
@@ -189,7 +195,7 @@
                                 <h6 class="mb-0">Living expenses</h6>
                             </div>
                             <div class="col-sm-6 text-secondary" id="livingExpensesValue">
-                                <%= billFormatted %> VND
+                                <%= String.format("%.0f", livingTotal) %> VND
                             </div>
                             <div class="col-sm-3 text-secondary">
                                 <a href="RenterBillDetailController?roomID=<%= detail.getRoomID() %>" class="pay-button">Pay</a>

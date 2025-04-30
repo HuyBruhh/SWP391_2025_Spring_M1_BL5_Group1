@@ -5,6 +5,7 @@
 
 package controller.Renter;
 
+import dao.BillDAO;
 import dao.RenterDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -84,7 +85,20 @@ public class RenterRoomDetail extends HttpServlet {
         for (RentDetail rentDetail : rentDetails) {
             roomID = rentDetail.getRoomID();
         }
+        BillDAO billDAO = new BillDAO();
+// ví dụ: lấy tất cả các Bill của phòng này
+List<Bill> bills = billDAO.getBillByRoomID(roomID);
 
+// giả sử bạn muốn hiển thị tổng tiền:
+double totalLiving = bills.stream()
+                          .mapToDouble(Bill::getTotal)
+                          .sum();
+// hoặc nếu chỉ cần bill mới nhất:
+Bill lastBill = bills.isEmpty() ? null : bills.get(bills.size() - 1);
+
+// đẩy xuống JSP
+request.setAttribute("livingTotal", totalLiving);
+request.setAttribute("bill", lastBill);
         //take all money of a person from roomID of that person's room
   
 

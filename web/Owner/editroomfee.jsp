@@ -219,7 +219,7 @@
                                                 <div class="col-md-6"> 
                                                     <div class="form-group">
                                                         <label class="label" for="subject">Electric Fee K(VND/Kmw): </label>
-                                                        <input type="number" class="form-control positive-number" value="${bl.electric}" name="electric" id="electric" placeholder="Enter Number" required>
+                                                        <input type="number" step="any" class="form-control positive-number" value="${bl.electric}" name="electric" id="electric" placeholder="Enter Number" required>
 
                                                     </div>
                                                 </div>

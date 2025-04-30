@@ -8,7 +8,15 @@
             <file>file:/D:/SWP391_2025_Spring_M1_BL5_Group1/src/java/controller/Admin/Manage.java</file>
         </group>
         <group>
-            <file>file:/C:/Users/huyph/Desktop/test%20bài%20hiếu/SWP391_2025_Spring_M1_BL5_Group1/src/java/dao/DBContext.java</file>
+            <file>file:/C:/Users/MSI/Documents/SWP391_2025_Spring_M1_BL5_Group1/src/java/controller/Owner/EditRoomFeeController.java</file>
+            <file>file:/C:/Users/MSI/Documents/SWP391_2025_Spring_M1_BL5_Group1/src/java/dao/RequestDAO.java</file>
+            <file>file:/C:/Users/MSI/Documents/SWP391_2025_Spring_M1_BL5_Group1/src/java/dao/RenterDAO.java</file>
+            <file>file:/C:/Users/MSI/Documents/SWP391_2025_Spring_M1_BL5_Group1/web/Owner/editroomfee.jsp</file>
+            <file>file:/C:/Users/MSI/Documents/SWP391_2025_Spring_M1_BL5_Group1/src/java/controller/Renter/RenterBillDetailController.java</file>
+            <file>file:/C:/Users/MSI/Documents/SWP391_2025_Spring_M1_BL5_Group1/src/java/controller/Owner/OwnerController.java</file>
+            <file>file:/C:/Users/MSI/Documents/SWP391_2025_Spring_M1_BL5_Group1/src/java/controller/Owner/ListRenterController.java</file>
+            <file>file:/C:/Users/MSI/Documents/SWP391_2025_Spring_M1_BL5_Group1/src/java/model/Rooms.java</file>
+            <file>file:/C:/Users/MSI/Documents/SWP391_2025_Spring_M1_BL5_Group1/src/java/controller/Renter/WalletController.java</file>
         </group>
     </open-files>
 </project-private>
