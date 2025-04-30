@@ -1,4 +1,4 @@
-package controller.Owner;
+package controller.Admin;
 
 import dao.EditNewsDAO;
 import jakarta.servlet.ServletException;
@@ -6,7 +6,9 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import model.News;
+import model.User;
 import java.io.IOException;
 import java.net.URLEncoder;
 
@@ -16,12 +18,23 @@ public class DeleteNewsController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("user") == null) {
+            response.sendRedirect("login?error=Please+login+first");
+            return;
+        }
         response.sendRedirect("displayNews");
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("user") == null) {
+            response.sendRedirect("login?error=Please+login+first");
+            return;
+        }
+
         try {
             int newsId = Integer.parseInt(request.getParameter("newsId"));
             
@@ -31,14 +44,12 @@ public class DeleteNewsController extends HttpServlet {
             EditNewsDAO dao = new EditNewsDAO();
             int result = dao.DeleteNews(news);
 
-            // Lấy các tham số phân trang và tìm kiếm
+            StringBuilder redirectUrl = new StringBuilder("displayNews");
+            boolean hasParams = false;
+
             String index = request.getParameter("index");
             String pageSize = request.getParameter("pageSize");
             String search = request.getParameter("search");
-
-            // Xây dựng URL chuyển hướng
-            StringBuilder redirectUrl = new StringBuilder("displayNews");
-            boolean hasParams = false;
 
             if (index != null && !index.isEmpty()) {
                 redirectUrl.append(hasParams ? "&" : "?").append("index=").append(index);
@@ -53,7 +64,6 @@ public class DeleteNewsController extends HttpServlet {
                 hasParams = true;
             }
 
-            // Thêm thông báo
             if (result > 0) {
                 redirectUrl.append(hasParams ? "&" : "?").append("success=News+deleted+successfully");
             } else {
@@ -64,12 +74,12 @@ public class DeleteNewsController extends HttpServlet {
         } catch (NumberFormatException e) {
             response.sendRedirect("displayNews?error=Invalid+news+ID");
         } catch (Exception e) {
-            response.sendRedirect("displayNews?error=An+error+occurred+while+deleting+news");
+            response.sendRedirect("displayNews?error=Error+occurred+while+deleting+news");
         }
     }
 
     @Override
     public String getServletInfo() {
-        return "Servlet for deleting news";
+        return "Servlet to delete news";
     }
 }

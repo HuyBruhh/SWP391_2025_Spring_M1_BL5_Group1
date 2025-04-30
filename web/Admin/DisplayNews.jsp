@@ -1,5 +1,13 @@
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="model.Account" %>
+<%
+    Account account = (Account) session.getAttribute("user");
+    if (account == null || account.getUserRole() != 4) {
+        response.sendRedirect(request.getContextPath() + "/login.jsp?error=Access+denied");
+        return;
+    }
+%>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -9,12 +17,19 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>Security List - SB Admin</title>
+        <title>News Management - SB Admin</title>
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
         <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/css/bootstrap.min.css" integrity="sha512-..." crossorigin="anonymous">
         <link href="${pageContext.request.contextPath}/AdminCSS/css/styles.css" rel="stylesheet" />
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <style>
+            .news-img {
+                max-width: 100px;
+                height: auto;
+                object-fit: cover;
+            }
+        </style>
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -60,46 +75,68 @@
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid px-4">
-                        <h1 class="mt-4">Security List</h1>
+                        <h1 class="mt-4">News Management</h1>
                         <ol class="breadcrumb mb-4">
                             <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/manage">Manage</a></li>
-                            <li class="breadcrumb-item active">Security List</li>
+                            <li class="breadcrumb-item active">News Management</li>
                         </ol>
                         <div class="card mb-4">
                             <div class="card-header">
                                 <i class="fas fa-table me-1"></i>
-                                Manage Security
+                                News List
                             </div>
                             <div class="card-body">
+                                <c:if test="${not empty message}">
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                        <c:out value="${message}" />
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                </c:if>
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <form action="${pageContext.request.contextPath}/displayNews" method="post" class="input-group w-50">
+                                        <input type="text" name="search" placeholder="Search by title" class="form-control" aria-label="Search by title">
+                                        <button type="submit" class="btn btn-primary">Search</button>
+                                    </form>
+                                    <a href="${pageContext.request.contextPath}/addnews" class="btn btn-primary">Add News</a>
+                                </div>
+                                <form id="pageSizeForm" action="${pageContext.request.contextPath}/displayNews" method="get" class="form-inline mb-3">
+                                    <label for="page-size-select" class="me-2">News per page:</label>
+                                    <select name="pageSize" id="page-size-select" class="form-select w-auto" onchange="document.getElementById('pageSizeForm').submit()">
+                                        <option value="5" <c:if test="${pageSize == 5}">selected</c:if>>5</option>
+                                        <option value="10" <c:if test="${pageSize == 10}">selected</c:if>>10</option>
+                                        <option value="15" <c:if test="${pageSize == 15}">selected</c:if>>15</option>
+                                        <option value="20" <c:if test="${pageSize == 20}">selected</c:if>>20</option>
+                                    </select>
+                                    <input type="hidden" name="index" value="1">
+                                    <input type="hidden" name="search" value="${search}">
+                                </form>
                                 <table id="datatablesSimple" class="table table-bordered">
                                     <thead>
                                         <tr>
-                                            <th>ID</th>
-                                            <th>Name</th>
-                                            <th>Shift</th>
-                                            <th>Department</th>
+                                            <th>Date</th>
+                                            <th>Title</th>
+                                            <th>Image</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <c:forEach var="o" items="${list}">
+                                        <c:forEach var="news" items="${newsList}">
                                             <tr>
-                                                <td>${o.seID}</td>
-                                                <td>${o.userName}</td>
-                                                <c:choose>
-                                                    <c:when test="${o.xShift == 1}">
-                                                        <td>Day</td>
-                                                    </c:when>
-                                                    <c:when test="${o.xShift == 2}">
-                                                        <td>Night</td>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <td>None</td>
-                                                    </c:otherwise>
-                                                </c:choose>
-                                                <td>${o.department}</td>
+                                                <td>${news.createAt}</td>
+                                                <td><a href="${pageContext.request.contextPath}/newsDetail?id=${news.newId}">${news.newTitle}</a></td>
                                                 <td>
-                                                    <a href="${pageContext.request.contextPath}/selctseup?seID=${o.seID}" class="btn btn-sm btn-primary">Change Shift</a>
+                                                    <c:if test="${not empty news.img}">
+                                                        <img src="data:image/jpeg;base64,${news.img}" alt="${news.newTitle}" class="news-img" />
+                                                    </c:if>
+                                                    <c:if test="${empty news.img}">
+                                                        <span>No Image</span>
+                                                    </c:if>
+                                                </td>
+                                                <td>
+                                                    <a href="${pageContext.request.contextPath}/formeditnews?id=${news.newId}" class="btn btn-sm btn-primary me-1"><i class="fas fa-edit"></i></a>
+                                                    <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-news-id="${news.newId}">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
                                                 </td>
                                             </tr>
                                         </c:forEach>
@@ -108,58 +145,21 @@
                             </div>
                         </div>
                     </div>
-                    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="editModalLabel">Edit Account</h5>
+                                    <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <c:if test="${not empty errorMessage}">
-                                        <div class="alert alert-danger">${errorMessage}</div>
-                                    </c:if>
-                                    <form id="editAccountForm" action="${pageContext.request.contextPath}/edac" method="post">
-                                        <div class="mb-3">
-                                            <label for="emailInput" class="form-label">Email address</label>
-                                            <input type="email" name="email" class="form-control" id="emailInput" aria-describedby="emailHelp">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="passwordInput" class="form-label">Password</label>
-                                            <input type="password" name="password" placeholder="Abcdefg1" class="form-control" id="passwordInput" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="roleInput" class="form-label">Role</label>
-                                            <input type="number" name="role" placeholder="Role: 1,2,3" class="form-control" id="roleInput" required>
-                                        </div>
-                                        <button type="submit" name="save" class="btn btn-primary">Save</button>
-                                    </form>
+                                    Are you sure you want to delete this news?
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal fade" id="addAccountModal" tabindex="-1" aria-labelledby="addAccountModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="addAccountModalLabel">Add Account</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <form id="addAccountForm" action="${pageContext.request.contextPath}/addAccount" method="get">
-                                        <div class="mb-3">
-                                            <label for="addEmailInput" class="form-label">Email address</label>
-                                            <input type="email" name="email" class="form-control" id="addEmailInput" aria-describedby="emailHelp" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="addPasswordInput" class="form-label">Password</label>
-                                            <input type="password" name="password" placeholder="Abcdefg1" class="form-control" id="addPasswordInput" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="addRoleInput" class="form-label">Role</label>
-                                            <input type="number" name="role" placeholder="Role: 1,2,3" class="form-control" id="addRoleInput" required>
-                                        </div>
-                                        <button type="submit" name="add" class="btn btn-primary">Add</button>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <form action="${pageContext.request.contextPath}/deleteNews" method="post" style="display: inline;">
+                                        <input type="hidden" name="newsId" id="deleteNewsId" value="" />
+                                        <button type="submit" class="btn btn-danger">Delete</button>
                                     </form>
                                 </div>
                             </div>
@@ -185,25 +185,12 @@
         <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
         <script src="${pageContext.request.contextPath}/AdminCSS/js/datatables-simple-demo.js"></script>
         <script>
-            <% if (request.getAttribute("errorMessage") != null) { %>
-            $('#editModal').modal('show');
-            <% } %>
-
             $(document).ready(function () {
-                $('#editModal').on('show.bs.modal', function (event) {
+                $('#deleteModal').on('show.bs.modal', function (event) {
                     var button = $(event.relatedTarget);
-                    var email = button.data('email');
-                    var password = button.data('password');
-                    var role = button.data('role');
-
+                    var newsId = button.data('news-id');
                     var modal = $(this);
-                    modal.find('.modal-body #emailInput').val(email);
-                    modal.find('.modal-body #passwordInput').val(password);
-                    modal.find('.modal-body #roleInput').val(role);
-                });
-                $('#addAccountModal').on('show.bs.modal', function (event) {
-                    var modal = $(this);
-                    modal.find('.modal-body').find('input').val('');
+                    modal.find('#deleteNewsId').val(newsId);
                 });
             });
         </script>

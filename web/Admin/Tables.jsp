@@ -41,14 +41,12 @@
             <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
             <!-- Navbar Search-->
             <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
-
             </form>
             <!-- Navbar-->
             <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                       
                         <li><hr class="dropdown-divider" /></li>
                         <li><a class="dropdown-item" href="logout">Logout</a></li>
                     </ul>
@@ -60,20 +58,19 @@
                 <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                     <div class="sb-sidenav-menu">
                         <div class="nav">
-
-
                             <div class="sb-sidenav-menu-heading">Addons</div>
                             <a class="nav-link" href="manage">
                                 <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
                                 Account
                             </a>
-                            
-                            </a>
                             <a class="nav-link" href="selist">
                                 <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
                                 Security List
                             </a>
-
+                            <a class="nav-link" href="displayNews">
+                                <div class="sb-nav-link-icon"><i class="fas fa-newspaper"></i></div>
+                                News Management
+                            </a>
                         </div>
                     </div>
                     <div class="sb-sidenav-footer">
@@ -87,7 +84,7 @@
                     <div class="container-fluid px-4">
                         <h1 class="mt-4">Tables</h1>
                         <ol class="breadcrumb mb-4">
-                            <li class="breadcrumb-item"><a href="">Manage</a></li>
+                            <li class="breadcrumb-item"><a href="manage">Manage</a></li>
                             <li class="breadcrumb-item active">Account</li>
                         </ol>
 
@@ -108,16 +105,14 @@
 
                                 <br>
                                 <table id="datatablesSimple" border="1">
-
                                     <thead>
-                                    <th>Mail</th>
-                                    <th>Password</th>
-                                    <th>Role</th>
-                                    <th>Action</th>
+                                        <th>Mail</th>
+                                        <th>Password</th>
+                                        <th>Role</th>
+                                        <th>Action</th>
                                     </thead>
                                     <c:forEach var="acc" items="${account}">
                                         <tr>
-
                                             <td>${acc.userMail}</td>
                                             <td>${acc.userPassword}</td>
                                             <td><c:if test="${acc.userRole == 1}">
@@ -135,22 +130,15 @@
                                                 <c:if test="${acc.userRole == 0}">
                                                     DeActive
                                                 </c:if></td>
-
                                             <td>
                                                 <a href="#" onclick="setModalFields('${acc.userMail}', '${acc.userRole}')" data-bs-toggle="modal" data-bs-target="#editModal" style="margin-right: 10px">
                                                     <i class="fa-regular fa-pen-to-square"></i>
                                                 </a>
-
-
                                                 <a href="changeRole?email=${acc.userMail}" onclick="return confirm('Are you sure you want to ban this user?')">DeActive</a>
-
                                             </td>
                                         </tr>
                                     </c:forEach>
-
                                 </table>
-                                <!--                                js ban-->
-
                             </div>
                         </div>
                     </div>
@@ -175,7 +163,6 @@
                                             <label for="emailInput" class="form-label">Email address</label>
                                             <input type="email" name="email" class="form-control" id="emailInput" value="${sessionScope.editEmail}" readonly>
                                         </div>
-                                        
                                         <div class="form-group mb-3">
                                             <label for="passwordInput" class="form-label">Password:</label>
                                             <input type="password" name="password" class="form-control" id="passwordInput" required>
@@ -183,7 +170,6 @@
                                                 Password must contain at least 8 characters, including at least one letter, one number, and one special character (!@#$%^&*).
                                             </div>
                                         </div>
-                                        
                                         <div class="form-group mb-3">
                                             <label for="roleInput" class="form-label">Role:</label>
                                             <select class="form-select" name="role" id="roleInput" required>
@@ -193,7 +179,6 @@
                                                 <option value="4" ${sessionScope.editRole == '4' ? 'selected' : ''}>Admin</option>
                                             </select>
                                         </div>
-                                        
                                         <div class="mt-3">
                                             <button type="submit" class="btn btn-primary" name="save">Save Changes</button>
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -246,11 +231,11 @@
                 <footer class="py-4 bg-light mt-auto">
                     <div class="container-fluid px-4">
                         <div class="d-flex align-items-center justify-content-between small">
-                            <div class="text-muted">Copyright &copy; Your Website 2023</div>
+                            <div class="text-muted">Copyright © Your Website 2023</div>
                             <div>
                                 <a href="#">Privacy Policy</a>
-                                &middot;
-                                <a href="#">Terms &amp; Conditions</a>
+                                ·
+                                <a href="#">Terms & Conditions</a>
                             </div>
                         </div>
                     </div>
@@ -267,7 +252,6 @@
             document.addEventListener('DOMContentLoaded', function() {
                 // Kiểm tra nếu có lỗi thì hiển thị modal
                 <% if (session.getAttribute("errorMessage") != null) { %>
-                    // Sử dụng Bootstrap 5 để hiển thị modal
                     var editModal = new bootstrap.Modal(document.getElementById('editModal'));
                     editModal.show();
                 <% } %>
@@ -293,7 +277,6 @@
                 var regex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/;
                 var isValid = regex.test(password);
                 
-                // Hiển thị trạng thái validation
                 if (password.length > 0) {
                     if (isValid) {
                         input.classList.remove('is-invalid');
@@ -308,16 +291,13 @@
                 }
             }
             
-            // Hàm để đặt giá trị cho các trường khi mở modal edit
             function setModalFields(email, role) {
                 document.getElementById('emailInput').value = email;
                 document.getElementById('roleInput').value = role;
-                // Lưu giá trị vào session storage để có thể truy cập sau khi trang tải lại
                 sessionStorage.setItem('editEmail', email);
                 sessionStorage.setItem('editRole', role);
             }
             
-            // Khôi phục giá trị từ session storage khi trang tải lại
             window.onload = function() {
                 const storedEmail = sessionStorage.getItem('editEmail');
                 const storedRole = sessionStorage.getItem('editRole');

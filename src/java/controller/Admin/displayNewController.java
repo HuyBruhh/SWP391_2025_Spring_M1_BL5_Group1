@@ -1,4 +1,4 @@
-package controller.Owner;
+package controller.Admin;
 
 import dao.NewDAO;
 import jakarta.servlet.ServletException;
@@ -6,7 +6,9 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import model.News;
+import model.User;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -17,6 +19,12 @@ public class displayNewController extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("user") == null) {
+            response.sendRedirect("login?error=Please+login+first");
+            return;
+        }
+
         response.setContentType("text/html;charset=UTF-8");
         NewDAO newsDAO = new NewDAO();
 
@@ -45,7 +53,6 @@ public class displayNewController extends HttpServlet {
                 ? newsDAO.getNewsList(index, pageSize)
                 : newsDAO.searchByText(index, pageSize, search);
 
-        // Định dạng ngày
         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-dd-MM HH:mm:ss.S");
         SimpleDateFormat outputFormat = new SimpleDateFormat("dd-MM-yyyy");
         for (News news : newsList) {
@@ -57,8 +64,6 @@ public class displayNewController extends HttpServlet {
             }
         }
 
-        // Ước lượng tổng số tin tức (vì không sửa DAO)
-        // Lấy tất cả tin tức với pageSize lớn để tính totalNews
         List<News> allNews = (search == null || search.isEmpty())
                 ? newsDAO.getNewsList(1, Integer.MAX_VALUE)
                 : newsDAO.searchByText(1, Integer.MAX_VALUE, search);
@@ -70,7 +75,7 @@ public class displayNewController extends HttpServlet {
         request.setAttribute("currentPage", index);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("search", search);
-        request.getRequestDispatcher("Owner/DisplayNews.jsp").forward(request, response);
+        request.getRequestDispatcher("Admin/DisplayNews.jsp").forward(request, response);
     }
 
     @Override
@@ -87,6 +92,6 @@ public class displayNewController extends HttpServlet {
 
     @Override
     public String getServletInfo() {
-        return "Servlet for displaying news list";
+        return "Servlet to display news list";
     }
 }
