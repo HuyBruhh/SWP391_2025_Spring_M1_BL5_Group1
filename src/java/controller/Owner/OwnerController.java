@@ -35,8 +35,15 @@ import org.json.simple.parser.ParseException;
 @MultipartConfig
 public class OwnerController extends HttpServlet {
 
-    private static final String OWNER_NEWS = "ownernews";
-
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -89,8 +96,6 @@ public class OwnerController extends HttpServlet {
             updateRoomStatus(request, response);
         } else if (service.equals("setUnderRepair")) {
             setUnderRepair(request, response);
-        } else if (service.equals(OWNER_NEWS)) {
-            request.getRequestDispatcher("ownernews").forward(request, response);
         }
     }
 
@@ -170,7 +175,8 @@ public class OwnerController extends HttpServlet {
 
     private void getOwnerProfile(HttpServletRequest request, HttpServletResponse response, int flag) throws ServletException, IOException {
         RoomDAO dao = new RoomDAO();
-        HttpSession session = request.getSession();
+                        HttpSession session = request.getSession();
+
         int userID = (int) session.getAttribute("userID");
 
         User ownerProfile = dao.getOwnerProfileByID(userID);
@@ -185,11 +191,11 @@ public class OwnerController extends HttpServlet {
     private void updateAvatar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         RoomDAO dao = new RoomDAO();
         Part photo = request.getPart("img");
-        HttpSession session = request.getSession();
-        int userID = (int) session.getAttribute("userID");
+                                HttpSession session = request.getSession();
+int userID = (int) session.getAttribute("userID");
         byte[] avatar_raw = convertInputStreamToByteArray(photo.getInputStream());
         String avatar = Base64.getEncoder().encodeToString(avatar_raw);
-        int updateAvatar = dao.updateAvatar(new User(userID, avatar));
+        int updateAvatar = dao.updateAvatar(new User(15, avatar));
         request.getRequestDispatcher("OwnerController?service=editOwnerProfile").forward(request, response);
     }
 
@@ -216,6 +222,7 @@ public class OwnerController extends HttpServlet {
                     return;
                 }
             }
+
         } catch (NumberFormatException e) {
             request.setAttribute("error", "Invalid room number");
             request.getRequestDispatcher("OwnerController?service=editRoom&roomID=" + roomID).forward(request, response);
@@ -254,14 +261,15 @@ public class OwnerController extends HttpServlet {
 
     private void updateOwnerProfile(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         RoomDAO dao = new RoomDAO();
+
         boolean hasError = false;
         String fullName = request.getParameter("fullName").trim();
         String dob = request.getParameter("dob");
         String gender = request.getParameter("gender");
         String phone = request.getParameter("phone");
         String address = request.getParameter("address");
-        HttpSession session = request.getSession();
-        int userID = (int) session.getAttribute("userID");
+                        HttpSession session = request.getSession();
+int userID = (int) session.getAttribute("userID");
         if (fullName == null || fullName.isEmpty() || fullName.isBlank() || fullName.trim().isEmpty()) {
             hasError = true;
         } else if (phone == null || phone.length() != 10 || !phone.startsWith("0") || !phone.matches("[0-9]+")) {
@@ -274,7 +282,8 @@ public class OwnerController extends HttpServlet {
             request.setAttribute("error", "Invalid input information. Please check again.");
             request.getRequestDispatcher("OwnerController?service=ownerProfile").forward(request, response);
         } else {
-            int update = dao.updateOwnerProfile(new User(userID, fullName, gender, dob, address, phone));
+            int update = dao.updateOwnerProfile(new User(15, fullName, gender, dob, address, phone));
+
             request.getRequestDispatcher("OwnerController?service=ownerProfile").forward(request, response);
         }
     }
@@ -314,6 +323,7 @@ public class OwnerController extends HttpServlet {
                     } else {
                         dao.updateItemQuantity(roomID, itemID, quantity);
                     }
+
                 }
             } else {
                 System.out.println("Received empty JSON.");
@@ -327,7 +337,7 @@ public class OwnerController extends HttpServlet {
 
     public byte[] convertInputStreamToByteArray(InputStream inputStream) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        byte[] buffer = new byte[4096];
+        byte[] buffer = new byte[4096]; // Sử dụng một buffer có kích thước lớn hơn cho hiệu suất tốt hơn
         int bytesRead;
         while ((bytesRead = inputStream.read(buffer)) != -1) {
             outputStream.write(buffer, 0, bytesRead);
@@ -335,55 +345,94 @@ public class OwnerController extends HttpServlet {
         return outputStream.toByteArray();
     }
 
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
 
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
 
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
     @Override
     public String getServletInfo() {
-        return "OwnerController Servlet";
-    }
+        return "Short description";
+    }// </editor-fold>
 
     private void requestList(HttpServletRequest request, HttpServletResponse response, int flag) throws ServletException, IOException {
-        RequestDAO requestDAO = new RequestDAO();
-        if (flag == 0) {
-            List<RequestList> requests = requestDAO.getAllRequest();
-            request.setAttribute("requests", requests);
-            request.getRequestDispatcher("Owner/OwnerRequest.jsp").forward(request, response);
-        } else if (flag == 1) {
-            String rawRequestId = request.getParameter("requestId");
-            String status = request.getParameter("status");
-            if (rawRequestId != null && status != null) {
-                try {
-                    int requestId = Integer.parseInt(rawRequestId);
-                    RequestList currentRequest = requestDAO.getRequestByID(requestId);
-                    if (currentRequest != null) {
-                        boolean updateSuccess = requestDAO.updateRequestStatus(status, requestId);
-                        if (updateSuccess) {
-                            request.getSession().setAttribute("message", "Request status updated successfully.");
-                        } else {
-                            request.getSession().setAttribute("message", "Failed to update request status.");
-                        }
+    RequestDAO requestDAO = new RequestDAO();
+    HttpSession session = request.getSession();
+    int ownerID = (int) session.getAttribute("userID");
+    if (flag == 0) {
+         List<RequestList> requests = requestDAO.getReqListByOwnerID(ownerID);
+        request.setAttribute("requests", requests);
+                request.setAttribute("debugOwnerID", ownerID);
+
+        request.getRequestDispatcher("Owner/OwnerRequest.jsp").forward(request, response);
+    } else if (flag == 1) {
+        // REQUEST STATUS UPDATE
+        String rawRequestId = request.getParameter("requestId");
+        String status = request.getParameter("status");
+
+        if (rawRequestId != null && status != null) {
+            try {
+                int requestId = Integer.parseInt(rawRequestId);
+                // Fetch the current request
+                RequestList currentRequest = requestDAO.getRequestByID(requestId);
+
+                if (currentRequest != null) {
+                    // Update the request status regardless of the current state
+                    boolean updateSuccess = requestDAO.updateRequestStatus(status, requestId);
+
+                    if (updateSuccess) {
+                        // Set success message
+                        request.getSession().setAttribute("message", "Request status updated successfully.");
                     } else {
-                        request.getSession().setAttribute("message", "Request not found.");
+                        // Set failure message
+                        request.getSession().setAttribute("message", "Request status updated successfully.");
                     }
-                } catch (NumberFormatException e) {
-                    request.getSession().setAttribute("message", "Invalid request ID format.");
+                } else {
+                    // Set message if request does not exist
+                    request.getSession().setAttribute("message", "Request not found.");
                 }
-            } else {
-                request.getSession().setAttribute("message", "Invalid request parameters.");
+            } catch (NumberFormatException e) {
+                // Handle invalid request ID format
+                request.getSession().setAttribute("message", "Invalid request ID format.");
             }
-            response.sendRedirect("OwnerController?service=listrequest");
+        } else {
+            // Set message if status or requestId is invalid
+            request.getSession().setAttribute("message", "Invalid request parameters.");
         }
+
+        // Redirect back to the list page
+        response.sendRedirect("OwnerController?service=listrequest");
     }
+}
 
     private void updateRoomStatus(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         RoomDAO dao = new RoomDAO();
@@ -397,9 +446,9 @@ public class OwnerController extends HttpServlet {
             return;
         }
         if (roomStatus == 2) {
-            int update = dao.updateRoomStatus(roomID, 1); // Change from under repair to ready to rent
+            int update = dao.updateRoomStatus(roomID, 1); // cap nhat dang sua thanh san sang cho thue
         } else if (roomStatus == 1) {
-            int update = dao.updateRoomStatus(roomID, 2); // Change from ready to rent to under repair
+            int update = dao.updateRoomStatus(roomID, 2); // cap nhat san sang cho thue thanh dang sua
         }
 
         request.getRequestDispatcher("OwnerController?service=editRoom&roomID=" + roomID).forward(request, response);
@@ -411,13 +460,17 @@ public class OwnerController extends HttpServlet {
         int roomStatus = Integer.parseInt(request.getParameter("roomStatus"));
         int updateRoomStatus = Integer.parseInt(request.getParameter("updateRoomStatus"));
 
-        if (roomStatus == 2 && updateRoomStatus == 0) {
-            int update = dao.updateRoomStatus(roomID, 0); // Set to not available
-        } else if (roomStatus == 0 && updateRoomStatus == 2) {
-            int update = dao.updateRoomStatus(roomID, 2); // Set to under repair
+        if (roomStatus == 2) {
+            if (updateRoomStatus == 0) {
+                int update = dao.updateRoomStatus(roomID, 0);
+            }
+        } else if (roomStatus == 0) {
+            if (updateRoomStatus == 2) {
+                int update = dao.updateRoomStatus(roomID, 2);
+            }
         }
-
         request.setAttribute("error", "Update status successfully!!!");
         request.getRequestDispatcher("OwnerController?service=editRoom&roomID=" + roomID).forward(request, response);
     }
+
 }

@@ -521,6 +521,44 @@ public class RenterDAO extends MyDAO {
         }
         return rentDetails;
     }
+    
+        public List<RenterList> getRentersByOwnerID(int ownerID) {
+    List<RenterList> renters = new ArrayList<>();
+    String sql = ""
+      + "SELECT r.roomID"                       // thêm dòng này
+      + "     , u.userName"
+      + "     , r.roomNumber"
+      + "     , r.roomFloor"
+      + "     , r.roomDepartment"
+      + "     , rt.balance"
+      + "     , u.userID"
+      + "  FROM renter rt"
+      + "  JOIN room   r  ON rt.roomID  = r.roomID"
+      + "  JOIN [user] u  ON rt.userID  = u.userID"
+      + " WHERE r.ownerID = ?"
+      + "   AND rt.renterHaveRoom = 1";
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        ps.setInt(1, ownerID);
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                RenterList row = new RenterList();
+                row.setRoomID      (rs.getInt   ("roomID"));       // <-- set roomID
+                row.setUserName    (rs.getString("userName"));
+                row.setRoomNumber  (rs.getInt   ("roomNumber"));
+                row.setRoomFloor   (rs.getInt   ("roomFloor"));
+                row.setDepartment  (rs.getString("roomDepartment"));
+                row.setBalance     (rs.getDouble("balance"));
+                row.setUserID      (rs.getInt   ("userID"));
+                renters.add(row);
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return renters;
+}
+
+    
     public List<RenterList> getAllRentersExcel() {
     List<RenterList> renters = new ArrayList<>();
     String sql = "SELECT u.userName, r.roomNumber, r.roomFloor, r.roomDepartment\n" +
@@ -565,5 +603,6 @@ public class RenterDAO extends MyDAO {
         System.out.println("----------"); // Separator for readability
     }
 }
+     
 
 }

@@ -32,7 +32,45 @@ public class RequestDAO extends DBContext {
         }
         return requestTypes;
     }
+public List<RequestList> getReqListByOwnerID(int ownerID) {
+    List<RequestList> list = new ArrayList<>();
+    String sql =
+        "SELECT r.requestID, r.userID AS renterID, u.userName, rt.typeName, "
+      + "       r.title, r.description, r.createAt, r.resStatus "
+      + "FROM request r "
+      + "  JOIN [user] u       ON u.userID     = r.userID "
+      + "  JOIN requestType rt ON rt.reqTypeID  = r.requestType "
+      + "  JOIN renter ren     ON ren.userID   = r.userID "
+      + "  JOIN room   ro      ON ro.roomID    = ren.roomID "
+      + " WHERE ro.ownerID = ? "
+      + "   AND ren.renterHaveRoom = 1 "
+      + " ORDER BY r.createAt DESC";
+    try (PreparedStatement st = connection.prepareStatement(sql)) {
+        st.setInt(1, ownerID);
+        System.out.println(">> ownerID=" + ownerID);
+System.out.println(">> SQL = " + sql.replace("?", String.valueOf(ownerID)));
 
+        System.out.println("Owner-side SQL:\n" + sql.replace("?", String.valueOf(ownerID)));
+        try (ResultSet rs = st.executeQuery()) {
+            while (rs.next()) {
+                list.add(new RequestList(
+                  rs.getInt("requestID"),
+                  rs.getInt("renterID"),
+                  rs.getString("userName"),
+                  rs.getString("title"),
+                  rs.getString("description"),
+                  rs.getString("typeName"),
+                  rs.getString("createAt"),
+                  rs.getString("resStatus")
+                ));
+            }
+        }
+        
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return list;
+}
     public List<RequestList> getReqListByID(int userID) {
         List<RequestList> requests = new ArrayList<>();
         String sql = "SELECT DISTINCT  u.userID, u.userName, r.requestID, r.title, r.description, rt.typeName, r.createAt, r.resStatus "
@@ -44,6 +82,7 @@ public class RequestDAO extends DBContext {
             PreparedStatement st = connection.prepareStatement(sql)
         ) {
             st.setInt(1, userID);
+            
             try (ResultSet rs = st.executeQuery()) {
                 while (rs.next()) {
                                        
