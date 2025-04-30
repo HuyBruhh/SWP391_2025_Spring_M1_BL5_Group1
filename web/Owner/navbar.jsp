@@ -1,5 +1,3 @@
-
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <% String service = (String) request.getParameter("service"); %>
 <!DOCTYPE html>
@@ -17,7 +15,6 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-
         <link rel="stylesheet" href="../fonts/icomoon/style.css">
         <link rel="stylesheet" href="../fonts/flaticon/font/flaticon.css">
 
@@ -28,7 +25,6 @@
         <!-- Include jQuery from a CDN -->
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.css" />
-
         <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
 
         <title>Hola Motel</title>
@@ -41,21 +37,18 @@
                 <ul class="dropdown">
                     <li><a href="OwnerController?service=pagingRoom&index=1">List of rooms</a></li>
                     <li><a href="OwnerController?service=listrequest">List of Request</a></li>
-                    
                 </ul>
             </li>               
             <li><a class="<%= "addrenter".equals(service) ? "active" : "" %>" href="AddRenterController?service=addrenter">Add Renter</a></li>
             <li><a href="ListRenterController">Renter Management</a></li>
-            <li class="dropdown has-children <%=("displayNews".equals(service) || "addnews".equals(service) || "ruleList".equals(service) || "addGuideline".equals(service) || "displayslider".equals(service)
-                    || "penaltys".equals(service))  ? "active" : "" %>">
+            <li class="has-children <%= (service != null && (service.equals("ownernews") || service.equals("ruleList") || service.equals("addGuideline") || service.equals("displayslider") || service.equals("penaltys"))) ? "active" : "" %>">
                 <a href="#">Manage</a>
                 <ul class="dropdown">
                     <li><a href="ruleList?service=ruleList">Rule</a></li>
-                    <li><a href="displayNews?service=displayNews">News</a></li>
+                    <li><a href="ownernews">News</a></li>
                     <li><a href="guidelines?service=guidelines">GuildLine</a></li>
                     <li><a href="penaltys?service=penaltys">Penalty</a></li>
                     <li><a href="displayslider?service=displayslider">Slider</a></li>
-                    <li><a href="ExcelFee.jsp">Add fee by excel</a></li>
                 </ul>
             </li>
             <li><a href="logout">Logout</a></li>
