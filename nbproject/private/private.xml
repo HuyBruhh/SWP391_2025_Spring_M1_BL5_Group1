@@ -8,15 +8,10 @@
             <file>file:/D:/SWP391_2025_Spring_M1_BL5_Group1/src/java/controller/Admin/Manage.java</file>
         </group>
         <group>
-            <file>file:/C:/Users/MSI/Documents/SWP391_2025_Spring_M1_BL5_Group1/src/java/controller/Owner/EditRoomFeeController.java</file>
-            <file>file:/C:/Users/MSI/Documents/SWP391_2025_Spring_M1_BL5_Group1/src/java/dao/RequestDAO.java</file>
-            <file>file:/C:/Users/MSI/Documents/SWP391_2025_Spring_M1_BL5_Group1/src/java/dao/RenterDAO.java</file>
-            <file>file:/C:/Users/MSI/Documents/SWP391_2025_Spring_M1_BL5_Group1/web/Owner/editroomfee.jsp</file>
-            <file>file:/C:/Users/MSI/Documents/SWP391_2025_Spring_M1_BL5_Group1/src/java/controller/Renter/RenterBillDetailController.java</file>
-            <file>file:/C:/Users/MSI/Documents/SWP391_2025_Spring_M1_BL5_Group1/src/java/controller/Owner/OwnerController.java</file>
-            <file>file:/C:/Users/MSI/Documents/SWP391_2025_Spring_M1_BL5_Group1/src/java/controller/Owner/ListRenterController.java</file>
-            <file>file:/C:/Users/MSI/Documents/SWP391_2025_Spring_M1_BL5_Group1/src/java/model/Rooms.java</file>
-            <file>file:/C:/Users/MSI/Documents/SWP391_2025_Spring_M1_BL5_Group1/src/java/controller/Renter/WalletController.java</file>
+            <file>file:/D:/works/SWP391__/SWP391_BL5/apartment/SWP391_2025_Spring_M1_BL5_Group1/src/java/model/Payment.java</file>
+            <file>file:/D:/works/SWP391__/SWP391_BL5/apartment/SWP391_2025_Spring_M1_BL5_Group1/src/java/utility/VNPayConfig.java</file>
+            <file>file:/D:/works/SWP391__/SWP391_BL5/apartment/SWP391_2025_Spring_M1_BL5_Group1/web/Renter/list-payment.jsp</file>
+            <file>file:/D:/works/SWP391__/SWP391_BL5/apartment/SWP391_2025_Spring_M1_BL5_Group1/src/java/controller/Renter/VNPay_PaymentController.java</file>
         </group>
     </open-files>
 </project-private>

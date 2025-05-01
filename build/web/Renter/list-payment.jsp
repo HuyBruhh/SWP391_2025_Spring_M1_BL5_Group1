@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix = "fmt" uri = "http://java.sun.com/jsp/jstl/fmt" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="java.util.List" %>
 <%@page import="java.util.ArrayList" %>
@@ -65,7 +66,7 @@
                 </div>
             </div>
 
-             <div class="main">
+            <div class="main">
                 <div class="container" style="margin-top: 2em">
                     <div class="col-3"><a href="createPayment"><button type="button" class="btn btn-primary">Create Payment</button></div></a>
                     <table id="guildLineTable" class="display">
@@ -80,60 +81,54 @@
                             </tr>
                         </thead>
                         <tbody>
-                        </tbody>
-                    </table>
-                </div>
+                        <c:forEach var="payment" items="${payments}">
+                            <tr>
+                                <td>${payment.id}</td>
+                                <td><p class="text-center">${payment.money}</p></td>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${payment.status == 0}">
+                                            <p class="text-center" style="color: orange">Pending</p>
+                                        </c:when>
+                                        <c:when test="${payment.status == 1}">
+                                            <p class="text-center" style="color: green">Paid</p>
+                                        </c:when>
+                                        <c:when test="${payment.status == 2}">
+                                            <p class="text-center" style="color: red"> Not paid</p>
+                                        </c:when>
+                                    </c:choose>
+
+                                </td>
+                                <td>
+                                    <p class="text-left">
+                                        <fmt:formatDate pattern = "MMM dd, yyyy" value = "${payment.createdAt}"/>
+                                    </p>
+                                </td>
+                                <td>
+                                    <p class="text-left">
+                                        <fmt:formatDate pattern = "MMM dd, yyyy" value = "${payment.updatedAt}"/>
+                                    </p>
+                                </td>
+                                <td>
+                                    <c:if test="${payment.status ne 1}">
+                                        <a href="VNPay_PaymentController?id=${payment.id}&flag=0&amount=${payment.money}">
+                                            <button type="button" class="btn btn-success">Pay</button>
+                                        </a>
+                                    </c:if>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
             </div>
-       
-        </body>
-        <script>
-            $(document).ready(function () {
-                var dataList = ${dataList};
-                //var realData = JSON.parse(dataList);
-                $('#guildLineTable').DataTable({
-                    data: dataList,
-                    columns: [
-                        {title: "ID", data: "id"},
-                        {title: "Money", data: "money"},
-                        {
-                            title: "Status",
-                            data: "status",
-                            render: function (data, type, row) {
-                                if (data === 0) {
-                                    return '<button type="button" class="btn btn-info">Pending</span>';
-                                } else if (data === 1) {
-                                    return '<button type="button" class="btn btn-success">Paid</span>';
-                                } else if (data === 2) {
-                                    return '<button type="button" class="btn btn-danger">Not Paid</span>';
-                                }
-                            }
-                        },
-                        {
-                            title: "Created At",
-                            data: "createdAt",
-                            render: function (data, type, row) {
-                                return '<p class="text-left">' + data + '</p>';
-                            }
-                        },
-                        {
-                            title: "Updated At",
-                            data: "updatedAt",
-                            render: function (data, type, row) {
-                                return '<p class="text-left">' + data + '</p>';
-                            }
-                        },
-                        {
-                            title: "Action",
-                            
-                            render: function (data, type, row) {
-                                return '\
-            <a href="VNPay_PaymentController?id=' + row.id + '&flag=0&amount=' + row.money + '"><button type="button" class="btn btn-success">Pay</button></a>';
-                            },
-                            orderable: false
-                        }
-                    ]
-                });
+        </div>
+
+    </body>
+    <script>
+        $(document).ready(function () {
+            //var realData = JSON.parse(dataList);
+            $('#guildLineTable').DataTable({
             });
-            
+        });
     </script>
 </html>

@@ -5,16 +5,19 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 public class VNPayConfig {
 
-    public static final String vnp_TmnCode = "LSN8XAGM";
-    public static final String vnp_HashSecret = "DLLU32CIEXBO4WVSIK1TGHML2EPXRP0H";
+//    public static final String vnp_TmnCode = "A6CC178T";
+//    public static final String vnp_HashSecret = "79B4OI6QEQJPHNIQ3KMC8MU800RLEEF3";
+    public static String vnp_TmnCode = "4YUP19I4";
+    public static String vnp_HashSecret = "MDUIFDCRAKLNBPOFIAFNEKFRNMFBYEPX";
     public static final String vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-    public static final String vnp_ReturnUrl = "http://localhost:9999/SWP391.E.BL5.G5/VNPay_ReturnController";
+    public static final String vnp_ReturnUrl = "http://localhost:9999/SWP391_2025_Spring_M1_BL5_Group1/VNPay_ReturnController";
 
     public static String getIpAddress(HttpServletRequest request) {
         String ipAddress = request.getHeader("X-Forwarded-For");
@@ -36,18 +39,18 @@ public class VNPayConfig {
 
     public static String getCurrentDate() {
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+7"));
-        return String.format("%1$tY%1$tm%1$td%1$tH%1$tM%1$tS", calendar);
+        return new SimpleDateFormat("yyyyMMddHHmmss").format(calendar.getTime());
     }
 
     public static String getExpireDate(int minutes) {
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+7"));
         calendar.add(Calendar.MINUTE, minutes);
-        return String.format("%1$tY%1$tm%1$td%1$tH%1$tM%1$tS", calendar);
+        return new SimpleDateFormat("yyyyMMddHHmmss").format(calendar.getTime());
     }
 
     public static String hashAllFields(Map<String, String> fields) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         List<String> fieldNames = new ArrayList<>(fields.keySet());
-        Collections.sort(fieldNames); 
+        Collections.sort(fieldNames);
 
         StringBuilder hashData = new StringBuilder();
         StringBuilder queryString = new StringBuilder();
@@ -74,26 +77,32 @@ public class VNPayConfig {
 
         String vnp_SecureHash = hmacSHA512(vnp_HashSecret, hashData.toString());
         queryString.append("&vnp_SecureHash=");
-        queryString.append(URLEncoder.encode(vnp_SecureHash, "UTF-8"));
+        queryString.append(vnp_SecureHash);
 
         return queryString.toString();
     }
 
-    public static String hmacSHA512(String key, String data) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-        String result;
+    public static String hmacSHA512(final String key, final String data) {
         try {
-            byte[] byteKey = key.getBytes("UTF-8");
-            final String HMAC_SHA512 = "HmacSHA512";
-            Mac hmacSHA512;
-            hmacSHA512 = Mac.getInstance(HMAC_SHA512);
-            SecretKeySpec keySpec = new SecretKeySpec(byteKey, HMAC_SHA512);
-            hmacSHA512.init(keySpec);
-            byte[] macData = hmacSHA512.doFinal(data.getBytes("UTF-8"));
-            result = bytesToHex(macData);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to calculate HMAC-SHA512", e);
+
+            if (key == null || data == null) {
+                throw new NullPointerException();
+            }
+            final Mac hmac512 = Mac.getInstance("HmacSHA512");
+            byte[] hmacKeyBytes = key.getBytes();
+            final SecretKeySpec secretKey = new SecretKeySpec(hmacKeyBytes, "HmacSHA512");
+            hmac512.init(secretKey);
+            byte[] dataBytes = data.getBytes(StandardCharsets.UTF_8);
+            byte[] result = hmac512.doFinal(dataBytes);
+            StringBuilder sb = new StringBuilder(2 * result.length);
+            for (byte b : result) {
+                sb.append(String.format("%02x", b & 0xff));
+            }
+            return sb.toString();
+
+        } catch (Exception ex) {
+            return "";
         }
-        return result;
     }
 
     private static String bytesToHex(byte[] bytes) {

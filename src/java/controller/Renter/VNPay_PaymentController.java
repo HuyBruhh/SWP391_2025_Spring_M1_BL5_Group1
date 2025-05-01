@@ -24,8 +24,7 @@ public class VNPay_PaymentController extends HttpServlet {
         HttpSession session = request.getSession();
 
         String amount = request.getParameter("amount");
-        
-         
+
         int flag = Integer.parseInt(request.getParameter("flag"));
         int id = 0; // id payment
         if (flag == 0) { // add balance
@@ -52,17 +51,17 @@ public class VNPay_PaymentController extends HttpServlet {
         vnp_Params.put("vnp_Version", "2.1.0");
         vnp_Params.put("vnp_Command", "pay");
         vnp_Params.put("vnp_TmnCode", VNPayConfig.vnp_TmnCode);
-        vnp_Params.put("vnp_Amount", String.valueOf(Integer.parseInt(amount) * 100000));
-        vnp_Params.put("vnp_CurrCode", "VND");
-//        vnp_Params.put("vnp_BankCode", "MBBank");
-        vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
-        vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang");
-        vnp_Params.put("vnp_OrderType", "billpayment");
-        vnp_Params.put("vnp_Locale", "vn");
-        vnp_Params.put("vnp_ReturnUrl", VNPayConfig.vnp_ReturnUrl);
-        vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
+        vnp_Params.put("vnp_Amount", String.valueOf((int) Double.parseDouble(amount) * 100000)); // *100
+        vnp_Params.put("vnp_BankCode", "INTCARD");
         vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
+        vnp_Params.put("vnp_CurrCode", "VND");
+        vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
+        vnp_Params.put("vnp_Locale", "vn");
+        vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang " + id);
+        vnp_Params.put("vnp_OrderType", "other");
+        vnp_Params.put("vnp_ReturnUrl", VNPayConfig.vnp_ReturnUrl);
         vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);
+        vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
 
         String queryUrl = null;
         try {
@@ -72,7 +71,7 @@ public class VNPay_PaymentController extends HttpServlet {
         }
 
         String paymentUrl = VNPayConfig.vnp_Url + "?" + queryUrl;
-
+        System.out.println(paymentUrl);
         response.sendRedirect(paymentUrl);
     }
 
