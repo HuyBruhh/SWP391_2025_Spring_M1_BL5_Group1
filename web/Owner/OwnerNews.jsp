@@ -58,6 +58,18 @@
             height: 200px;
             object-fit: cover;
         }
+        .search-bar {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .search-bar input {
+            width: 100%;
+            max-width: 500px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
@@ -98,6 +110,10 @@
     <div id="fh5co-main">
         <div class="container">
             <div class="row">
+                <!-- Search Bar -->
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="Search news" onkeyup="searchNews()">
+                </div>
                 <div id="fh5co-board" data-columns>
                     <c:forEach items="${ListN}" var="n">
                         <div class="item">
@@ -207,6 +223,21 @@
                 }
             });
         });
+
+        // Search function
+        function searchNews() {
+            let input = document.getElementById('searchInput').value.toLowerCase();
+            let items = document.getElementsByClassName('item');
+
+            for (let i = 0; i < items.length; i++) {
+                let title = items[i].getElementsByClassName('fh5co-desc')[0].getElementsByTagName('a')[0].innerText.toLowerCase();
+                if (title.includes(input)) {
+                    items[i].style.display = '';
+                } else {
+                    items[i].style.display = 'none';
+                }
+            }
+        }
     </script>
 </body>
 </html>

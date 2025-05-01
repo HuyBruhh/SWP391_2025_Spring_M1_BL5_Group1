@@ -17,7 +17,7 @@ public class VNPayConfig {
     public static String vnp_TmnCode = "4YUP19I4";
     public static String vnp_HashSecret = "MDUIFDCRAKLNBPOFIAFNEKFRNMFBYEPX";
     public static final String vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-    public static final String vnp_ReturnUrl = "http://localhost:9999/SWP391_2025_Spring_M1_BL5_Group1/VNPay_ReturnController";
+    public static final String vnp_ReturnUrl = "http://localhost:8080/SWP391_2025_Spring_M1_BL5_Group1/VNPay_ReturnController";
 
     public static String getIpAddress(HttpServletRequest request) {
         String ipAddress = request.getHeader("X-Forwarded-For");

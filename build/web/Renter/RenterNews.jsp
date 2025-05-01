@@ -88,6 +88,29 @@
             .table-container td:nth-child(3) {
                 width: 10%;
             }
+            .search-bar {
+                margin-bottom: 20px;
+                text-align: center;
+                padding: 10px 0;
+            }
+            .search-bar input {
+                width: 100%;
+                max-width: 500px;
+                padding: 10px;
+                font-size: 16px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                outline: none;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                transition: border-color 0.3s, box-shadow 0.3s;
+            }
+            .search-bar input:focus {
+                border-color: #7163ba;
+                box-shadow: 0 0 8px rgba(113, 99, 186, 0.3);
+            }
+            .search-bar input::placeholder {
+                color: #999;
+            }
         </style>
     </head>
     <body>
@@ -132,6 +155,10 @@
 
         <div class="tabular--wrapper">
             <h3 class="main--title">News</h3>
+            <!-- Search Bar -->
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search news by title..." onkeyup="searchNews()">
+            </div>
             <div class="table-container">
                 <table>
                     <thead>
@@ -142,7 +169,7 @@
                     </thead>
                     <tbody>
                         <c:forEach items="${ListN}" var="n">
-                            <tr>
+                            <tr class="news-item">
                                 <td><a href="newsdetails?id=${n.newId}">${n.newTitle}</a></td>
                                 <td>${n.userName}</td>
                             </tr>
@@ -157,4 +184,84 @@
                 <div class="row">
                     <div class="col-lg-4">
                         <div class="widget">
-                           expired, or there is a typo in the URL.
+                            <h3>Contact</h3>
+                            <address>43 Raymouth Rd. Baltemoer, London 3910</address>
+                            <ul class="list-unstyled links">
+                                <li><a href="tel://11234567890">+1(123)-456-7890</a></li>
+                                <li><a href="tel://11234567890">+1(123)-456-7890</a></li>
+                                <li><a href="mailto:info@mydomain.com">info@mydomain.com</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="widget">
+                            <h3>Sources</h3>
+                            <ul class="list-unstyled float-start links">
+                                <li><a href="#">About us</a></li>
+                                <li><a href="#">Services</a></li>
+                                <li><a href="#">Vision</a></li>
+                                <li><a href="#">Mission</a></li>
+                                <li><a href="#">Terms</a></li>
+                                <li><a href="#">Privacy</a></li>
+                            </ul>
+                            <ul class="list-unstyled float-start links">
+                                <li><a href="#">Partners</a></li>
+                                <li><a href="#">Business</a></li>
+                                <li><a href="#">Careers</a></li>
+                                <li><a href="#">Blog</a></li>
+                                <li><a href="#">FAQ</a></li>
+                                <li><a href="#">Creative</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="widget">
+                            <h3>Links</h3>
+                            <ul class="list-unstyled links">
+                                <li><a href="#">Our Vision</a></li>
+                                <li><a href="#">About us</a></li>
+                                <li><a href="#">Contact us</a></li>
+                            </ul>
+                            <ul class="list-unstyled social">
+                                <li><a href="#"><span class="icon-instagram"></span></a></li>
+                                <li><a href="#"><span class="icon-twitter"></span></a></li>
+                                <li><a href="#"><span class="icon-facebook"></span></a></li>
+                                <li><a href="#"><span class="icon-linkedin"></span></a></li>
+                                <li><a href="#"><span class="icon-pinterest"></span></a></li>
+                                <li><a href="#"><span class="icon-dribbble"></span></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-5">
+                    <div class="col-12 text-center">
+                        <p>Copyright ©<script>document.write(new Date().getFullYear());</script>. All Rights Reserved. — Designed with love by <a href="https://untree.co">Untree.co</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- jQuery -->
+        <script src="RenterCSS/js/jquery.min.js"></script>
+        <script>
+            $(document).ready(function() {
+                function searchNews() {
+                    let input = $('#searchInput').val().toLowerCase();
+                    let items = $('.news-item');
+
+                    items.each(function() {
+                        let title = $(this).find('td:first a').text().toLowerCase();
+                        if (title.includes(input)) {
+                            $(this).show();
+                        } else {
+                            $(this).hide();
+                        }
+                    });
+                }
+
+                // Gắn sự kiện onkeyup vào thanh tìm kiếm
+                $('#searchInput').on('keyup', searchNews);
+            });
+        </script>
+    </body>
+</html>

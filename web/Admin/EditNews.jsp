@@ -62,10 +62,10 @@
                                 <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
                                 Account
                             </a>
-                            <a class="nav-link" href="${pageContext.request.contextPath}/selist">
+<!--                            <a class="nav-link" href="${pageContext.request.contextPath}/selist">
                                 <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
                                 Security List
-                            </a>
+                            </a>-->
                             <a class="nav-link" href="${pageContext.request.contextPath}/displayNews">
                                 <div class="sb-nav-link-icon"><i class="fas fa-newspaper"></i></div>
                                 News Management

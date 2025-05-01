@@ -19,7 +19,7 @@
         <meta name="author" content="" />
         <title>News Management - SB Admin</title>
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/css/bootstrap.min.css" integrity="sha512-..." crossorigin="anonymous">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/css/bootstrap.min.css" rel="stylesheet" />
         <link href="${pageContext.request.contextPath}/AdminCSS/css/styles.css" rel="stylesheet" />
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
@@ -28,6 +28,9 @@
                 max-width: 100px;
                 height: auto;
                 object-fit: cover;
+            }
+            .pagination {
+                justify-content: center;
             }
         </style>
     </head>
@@ -56,10 +59,6 @@
                                 <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
                                 Account
                             </a>
-<!--                            <a class="nav-link" href="${pageContext.request.contextPath}/selist">
-                                <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
-                                Security List
-                            </a>-->
                             <a class="nav-link" href="${pageContext.request.contextPath}/displayNews">
                                 <div class="sb-nav-link-icon"><i class="fas fa-newspaper"></i></div>
                                 News Management
@@ -94,22 +93,11 @@
                                 </c:if>
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <form action="${pageContext.request.contextPath}/displayNews" method="post" class="input-group w-50">
-                                        <input type="text" name="search" placeholder="Search by title" class="form-control" aria-label="Search by title">
+                                        <input type="text" name="search" placeholder="Search by title" class="form-control" aria-label="Search by title" value="${search}">
                                         <button type="submit" class="btn btn-primary">Search</button>
                                     </form>
                                     <a href="${pageContext.request.contextPath}/addnews" class="btn btn-primary">Add News</a>
                                 </div>
-                                <form id="pageSizeForm" action="${pageContext.request.contextPath}/displayNews" method="get" class="form-inline mb-3">
-                                    <label for="page-size-select" class="me-2">News per page:</label>
-                                    <select name="pageSize" id="page-size-select" class="form-select w-auto" onchange="document.getElementById('pageSizeForm').submit()">
-                                        <option value="5" <c:if test="${pageSize == 5}">selected</c:if>>5</option>
-                                        <option value="10" <c:if test="${pageSize == 10}">selected</c:if>>10</option>
-                                        <option value="15" <c:if test="${pageSize == 15}">selected</c:if>>15</option>
-                                        <option value="20" <c:if test="${pageSize == 20}">selected</c:if>>20</option>
-                                    </select>
-                                    <input type="hidden" name="index" value="1">
-                                    <input type="hidden" name="search" value="${search}">
-                                </form>
                                 <table id="datatablesSimple" class="table table-bordered">
                                     <thead>
                                         <tr>
@@ -142,6 +130,28 @@
                                         </c:forEach>
                                     </tbody>
                                 </table>
+                                <!-- Pagination -->
+                                <c:if test="${totalPages > 1}">
+                                    <nav aria-label="Page navigation">
+                                        <ul class="pagination">
+                                            <li class="page-item <c:if test='${index == 1}'>disabled</c:if>">
+                                                <a class="page-link" href="${pageContext.request.contextPath}/displayNews?index=${index - 1}&search=${search}" aria-label="Previous">
+                                                    <span aria-hidden="true">&laquo;</span>
+                                                </a>
+                                            </li>
+                                            <c:forEach begin="1" end="${totalPages}" var="i">
+                                                <li class="page-item <c:if test='${i == index}'>active</c:if>">
+                                                    <a class="page-link" href="${pageContext.request.contextPath}/displayNews?index=${i}&search=${search}">${i}</a>
+                                                </li>
+                                            </c:forEach>
+                                            <li class="page-item <c:if test='${index == totalPages}'>disabled</c:if>">
+                                                <a class="page-link" href="${pageContext.request.contextPath}/displayNews?index=${index + 1}&search=${search}" aria-label="Next">
+                                                    <span aria-hidden="true">&raquo;</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                </c:if>
                             </div>
                         </div>
                     </div>

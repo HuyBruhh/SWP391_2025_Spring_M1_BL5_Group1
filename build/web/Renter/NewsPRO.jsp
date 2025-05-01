@@ -58,6 +58,29 @@
                 height: 200px;
                 object-fit: cover;
             }
+            .search-bar {
+                margin-bottom: 20px;
+                text-align: center;
+                padding: 10px 0;
+            }
+            .search-bar input {
+                width: 100%;
+                max-width: 500px;
+                padding: 10px;
+                font-size: 16px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                outline: none;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                transition: border-color 0.3s, box-shadow 0.3s;
+            }
+            .search-bar input:focus {
+                border-color: #7163ba;
+                box-shadow: 0 0 8px rgba(113, 99, 186, 0.3);
+            }
+            .search-bar input::placeholder {
+                color: #999;
+            }
         </style>
     </head>
     <body>
@@ -98,6 +121,10 @@
         <div id="fh5co-main">
             <div class="container">
                 <div class="row">
+                    <!-- Search Bar -->
+                    <div class="search-bar">
+                        <input type="text" id="searchInput" placeholder="Search news" onkeyup="searchNews()">
+                    </div>
                     <div id="fh5co-board" data-columns>
                         <c:forEach items="${ListN}" var="n">
                             <div class="item">
@@ -192,5 +219,40 @@
         <script src="RenterCSS/js/salvattore.min.js"></script>
         <!-- Main JS -->
         <script src="RenterCSS/js/main.js"></script>
+        <!-- Initialize Magnific Popup and Search Function -->
+        <script>
+            $(document).ready(function() {
+                // Khởi tạo Magnific Popup cho hình ảnh
+                $('.image-popup').magnificPopup({
+                    type: 'image',
+                    closeOnContentClick: true,
+                    mainClass: 'mfp-img-mobile',
+                    image: {
+                        verticalFit: true,
+                        titleSrc: function(item) {
+                            return item.el.attr('title');
+                        }
+                    }
+                });
+
+                // Hàm tìm kiếm
+                function searchNews() {
+                    let input = $('#searchInput').val().toLowerCase();
+                    let items = $('.item');
+
+                    items.each(function() {
+                        let title = $(this).find('.fh5co-desc a').text().toLowerCase();
+                        if (title.includes(input)) {
+                            $(this).show();
+                        } else {
+                            $(this).hide();
+                        }
+                    });
+                }
+
+                // Gắn sự kiện onkeyup vào thanh tìm kiếm
+                $('#searchInput').on('keyup', searchNews);
+            });
+        </script>
     </body>
 </html>
