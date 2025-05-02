@@ -128,7 +128,7 @@
 
     <body>
 
-          <div class="site-mobile-menu site-navbar-target">
+        <div class="site-mobile-menu site-navbar-target">
             <div class="site-mobile-menu-header">
                 <div class="site-mobile-menu-close">
                     <span class="icofont-close js-menu-toggle"></span>
@@ -153,22 +153,22 @@
                 </div>
             </nav>
 
-        <div class="hero page-inner overlay" style="background-image: url('images/hero_bg_3.jpg');">
+            <div class="hero page-inner overlay" style="background-image: url('images/hero_bg_3.jpg');">
 
-            <div class="container">
-                <div class="row justify-content-center align-items-center">
-                    <div class="col-lg-9 text-center mt-5">
-                        <h1 class="heading" data-aos="fade-up">Room Fee</h1>
+                <div class="container">
+                    <div class="row justify-content-center align-items-center">
+                        <div class="col-lg-9 text-center mt-5">
+                            <h1 class="heading" data-aos="fade-up">Room Fee</h1>
 
-                        <nav aria-label="breadcrumb" data-aos="fade-up" data-aos-delay="200">
-                            <ol class="breadcrumb text-center justify-content-center">
+                            <nav aria-label="breadcrumb" data-aos="fade-up" data-aos-delay="200">
+                                <ol class="breadcrumb text-center justify-content-center">
 
-                            </ol>
-                        </nav>
+                                </ol>
+                            </nav>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
         <c:set var="bl" value="${billDetail}"></c:set>
             <div class="container rounded bg-white" id="printableArea">
@@ -235,10 +235,17 @@
             </div>
         </div>
         <div class="container rounded bg-white" id="printableArea">
-    <!-- Your existing content here -->
-</div>
-<div class="p-2" style="display: grid; place-items: center;">
-    <button class="btn btn-primary" onclick="printBill()">Print Bill</button>
+            <!-- Your existing content here -->
+        </div>
+        <div class="p-2" style="display: grid; place-items: center;">
+            <button class="btn btn-primary" onclick="printBill()">Print Bill</button>
+        </div>
+        <div class="col-md-12">
+    <div class="form-group d-flex justify-content-center">
+        <a href="roomfee?roomID=${sessionScope.roomID}" style="color:#FFF" class="btn btn-info">
+            <i class="fa-regular fa-rectangle-list"></i>&nbsp;Back
+        </a>
+    </div>
 </div>
         <script>
             function printBill() {

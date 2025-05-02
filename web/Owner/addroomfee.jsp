@@ -193,8 +193,8 @@
                                                 </thead>
                                                 <tbody>
                                                     <tr>
-                                                        <td style="padding: 8px; text-align: center;">${eprice}(VND/Kmw)</td>
-                                                    <td style="padding: 8px; text-align: center;">${wprice}(VND/m3)</td>
+                                                        <td style="padding: 8px; text-align: center;">${eprice}K(VND/Kmw)</td>
+                                                    <td style="padding: 8px; text-align: center;">${wprice}K(VND/m3)</td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -332,6 +332,20 @@
                 });
             });
         </script>
+        <script>
+    var successMessage = "${sessionScope.successMessage}";
+    var errorMessage = "${sessionScope.errorMessage}";
+    if (successMessage !== "") {
+        alert(successMessage);
+        <% session.removeAttribute("successMessage"); %>
+    }
+    if (errorMessage !== "") {
+        alert(errorMessage);
+        <% session.removeAttribute("errorMessage"); %>
+    }
+</script>
+
+<script src="js/bootstrap.bundle.min.js"></script>
     </body>
 
 </html>

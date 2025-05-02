@@ -307,7 +307,7 @@
                                                 <th>Renter Name</th>
                                                 <th>Room Number</th>
                                                 <th>Room Floor</th>
-                                                <th>Balance</th>
+<!--                                                <th>Balance</th>-->
                                                 <th>Room Fee</th>                                               
                                             </tr>
                                         </thead>
@@ -317,7 +317,7 @@
                                             <td><a href="ViewRenterProfileController?renterID=<%= renters.getUserID() %>"><%= renters.getUserName() %></a></td>
                                             <td><%= renters.getRoomNumber() %></td>
                                             <td><%= renters.getRoomFloor() %></td>
-                                            <td><%= renters.getBalance() %></td>
+<!--                                            <td><%= renters.getBalance() %></td>-->
                                             <td>
                                                 <a href="roomfee?roomID=<%= renters.getRoomID() %>">See Detail</a>
                                             </td>

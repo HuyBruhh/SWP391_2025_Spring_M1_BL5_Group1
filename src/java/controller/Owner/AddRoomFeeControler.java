@@ -21,7 +21,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-
 @WebServlet(name = "AddRoomFee", urlPatterns = {"/addroomfee"})
 public class AddRoomFeeControler extends HttpServlet {
 
@@ -101,18 +100,17 @@ public class AddRoomFeeControler extends HttpServlet {
         BigDecimal roomfee = room.getRoomFee();
         BillDAO dao = new BillDAO();
         UsagePrice price = dao.getEWPrice();
-        
-        
+
         double eprice = price.getEprice();
         double wprice = price.getWprice();
         //Lay ve
         String water = request.getParameter("water");
         String electric = request.getParameter("electric");
-        
+
         //Thay doi
         double elnum = Double.parseDouble(electric);
         double wnum = Double.parseDouble(water);
-        
+
         //Tien dien tien nuoc de insert
         double etotal = eprice * elnum;
         double wtotal = wprice * wnum;
@@ -133,13 +131,11 @@ public class AddRoomFeeControler extends HttpServlet {
             boolean success = dao.addFeeById(id, serviceM, etotal, wtotal, roomfee, otherM, penmoney, createAt, deadline, null);
             String updateMessage = "updateMessage";
             if (success) {
-                request.setAttribute(updateMessage, "Add Successful");
-
+                session.setAttribute("successMessage", "Add Successful");
                 response.sendRedirect(request.getContextPath() + "/roomfee?roomID=" + id);
                 session.removeAttribute("roomID");
             } else {
-                request.setAttribute(updateMessage, "Failed");
-
+                session.setAttribute("errorMessage", "Failed");
                 response.sendRedirect(request.getContextPath() + "/addroomfee?id=" + id);
             }
         } catch (IOException ex) {

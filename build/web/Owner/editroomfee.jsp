@@ -218,14 +218,14 @@
                                                 </div>
                                                 <div class="col-md-6"> 
                                                     <div class="form-group">
-                                                        <label class="label" for="subject">Electric Fee K(VND/Kmw): </label>
-                                                        <input type="number" step="any" class="form-control positive-number" value="${bl.electric}" name="electric" id="electric" placeholder="Enter Number" required>
+                                                        <label class="label" for="subject">Electric Fee K(VND/Kmw): (When editing, edit the Electric Number Usage section.)</label>
+                                                        <input type="number" class="form-control positive-number" value="${bl.electric}" name="electric" id="electric" placeholder="Enter Number" required>
 
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6"> 
                                                     <div class="form-group">
-                                                        <label class="label" for="subject">Water Fee: K(VND/m3)</label>
+                                                        <label class="label" for="subject">Water Fee K(VND/m3): (When editing, edit the Water Block Usage section.)</label>
                                                         <input type="number" class="form-control" value="${bl.water}" name="water" id="water" placeholder="Enter Number" required>
                                                     </div>
                                                 </div>
