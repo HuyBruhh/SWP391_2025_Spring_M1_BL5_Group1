@@ -1,12 +1,13 @@
 <%@page import="dao.RoomDAO,java.util.List"%>
 <%@page import="model.Rooms" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 
 <%
-    List<Rooms> listRoom = (List<Rooms>) request.getAttribute("rooms");
-    List<Rooms> listAllRoom = (List<Rooms>) request.getAttribute("allRooms");
-    int totalPage = (int) request.getAttribute("totalPage");
-    int index = (int) request.getAttribute("index");   
+List<Rooms> listRoom      = (List<Rooms>) request.getAttribute("roomList");
+  List<Rooms> listAllRoom   = listRoom;  // nếu bạn chỉ muốn filter/search trên cùng 1 list
+  int totalPage             = (Integer) request.getAttribute("totalPage");
+  int currentPage           = (Integer) request.getAttribute("currentPage");
 %>
 <!doctype html>
 <html lang="en">
@@ -32,25 +33,56 @@
         <link rel="stylesheet" href="css/style.css">
 
         <title>Hola Motel</title>
-        <script>
+<script>
+  // Định dạng số tiền
+  function formatNumber(num) {
+    return Number(num).toLocaleString('vi-VN');
+  }
 
-            function formatNumber(number) {
-                return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-            }
+  // Gán lại số tiền đã định dạng
+  function formatAllPrices() {
+    const priceElements = document.querySelectorAll('.price span');
+    priceElements.forEach(element => {
+      const rawFee = element.getAttribute('data-fee');
+      if (rawFee) {
+        const formattedFee = formatNumber(rawFee);
+        element.textContent = formattedFee + ' VND';
+      }
+    });
+  }
 
+  // Lọc phòng theo mệnh giá (đơn vị triệu đồng)
+  function filterRoomsByPrice(min, max) {
+    const rooms = document.querySelectorAll('.room-card');
+    rooms.forEach(room => {
+      const priceAttr = room.querySelector('.price')?.getAttribute('data-room-price');
+      const price = parseFloat(priceAttr);
+      if (isNaN(price)) return;
+      const inRange = (!min || price >= min) && (!max || price <= max);
+      room.style.display = inRange ? 'block' : 'none';
+    });
+  }
 
-            function formatAllPrices() {
-                var priceElements = document.querySelectorAll('.price span');
-                priceElements.forEach(function (element) {
-                    var rawFee = element.getAttribute('data-fee');
-                    var formattedFee = formatNumber(rawFee);
-                    element.textContent = formattedFee + ' VND';
-                });
-            }
+  // Gắn sự kiện khi chọn lọc giá
+  document.addEventListener('DOMContentLoaded', () => {
+    formatAllPrices();
 
-
-            document.addEventListener('DOMContentLoaded', formatAllPrices);
-        </script>
+    document.querySelectorAll('input[name="price"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        const value = radio.value;
+        if (value === 'all') {
+          filterRoomsByPrice(null, null);
+        } else if (value === 'under-1') {
+          filterRoomsByPrice(null, 1);
+        } else if (value === '1-2') {
+          filterRoomsByPrice(1, 2);
+        } else if (value === '2-3') {
+          filterRoomsByPrice(2, 3);
+        }
+      });
+    });
+  });
+</script>
         <style>
             .pagination {
                 display: flex;
@@ -276,237 +308,119 @@
             </div>
 
             <div class="section section-properties" style="padding-bottom: 30px">
-                <div class="container main-container">
-                    <div class="row">
-                        <!-- search -->
-                        <div class="col-lg-3" style="margin-left: -80px;">
-                            <div class="search-filter">
-                                <div class="search-container">
-                                    <input type="text" id="searchInput" class="form-control search-input" placeholder="Search by room number">
-                                </div>
-
-                                <div class="price-range">
-                                    <label style="color: orange; font-size: 17px" class="price-label">Price Levels</label><br>
-                                    <input type="checkbox" id="priceAll" name="priceRange" value="all" class="price-input" onclick="filterRooms(this)">
-                                    <label for="priceAll" class="price-label">All</label><br>
-                                    <input type="checkbox" id="priceBelow1M" name="priceRange" value="below1M" class="price-input" onclick="filterRooms(this)">
-                                    <label for="priceBelow1M" class="price-label">Under 1 million</label><br>
-                                    <input type="checkbox" id="price1To2M" name="priceRange" value="1To2M" class="price-input" onclick="filterRooms(this)">
-                                    <label for="price1To2M" class="price-label">1-2 million</label><br>
-                                    <input type="checkbox" id="price2To3M" name="priceRange" value="2To3M" class="price-input" onclick="filterRooms(this)">
-                                    <label for="price2To3M" class="price-label">2-3 million</label>
-                                </div>
-
-                                <div class="price-range">
-                                    <label style="color: orange; font-size: 17px" class="price-label">Department</label><br>
-                                    <input type="checkbox" id="departmentA" name="priceRange" value="A" class="price-input" onclick="filterRoomsByDepartment(this)">
-                                    <label for="departmentA" class="price-label">Department A</label>
-                                    <input type="checkbox" id="departmentB" name="priceRange" value="B" class="price-input" onclick="filterRoomsByDepartment(this)">
-                                    <label for="departmentB" class="price-label">Department B</label>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- end search -->
-
-                        <!-- room detail -->
-                        <div class="col-lg-9" id="roomListContainer">
-                            <div id="roomList" class="room-list-container row">
-                            <% for (int i = 0; i < listRoom.size(); i++) { %>
-                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4" data-room-name="<%= listRoom.get(i).getRoomNumber() %>" data-room-price="<%= listRoom.get(i).getRoomFee().longValue() %>">
-                                <div class="property-item mb-30">
-                                    <a href="OwnerController?service=roomDetail&roomID=<%= listRoom.get(i).getRoomID()%>" class="img">
-                                        <% String base64Image = listRoom.get(i).getRoomImg(); %>
-                                        <img src="data:image/jpg;base64,<%= base64Image %>" class="img-fluid" style="height: 350px; width: 100%;">
-                                    </a>
-                                    <div class="property-content">
-                                        <div class="price mb-2"> <span data-fee="<%= listRoom.get(i).getRoomFee().longValue() * 1000 %>"></span> </div>
-                                        <div>
-                                            <span class="d-block mb-2 text-black-50">Thon 3, Tan Xa, Thach That</span>
-                                            <span class="city d-block mb-3">Room <%= listRoom.get(i).getRoomNumber()%></span>
-                                            <div class="specs d-flex mb-4">
-                                                <span class="d-block d-flex align-items-center me-3">
-                                                    <span class="icon-bed me-2"></span>
-                                                    <span class="caption"><%= listRoom.get(i).getRoomSize()%> beds</span>
-                                                </span>
-                                                <span style="margin-right: 7px" class="d-block d-flex align-items-center">
-                                                    <span class="icon-building me-2"></span>
-                                                    <span class="caption"><%= listRoom.get(i).getRoomFloor()%> Floor</span>                                                    
-                                                </span>
-                                                <span class="d-block d-flex align-items-center">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-buildings-fill" viewBox="0 0 16 16">
-                                                    <path d="M15 .5a.5.5 0 0 0-.724-.447l-8 4A.5.5 0 0 0 6 4.5v3.14L.342 9.526A.5.5 0 0 0 0 10v5.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V14h1v1.5a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5zM2 11h1v1H2zm2 0h1v1H4zm-1 2v1H2v-1zm1 0h1v1H4zm9-10v1h-1V3zM8 5h1v1H8zm1 2v1H8V7zM8 9h1v1H8zm2 0h1v1h-1zm-1 2v1H8v-1zm1 0h1v1h-1zm3-2v1h-1V9zm-1 2h1v1h-1zm-2-4h1v1h-1zm3 0v1h-1V7zm-2-2v1h-1V5zm1 0h1v1h-1z"/>
-                                                    </svg>
-                                                    <span class="caption">Building <%= listRoom.get(i).getRoomDepartment()  %> </span>                                                    
-                                                </span>
-                                            </div>
-                                            <div class="occupancy">
-                                                <span class="icon-person me-2"></span>
-                                                <span class="caption"><%= listRoom.get(i).getRoomOccupant() %> / <%= listRoom.get(i).getRoomSize() %></span> 
-                                            </div>
-                                            <a href="OwnerController?service=roomDetail&roomID=<%= listRoom.get(i).getRoomID()%>" class="btn btn-primary py-2 px-3">See details</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <%}%>
-                        </div>
-                    </div> 
-                    <!-- room detail end -->
-
-                    <!-- all rooms detail -->
-                    <!-- khi tim kiem se dung toi phan nay (lay toan bo phong trong list de tim kiem) -->
-                    <div class="col-lg-9" id="allRoomListContainer" style="display: none;">
-                        <div id="allRoomList" class="room-list-container row">
-                            <% for (int i = 0; i < listAllRoom.size(); i++) { 
-                                    if (listAllRoom.get(i).getRoomStatus() == 1) {
-                            %>
-                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4" data-room-name="<%= listAllRoom.get(i).getRoomNumber() %>" data-room-price="<%= listAllRoom.get(i).getRoomFee().longValue() %>">
-                                <div class="property-item mb-30">
-                                    <a href="OwnerController?service=roomDetail&roomID=<%= listAllRoom.get(i).getRoomID()%>" class="img">
-                                        <% String base64Image = listAllRoom.get(i).getRoomImg(); %>
-                                        <img src="data:image/jpg;base64,<%= base64Image %>" class="img-fluid" style="height: 350px; width: 100%;">
-                                    </a>
-                                    <div class="property-content">
-                                        <div class="price mb-2"> <span data-fee="<%= listAllRoom.get(i).getRoomFee().longValue() * 1000 %>"></span> </div>
-                                        <div>
-                                            <span class="d-block mb-2 text-black-50">Thon 3, Tan Xa, Thach That</span>
-                                            <span class="city d-block mb-3">Room <%= listAllRoom.get(i).getRoomNumber()%></span>
-                                            <div class="specs d-flex mb-4">
-                                                <span class="d-block d-flex align-items-center me-3">
-                                                    <span class="icon-bed me-2"></span>
-                                                    <span class="caption"><%= listAllRoom.get(i).getRoomSize()%> beds</span>
-                                                </span>
-                                                <span style="margin-right: 10px" class="d-block d-flex align-items-center">
-                                                    <span class="icon-building me-2"></span>
-                                                    <span class="caption"><%= listAllRoom.get(i).getRoomFloor()%> Floor</span>
-                                                </span>
-                                                <span class="d-block d-flex align-items-center">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-buildings-fill" viewBox="0 0 16 16">
-                                                    <path d="M15 .5a.5.5 0 0 0-.724-.447l-8 4A.5.5 0 0 0 6 4.5v3.14L.342 9.526A.5.5 0 0 0 0 10v5.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V14h1v1.5a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5zM2 11h1v1H2zm2 0h1v1H4zm-1 2v1H2v-1zm1 0h1v1H4zm9-10v1h-1V3zM8 5h1v1H8zm1 2v1H8V7zM8 9h1v1H8zm2 0h1v1h-1zm-1 2v1H8v-1zm1 0h1v1h-1zm3-2v1h-1V9zm-1 2h1v1h-1zm-2-4h1v1h-1zm3 0v1h-1V7zm-2-2v1h-1V5zm1 0h1v1h-1z"/>
-                                                    </svg>
-                                                    <span class="caption"> Building <%= listAllRoom.get(i).getRoomDepartment() %> </span>
-                                                </span>
-                                            </div>
-                                            <div class="occupancy">
-                                                <span class="icon-person me-2"></span>
-                                                <span class="caption"><%= listAllRoom.get(i).getRoomOccupant() %> / <%= listAllRoom.get(i).getRoomSize() %></span> 
-                                            </div>
-                                            <a href="OwnerController?service=roomDetail&roomID=<%= listAllRoom.get(i).getRoomID()%>" class="btn btn-primary py-2 px-3">See details</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <%      } 
-                                }
-                            %>
-                        </div>
-                    </div>
-                    <!-- all rooms detail end -->   
-
-                    <!-- Rooms in Department A -->
-                    <div class="col-lg-9" id="departmentAListContainer" style="display: none;">
-                        <div id="allRoomList" class="room-list-container row">
-                            <% for (int i = 0; i < listAllRoom.size(); i++) { 
-                                   if (listAllRoom.get(i).getRoomDepartment().trim().equals("A")) { 
-                            %>                                
-                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4" data-room-name="<%= listAllRoom.get(i).getRoomNumber() %>" data-room-price="<%= listAllRoom.get(i).getRoomFee().longValue() %>">
-                                <div class="property-item mb-30">
-                                    <a href="OwnerController?service=roomDetail&roomID=<%= listAllRoom.get(i).getRoomID()%>" class="img">
-                                        <% String base64Image = listAllRoom.get(i).getRoomImg(); %>
-                                        <img src="data:image/jpg;base64,<%= base64Image %>" class="img-fluid" style="height: 350px; width: 100%;">
-                                    </a>
-                                    <div class="property-content">
-                                        <div class="price mb-2"> <span data-fee="<%= listAllRoom.get(i).getRoomFee().longValue() * 1000 %>"></span> </div>
-                                        <div>
-                                            <span class="d-block mb-2 text-black-50">Thon 3, Tan Xa, Thach That</span>
-                                            <span class="city d-block mb-3">Room <%= listAllRoom.get(i).getRoomNumber()%></span>
-                                            <div class="specs d-flex mb-4">
-                                                <span class="d-block d-flex align-items-center me-3">
-                                                    <span class="icon-bed me-2"></span>
-                                                    <span class="caption"><%= listAllRoom.get(i).getRoomSize()%> beds</span>
-                                                </span>
-                                                <span style="margin-right: 10px" class="d-block d-flex align-items-center">
-                                                    <span class="icon-building me-2"></span>
-                                                    <span class="caption"><%= listAllRoom.get(i).getRoomFloor()%> Floor</span>
-                                                </span>
-                                                <span class="d-block d-flex align-items-center">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-buildings-fill" viewBox="0 0 16 16">
-                                                    <path d="M15 .5a.5.5 0 0 0-.724-.447l-8 4A.5.5 0 0 0 6 4.5v3.14L.342 9.526A.5.5 0 0 0 0 10v5.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V14h1v1.5a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5zM2 11h1v1H2zm2 0h1v1H4zm-1 2v1H2v-1zm1 0h1v1H4zm9-10v1h-1V3zM8 5h1v1H8zm1 2v1H8V7zM8 9h1v1H8zm2 0h1v1h-1zm-1 2v1H8v-1zm1 0h1v1h-1zm3-2v1h-1V9zm-1 2h1v1h-1zm-2-4h1v1h-1zm3 0v1h-1V7zm-2-2v1h-1V5zm1 0h1v1h-1z"/>
-                                                    </svg>
-                                                    <span class="caption"> Building <%= listAllRoom.get(i).getRoomDepartment() %> </span>
-                                                </span>
-                                            </div>
-                                            <div class="occupancy">
-                                                <span class="icon-person me-2"></span>
-                                                <span class="caption"><%= listAllRoom.get(i).getRoomOccupant() %> / <%= listAllRoom.get(i).getRoomSize() %></span> 
-                                            </div>
-                                            <a href="OwnerController?service=roomDetail&roomID=<%= listAllRoom.get(i).getRoomID()%>" class="btn btn-primary py-2 px-3">See details</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <% } } %>
-                        </div>
-                    </div>
-                    <!-- End Rooms in Department A -->
-
-                    <!-- Rooms in Department B -->
-                    <div class="col-lg-9" id="departmentBListContainer" style="display: none;">
-                        <div id="departmentBList" class="room-list-container row">
-                            <% for (int i = 0; i < listAllRoom.size(); i++) { 
-                                        if (listAllRoom.get(i).getRoomDepartment().trim().equals("B")) { %>
-                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4" data-room-name="<%= listAllRoom.get(i).getRoomNumber() %>" data-room-price="<%= listAllRoom.get(i).getRoomFee().longValue() %>">
-                                <div class="property-item mb-30">
-                                    <a href="OwnerController?service=roomDetail&roomID=<%= listAllRoom.get(i).getRoomID()%>" class="img">
-                                        <% String base64Image = listAllRoom.get(i).getRoomImg(); %>
-                                        <img src="data:image/jpg;base64,<%= base64Image %>" class="img-fluid" style="height: 350px; width: 100%;">
-                                    </a>
-                                    <div class="property-content">
-                                        <div class="price mb-2"> <span data-fee="<%= listAllRoom.get(i).getRoomFee().longValue() * 1000 %>"></span> </div>
-                                        <div>
-                                            <span class="d-block mb-2 text-black-50">Thon 3, Tan Xa, Thach That</span>
-                                            <span class="city d-block mb-3">Room <%= listAllRoom.get(i).getRoomNumber()%></span>
-                                            <div class="specs d-flex mb-4">
-                                                <span class="d-block d-flex align-items-center me-3">
-                                                    <span class="icon-bed me-2"></span>
-                                                    <span class="caption"><%= listAllRoom.get(i).getRoomSize()%> beds</span>
-                                                </span>
-                                                <span style="margin-right: 10px" class="d-block d-flex align-items-center">
-                                                    <span class="icon-building me-2"></span>
-                                                    <span class="caption"><%= listAllRoom.get(i).getRoomFloor()%> Floor</span>
-                                                </span>
-                                                <span class="d-block d-flex align-items-center">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-buildings-fill" viewBox="0 0 16 16">
-                                                    <path d="M15 .5a.5.5 0 0 0-.724-.447l-8 4A.5.5 0 0 0 6 4.5v3.14L.342 9.526A.5.5 0 0 0 0 10v5.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V14h1v1.5a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5zM2 11h1v1H2zm2 0h1v1H4zm-1 2v1H2v-1zm1 0h1v1H4zm9-10v1h-1V3zM8 5h1v1H8zm1 2v1H8V7zM8 9h1v1H8zm2 0h1v1h-1zm-1 2v1H8v-1zm1 0h1v1h-1zm3-2v1h-1V9zm-1 2h1v1h-1zm-2-4h1v1h-1zm3 0v1h-1V7zm-2-2v1h-1V5zm1 0h1v1h-1z"/>
-                                                    </svg>
-                                                    <span class="caption"> Building <%= listAllRoom.get(i).getRoomDepartment() %> </span>
-                                                </span>
-                                            </div>
-                                            <div class="occupancy">
-                                                <span class="icon-person me-2"></span>
-                                                <span class="caption"><%= listAllRoom.get(i).getRoomOccupant() %> / <%= listAllRoom.get(i).getRoomSize() %></span> 
-                                            </div>
-                                            <a href="OwnerController?service=roomDetail&roomID=<%= listAllRoom.get(i).getRoomID()%>" class="btn btn-primary py-2 px-3">See details</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <% } } %>
-                        </div>
-                    </div>
-                    <!-- End Rooms in Department B -->
-
-
-                </div>
+    <div class="container main-container">
+      <div class="row">
+        <!-- search and filter sidebar -->
+        <div class="col-lg-3" style="margin-left: -80px;">
+          <div class="search-filter">
+            <div class="search-container">
+              <input type="text" id="searchInput" class="form-control search-input" placeholder="Search by room number">
             </div>
+            <div class="price-range">
+              <label style="color: orange; font-size: 17px" class="price-label">Price Levels</label><br>
+              <input type="checkbox" id="priceAll"    name="priceRange" value="all"    class="price-input" onclick="filterRooms(this.)" checked>
+              <label for="priceAll" class="price-label">All</label><br>
+              <input type="checkbox" id="priceBelow1M" name="priceRange" value="below1M" class="price-input" onclick="filterRooms(this)">
+              <label for="priceBelow1M" class="price-label">Under 1 million</label><br>
+              <input type="checkbox" id="price1To2M"  name="priceRange" value="1To2M"  class="price-input" onclick="filterRooms(this)">
+              <label for="price1To2M" class="price-label">1-2 million</label><br>
+              <input type="checkbox" id="price2To3M"  name="priceRange" value="2To3M"  class="price-input" onclick="filterRooms(this)">
+              <label for="price2To3M" class="price-label">2-3 million</label>
+            </div>
+          </div>
         </div>
 
-        <!-- paging -->
-        <div class="pagination" style="margin: 0px; padding-bottom: 50px">
-            <% for (int i = 0; i < totalPage; i++) { %>
-            <a href="OwnerController?service=pagingRoom&index=<%=i+1%>" class="<%= (i + 1 == index) ? "active" : "" %>"><%= i + 1 %></a>
+        <!-- original room list container -->
+        <div class="col-lg-9" id="roomListContainer">
+          <div id="roomList" class="room-list-container row">
+            <% for (Rooms r : listRoom) { %>
+            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4"
+                 data-room-name="<%= r.getRoomNumber() %>"
+                 data-room-price="<%= r.getRoomFee().longValue()  %>">
+
+              <div class="property-item mb-30">
+                <a href="OwnerController?service=roomDetail&roomID=<%= r.getRoomID()%>" class="img">
+                  <img src="data:image/jpg;base64,<%= r.getRoomImg()%>" class="img-fluid" style="height:350px;width:100%">
+                </a>
+                <div class="property-content">
+                  <div class="price mb-2">
+                    <span data-fee="<%= r.getRoomFee().longValue()* 1000 %>"></span>
+                  </div>
+                  <span class="d-block mb-2 text-black-50">Thon 3, Tan Xa, Thach That</span>
+                  <span class="city d-block mb-3">Room <%= r.getRoomNumber()%></span>
+                  <div class="specs d-flex mb-4">
+                    <span class="d-block d-flex align-items-center me-3">
+                      <span class="icon-bed me-2"></span>
+                      <span class="caption"><%= r.getRoomSize()%> beds</span>
+                    </span>
+                    <span style="margin-right:7px" class="d-block d-flex align-items-center">
+                      <span class="icon-building me-2"></span>
+                      <span class="caption"><%= r.getRoomFloor()%> Floor</span>
+                    </span>
+                  </div>
+                  <div class="occupancy">
+                    <span class="icon-person me-2"></span>
+                    <span class="caption"><%= r.getRoomOccupant()%> / <%= r.getRoomSize()%></span>
+                  </div>
+                  <a href="OwnerController?service=roomDetail&roomID=<%= r.getRoomID()%>" class="btn btn-primary py-2 px-3">See details</a>
+                </div>
+              </div>
+            </div>
             <% } %>
-        </div>  
+          </div>
+        </div>
+
+        <!-- filtered/alternate room list container -->
+        <div class="col-lg-9" id="allRoomListContainer" style="display:none">
+          <div id="allRoomList" class="room-list-container row">
+            <% for (Rooms r : listAllRoom) {
+                 if (r.getRoomStatus() == 1) { %>
+            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4"
+                 data-room-name="<%= r.getRoomNumber() %>"
+                 data-room-price="<%= r.getRoomFee().longValue()*1000 %>">
+              <div class="property-item mb-30">
+                <a href="OwnerController?service=roomDetail&roomID=<%= r.getRoomID()%>" class="img">
+                  <img src="data:image/jpg;base64,<%= r.getRoomImg()%>" class="img-fluid" style="height:350px;width:100%">
+                </a>
+                <div class="property-content">
+                  <div class="price mb-2">
+                    <span data-fee="<%= r.getRoomFee().longValue()*1000 %>"></span>
+                  </div>
+                  <span class="d-block mb-2 text-black-50">Thon 3, Tan Xa, Thach That</span>
+                  <span class="city d-block mb-3">Room <%= r.getRoomNumber()%></span>
+                  <div class="specs d-flex mb-4">
+                    <span class="d-block d-flex align-items-center me-3">
+                      <span class="icon-bed me-2"></span>
+                      <span class="caption"><%= r.getRoomSize()%> beds</span>
+                    </span>
+                    <span style="margin-right:10px" class="d-block d-flex align-items-center">
+                      <span class="icon-building me-2"></span>
+                      <span class="caption"><%= r.getRoomFloor()%> Floor</span>
+                    </span>
+                  </div>
+                  <div class="occupancy">
+                    <span class="icon-person me-2"></span>
+                    <span class="caption"><%= r.getRoomOccupant()%> / <%= r.getRoomSize()%></span>
+                  </div>
+                  <a href="OwnerController?service=roomDetail&roomID=<%= r.getRoomID()%>" class="btn btn-primary py-2 px-3">See details</a>
+                </div>
+              </div>
+            </div>
+            <%  } } %>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- pagination -->
+  <div class="pagination" style="margin:0; padding-bottom:50px">
+    <% for (int i=1; i<= totalPage; i++) { %>
+      <a href="OwnerController?service=pagingRoom&page=<%= i %>"
+         class="<%= (i==currentPage)? "active":"" %>"><%= i %></a>
+    <% } %>
+  </div>
 
 
         <div class="site-footer">
@@ -610,81 +524,41 @@
         </script>
 
         <script>
-            function filterRooms(clickedCheckbox) {
-                var checkboxes = document.querySelectorAll('input[name="priceRange"]');
-                checkboxes.forEach(function (checkbox) {
-                    if (checkbox !== clickedCheckbox) {
-                        checkbox.checked = false;
-                    }
-                });
 
-                var selectedPriceRange = document.querySelector('input[name="priceRange"]:checked') ? document.querySelector('input[name="priceRange"]:checked').value : null;
-                var roomListContainer = document.getElementById('roomListContainer');
-                var allRoomListContainer = document.getElementById('allRoomListContainer');
-                var allRoomList = document.getElementById('allRoomList').children;
+ function filterRooms(clickedCheckbox) {
+  // Bỏ chọn tất cả các checkbox khác
+  const checkboxes = document.querySelectorAll('input[name="priceRange"]');
+  checkboxes.forEach(cb => {
+    if (cb !== clickedCheckbox) cb.checked = false;
+  });
 
-                if (!selectedPriceRange) {
-                    roomListContainer.style.display = 'block';
-                    allRoomListContainer.style.display = 'none';
-                    return;
-                }
+  const sel  = clickedCheckbox.checked ? clickedCheckbox.value : 'all';
+  const orig = document.getElementById('roomListContainer');
+  const alt  = document.getElementById('allRoomListContainer');
+  const rooms= Array.from(document.getElementById('allRoomList').children);
 
-                roomListContainer.style.display = 'none';
-                allRoomListContainer.style.display = 'block';
+  if (sel === 'all') {
+    orig.style.display = 'block';
+    alt .style.display = 'none';
+    return;
+  }
+  orig.style.display = 'none';
+  alt .style.display = 'block';
 
-                Array.from(allRoomList).forEach(function (room) {
-                    var price = room.getAttribute('data-room-price');
-
-                    if (selectedPriceRange === "all") {
-                        room.style.display = "block";
-                    } else if (selectedPriceRange === "below1M" && price < 1000) {
-                        room.style.display = "block";
-                    } else if (selectedPriceRange === "1To2M" && price >= 1000 && price <= 2000) {
-                        room.style.display = "block";
-                    } else if (selectedPriceRange === "2To3M" && price > 2000 && price <= 3000) {
-                        room.style.display = "block";
-                    } else {
-                        room.style.display = "none";
-                    }
-                });
-            }
-        </script>
-
-        <script>
-            function filterRoomsByDepartment() {
-
-                var departmentAChecked = document.getElementById("departmentA").checked;
-                var departmentBChecked = document.getElementById("departmentB").checked;
+  rooms.forEach(room => {
+    const price = parseInt(room.getAttribute('data-room-price'), 10);
+    let show = false;
+    if (sel === 'below1M') show = price < 1_000_000;
+    if (sel === '1To2M')   show = price >= 1_000_000 && price <= 2_000_000;
+    if (sel === '2To3M')   show = price >  2_000_000 && price <= 3_000_000;
+    room.style.display = show ? '' : 'none';
+  });
+}
 
 
-                var availableRoomsContainer = document.getElementById("roomListContainer");
-                var departmentAContainer = document.getElementById("departmentAListContainer");
-                var departmentBContainer = document.getElementById("departmentBListContainer");
+  </script>
 
-
-
-                departmentAContainer.style.display = 'none';
-                departmentBContainer.style.display = 'none';
-
-
-                if (departmentAChecked) {
-                    availableRoomsContainer.style.display = 'none';
-                    departmentAContainer.style.display = 'block';
-
-                }
-                if (departmentBChecked) {
-                    departmentBContainer.style.display = 'block';
-                    availableRoomsContainer.style.display = 'none';
-                }
-                if (!departmentAChecked && !departmentBChecked) {
-                    availableRoomsContainer.style.display = 'block';
-                }
-            }
-
-
-            document.getElementById("departmentA").addEventListener("change", filterRoomsByDepartment);
-            document.getElementById("departmentB").addEventListener("change", filterRoomsByDepartment);
-        </script>
+        
 
     </body>
 </html>

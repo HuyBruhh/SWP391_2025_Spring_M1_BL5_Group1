@@ -23,42 +23,73 @@ import java.util.Locale;
  */
 public class BillDAO extends MyDAO {
 
-    public List<Bill> getBillByRoomID(int id) {
+        public List<Bill> getBillByRoomID(int id) {
         List<Bill> list = new ArrayList<>();
         String sql
-                = "SELECT \n"
-                + "    [billID],\n"
-                + "    [roomID],\n"
-                + "    [service],\n"
-                + "    [electric],\n"
-                + "    [water],\n"
-                + "    [roomFee],\n"
-                + "    [other],\n"
-                + "    [penMoney],\n"
-                + "    [createAt],\n"
-                + "    [deadline],\n"
-                + "    [payAt],\n"
-                + "    ([service] + [electric] + [water] + [roomFee] + [other] + [penMoney]) AS total\n"
-                + "FROM \n"
-                + "    [HL_Motel].[dbo].[bill]\n"
-                + "WHERE [roomID] = ?\n"
-                + "ORDER BY \n"
-                + "    [createAt] DESC;";
-
+            = "SELECT billID, roomID, service, electric, water, roomFee, other, penMoney, createAt, deadline, payAt,\n"
+            + "       (service + electric + water + roomFee + other + penMoney) AS total\n"
+            + "FROM bill\n"
+            + "WHERE roomID = ?\n"
+            + "ORDER BY createAt DESC;";
         try {
             ps = con.prepareStatement(sql);
             ps.setInt(1, id);
             rs = ps.executeQuery();
             while (rs.next()) {
-                Bill bill = new Bill(rs.getInt(1), rs.getInt(2), rs.getDouble(3), rs.getDouble(4),
-                        rs.getDouble(5), rs.getDouble(6), rs.getDouble(7), rs.getDouble(8),
-                        rs.getDouble(12), rs.getString(9), rs.getString(10), rs.getString(11));
-                list.add(bill);
+                Bill b = new Bill(
+                    rs.getInt("billID"),
+                    rs.getInt("roomID"),
+                    rs.getDouble("service"),
+                    rs.getDouble("electric"),
+                    rs.getDouble("water"),
+                    rs.getDouble("roomFee"),
+                    rs.getDouble("other"),
+                    rs.getDouble("penMoney"),
+                    rs.getDouble("total"),
+                    rs.getString("createAt"),
+                    rs.getString("deadline"),
+                    rs.getString("payAt")  // nếu null sẽ là NULL
+                );
+                list.add(b);
             }
         } catch (SQLException e) {
-            // Handle exception as needed
-            System.out.println("Fail: " + e.getMessage());
+            System.out.println("Fail getBillByRoomID: " + e.getMessage());
+        }
+        return list;
+    }
 
+    /** MỚI: Lấy chỉ bill chưa thanh toán (payAt IS NULL) */
+    public List<Bill> getUnpaidBillsByRoomID(int id) {
+        List<Bill> list = new ArrayList<>();
+        String sql
+            = "SELECT billID, roomID, service, electric, water, roomFee, other, penMoney, createAt, deadline,\n"
+            + "       (service + electric + water + roomFee + other + penMoney) AS total\n"
+            + "FROM bill\n"
+            + "WHERE roomID = ? AND payAt IS NULL\n"
+            + "ORDER BY createAt DESC;";
+        try {
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, id);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                Bill b = new Bill(
+                    rs.getInt("billID"),
+                    rs.getInt("roomID"),
+                    rs.getDouble("service"),
+                    rs.getDouble("electric"),
+                    rs.getDouble("water"),
+                    rs.getDouble("roomFee"),
+                    rs.getDouble("other"),
+                    rs.getDouble("penMoney"),
+                    rs.getDouble("total"),
+                    rs.getString("createAt"),
+                    rs.getString("deadline"),
+                    null   // payAt = null
+                );
+                list.add(b);
+            }
+        } catch (SQLException e) {
+            System.out.println("Fail getUnpaidBillsByRoomID: " + e.getMessage());
         }
         return list;
     }

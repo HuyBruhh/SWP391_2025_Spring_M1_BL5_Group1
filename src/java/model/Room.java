@@ -40,6 +40,14 @@ public class Room {
         this.roomOccupant = roomOccupant;
     }
 
+    public Room(int roomNumber, int roomFloor, int roomSize, BigDecimal roomFee, String roomImg) {
+        this.roomFloor = roomFloor;
+        this.roomNumber = roomNumber;
+        this.roomSize = roomSize;
+        this.roomImg = roomImg;
+        this.roomFee = roomFee;
+    }
+
     public Room(int roomID, int roomFloor, int roomNumber, int roomSize, String roomImg, int total) {
         this.roomID = roomID;
         this.roomFloor = roomFloor;

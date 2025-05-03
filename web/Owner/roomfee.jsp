@@ -264,7 +264,7 @@
                                                                         <div class="row" style="margin-top:50px ">
                                                                             <div class="col-md-12">
                                                                                 <div class="form-group d-flex justify-content-center">
-                                                                                    <a style="padding: 10px 20px; font-size: 18px" href="ListRenterController" class="btn btn-danger"><i class="fa-solid fa-chevron-left"></i>&nbsp;Back To List</a>
+                                                                                    <a style="padding: 10px 20px; font-size: 18px" href="/SWP391.E.BL5.G5/ListRenterController" class="btn btn-danger"><i class="fa-solid fa-chevron-left"></i>&nbsp;Back To List</a>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -299,20 +299,6 @@
             alert(errorMessage);
         }
     </script>-->
-        <script>
-    var successMessage = "${sessionScope.successMessage}";
-    var errorMessage = "${sessionScope.errorMessage}";
-    if (successMessage !== "") {
-        alert(successMessage);
-        <% session.removeAttribute("successMessage"); %>
-    }
-    if (errorMessage !== "") {
-        alert(errorMessage);
-        <% session.removeAttribute("errorMessage"); %>
-    }
-</script>
-
-<script src="js/bootstrap.bundle.min.js"></script>
 
 
         <script src="js/bootstrap.bundle.min.js"></script>

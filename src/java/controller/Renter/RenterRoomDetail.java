@@ -58,56 +58,42 @@ public class RenterRoomDetail extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-          HttpSession session = request.getSession();
-        RenterDAO dao = new RenterDAO();
+  HttpSession session = request.getSession();
 
-        // get notifi from paymentbillcontroller servlet
-        Boolean paymentSuccess = (Boolean) request.getSession().getAttribute("paymentSuccess");
+        // Lấy thông tin renter
+        String email = (String) session.getAttribute("email");
+        String password = (String) session.getAttribute("password");
+        RenterDAO renterDAO = new RenterDAO();
+        List<Renter> renters = renterDAO.getRenterDetail(email, password);
+
+        int userID = renters.isEmpty() ? 0 : renters.get(0).getUserID();
+
+        // Lấy rent details
+        List<RentDetail> rentDetails = renterDAO.rentDetail(userID);
+        request.setAttribute("rentDetails", rentDetails);
+
+        int roomID = rentDetails.isEmpty() ? 0 : rentDetails.get(0).getRoomID();
+
+        // Lấy thông báo thanh toán nếu có
+        Boolean paymentSuccess = (Boolean) session.getAttribute("paymentSuccess");
         if (paymentSuccess != null) {
-            request.getSession().removeAttribute("paymentSuccess");
+            session.removeAttribute("paymentSuccess");
             request.setAttribute("paymentSuccess", paymentSuccess);
         }
 
-        String email = (String) session.getAttribute("email");
-        String password = (String) session.getAttribute("password");
-
-        List<Renter> basicDetailRenter = dao.getRenterDetail(email, password);
-        int userID = 0;
-        for (Renter renter : basicDetailRenter) {
-            userID = renter.getUserID();
-        }
-
-        // Call the rentDetail method
-        List<RentDetail> rentDetails = dao.rentDetail(userID);
-
-        //get roomID
-        int roomID = 0;
-        for (RentDetail rentDetail : rentDetails) {
-            roomID = rentDetail.getRoomID();
-        }
+        // Tính tổng living expense
         BillDAO billDAO = new BillDAO();
-// ví dụ: lấy tất cả các Bill của phòng này
-List<Bill> bills = billDAO.getBillByRoomID(roomID);
+        List<Bill> unpaid = billDAO.getUnpaidBillsByRoomID(roomID);
+        double totalLiving = unpaid.stream().mapToDouble(Bill::getTotal).sum();
+        request.setAttribute("livingTotal", totalLiving);
 
-// giả sử bạn muốn hiển thị tổng tiền:
-double totalLiving = bills.stream()
-                          .mapToDouble(Bill::getTotal)
-                          .sum();
-// hoặc nếu chỉ cần bill mới nhất:
-Bill lastBill = bills.isEmpty() ? null : bills.get(bills.size() - 1);
+        // Lấy 1 bill để hiển thị chi tiết
+        Bill lastBill = billDAO.getBillDetailByRoomID(roomID);
+        request.setAttribute("bill", lastBill);
 
-// đẩy xuống JSP
-request.setAttribute("livingTotal", totalLiving);
-request.setAttribute("bill", lastBill);
-        //take all money of a person from roomID of that person's room
-  
-
-        // Set the rent details and bill as a request attribute
-        request.setAttribute("rentDetails", rentDetails);
-   
-
-        // Forward the request to the JSP page
-        request.getRequestDispatcher("Renter/RenterRoomDetail.jsp").forward(request, response);
+        // Forward về JSP
+        request.getRequestDispatcher("/Renter/RenterRoomDetail.jsp")
+               .forward(request, response);
     } 
 
     /** 

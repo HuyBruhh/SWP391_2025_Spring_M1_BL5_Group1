@@ -1,8 +1,9 @@
-
-
 <%@page import="dao.RoomDAO,java.util.List"%>
 <%@page import="model.RoomDetailSe"%>
 <%@ page import="java.text.DecimalFormat" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <% RoomDetailSe roomDetail = (RoomDetailSe) request.getAttribute("roomDetail"); 
    String[] listItemNames = (String[]) request.getAttribute("listItem");
@@ -11,13 +12,13 @@
 
 
 <!DOCTYPE html>
-<html>
+<html> 
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link rel="shortcut icon" href="images/favicon.png">
         <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css'>
-        <title>Edit Owner Profile</title>
- <link href='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css' rel='stylesheet' />
+        <title>Edit Room</title>
+        <link href='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css' rel='stylesheet' />
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -154,12 +155,12 @@
             }
 
             .under-repair-form {
-                margin: 20px auto; 
+                margin: 20px auto;
                 padding: 15px;
                 border: 1px solid #ddd;
                 border-radius: 5px;
                 background-color: #f9f9f9;
-                width: 400px; 
+                width: 400px;
             }
 
             .under-repair-form select {
@@ -168,7 +169,7 @@
                 border: 1px solid #ccc;
                 border-radius: 5px;
                 font-size: 16px;
-                box-sizing: border-box; 
+                box-sizing: border-box;
             }
 
             .under-repair-form input[type="submit"] {
@@ -181,7 +182,7 @@
                 font-size: 16px;
                 cursor: pointer;
                 display: block;
-                width: 100%; 
+                width: 100%;
             }
 
             .under-repair-form input[type="submit"]:hover {
@@ -226,9 +227,7 @@
 
                         <div class="col-lg-8 mx-auto">                       
                             <div class="card">
-                            <% if (error != null) { %>
-                            <p style="margin: 0px; text-align: center; color: red; margin: 10px 0px; background: beige"><%= error %></p>
-                            <%}%>
+                                <p style="margin: 0px; text-align: center; color: red; margin: 10px 0px; background: beige">${error}</p>
                             <form action="OwnerController" method="post" enctype="multipart/form-data">
                                 <div class="card-body">                                    
                                     <div class="row mb-3">
@@ -236,7 +235,7 @@
                                             <h6 class="mb-0">Room Number</h6>
                                         </div>
                                         <div class="col-sm-9 text-secondary">
-                                            <input  type="text" class="form-control" name="roomNumber" value="<%= roomDetail.getRoomNumber()%>" readonly="">
+                                            <input  type="text" class="form-control" name="roomNumber" value="${roomDetail.roomNumber}" readonly="">
                                         </div>
                                     </div>                              
                                     <div class="row mb-3">
@@ -244,11 +243,7 @@
                                             <h6 class="mb-0">Room Fee</h6>
                                         </div>
                                         <div class="col-sm-9 text-secondary">
-                                            <%
-                                                DecimalFormat df = new DecimalFormat("#.##");
-                                                String formattedFee = df.format(roomDetail.getRoomFee());
-                                            %>
-                                            <input type="text" class="form-control" name="roomFee" value="<%= formattedFee %>">
+                                            <input type="text" class="form-control" name="roomFee" value="${roomDetail.roomFee}">
                                         </div>
                                     </div>
                                     <div class="row mb-3">
@@ -256,7 +251,7 @@
                                             <h6 class="mb-0">Room Size</h6>
                                         </div>
                                         <div class="col-sm-9 text-secondary">
-                                            <input readonly="" type="text" class="form-control" name="roomSize" value="<%= roomDetail.getRoomSize()%>">
+                                            <input readonly="" type="text" class="form-control" name="roomSize" value="${roomDetail.roomSize}">
                                         </div>
                                     </div>
                                     <div class="row mb-3">
@@ -264,7 +259,7 @@
                                             <h6 class="mb-0">Room Image</h6>
                                         </div>
                                         <div class="col-sm-9 text-secondary">                                           
-                                            <input type="file" class="form-control" name="roomImg" value="<%= roomDetail.getRoomImg()%>" required="" >
+                                            <input type="file" class="form-control" name="roomImg" value="${roomDetail.roomImg}">
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -317,7 +312,7 @@
                                         </div>
 
                                     </div>
-                                    <input type="hidden" name="roomID" value="<%= roomDetail.getRoomID()%>">
+                                    <input type="hidden" name="roomID" value="${roomDetail.roomID}">
                                     <input type="hidden" class="btn btn-primary px-4" name="service" value="updateRoomDetail">
                                 </div>               
                             </form>  
@@ -342,26 +337,33 @@
 
                             <form id="roomForm" action="OwnerController" method="post">
                                 <input type="hidden" name="service" value="updateRoomStatus">
-                                <input type="hidden" name="roomID" value="<%= roomDetail.getRoomID() %>">
-                                <input type="hidden" name="roomOccupant" value="<%= roomDetail.getRoomOccupant() %>">
-                                <input type="hidden" id="roomStatusInput" name="roomStatus" value="<%= roomStatus %>">
+                                <input type="hidden" name="roomID" value="${roomDetail.roomID}">
+                                <input type="hidden" name="roomOccupant" value="${roomDetail.roomOccupant}">
+                                <input type="hidden" id="roomStatusInput" name="roomStatus" value="${roomDetail.roomStatus}">
                                 <div class="row button-group">
                                     <div class="col-sm-12 text-center">
                                         <div class="status-container">
                                             <label class="switch">
-                                                <input type="checkbox" id="toggle" onclick="toggleButton()" <%= roomStatus == 1 ? "checked" : "" %>>
+                                                <input type="checkbox" id="toggle" onclick="toggleButton()" ${roomDetail.roomStatus == 1 ? 'checked' : '' }>
                                                 <span class="slider"></span>
                                             </label>
-                                            <p>Status: <span id="status"><%= statusLabel %></span></p>
-
+                                            <p>Status: <span id="status">
+                                                    <c:choose>
+                                                        <c:when test="${roomDetail.roomStatus eq 0}">Rented</c:when>
+                                                        <c:when test="${roomDetail.roomStatus eq 1}">Available</c:when>
+                                                        <c:when test="${roomDetail.roomStatus eq 2}">Under Repair</c:when>
+                                                        <c:otherwise>Unknown</c:otherwise>
+                                                    </c:choose>
+                                                </span>
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
                             </form>
                             <form action="OwnerController" method="post" class="under-repair-form">
                                 <input type="hidden" name="service" value="setUnderRepair">
-                                <input type="hidden" name="roomID" value="<%= roomDetail.getRoomID() %>">
-                                <input type="hidden" name="roomStatus" value="<%= roomDetail.getRoomStatus() %>">
+                                <input type="hidden" name="roomID" value="${roomDetail.roomID}">
+                                <input type="hidden" name="roomStatus" value="${roomDetail.roomStatus}">
                                 <div class="form-group">
                                     <label for="updateRoomStatus">Update Room Status</label>
                                     <select name="updateRoomStatus" id="updateRoomStatus">
@@ -397,7 +399,7 @@
                                                     <input type="int" class="form-control" id="newQuantityModal" name="quantity" max="10">
                                                 </div>
                                                 <input type="hidden" name="service" value="addItem">
-                                                <input type="hidden" name="roomID" value="<%= roomDetail.getRoomID()%>">
+                                                <input type="hidden" name="roomID" value="${roomDetail.roomID}">
                                                 <button type="button" class="btn btn-primary" id="btnSubmitNewItemModal">Add Item</button>
                                             </form>
                                         </div>
@@ -409,142 +411,137 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
-<script src='https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js'></script>
-<script src="js/bootstrap.bundle.min.js"></script>
-<script src="js/tiny-slider.js"></script>
-<script src="js/aos.js"></script>
-<script src="js/navbar.js"></script>
-<script src="js/counter.js"></script>
-<script src="js/custom.js"></script>     
-<script>
-                                                    document.getElementById('btnSubmitNewItemModal').addEventListener('click', function () {
-                                                        var quantityInput = document.getElementById('newQuantityModal').value.trim();
-                                                        var quantity = parseFloat(quantityInput);
+        <script src='https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js'></script>
+        <script src="js/bootstrap.bundle.min.js"></script>
+        <script src="js/tiny-slider.js"></script>
+        <script src="js/aos.js"></script>
+        <script src="js/navbar.js"></script>
+        <script src="js/counter.js"></script>
+        <script src="js/custom.js"></script>     
+        <script>
+            document.getElementById('btnSubmitNewItemModal').addEventListener('click', function () {
+                var quantityInput = document.getElementById('newQuantityModal').value.trim();
+                var quantity = parseFloat(quantityInput);
 
-                                                        if (!Number.isInteger(quantity) || quantity <= 0) {
-                                                            alert('Quantity is not valid. Please enter a positive integer');
-                                                        } else if (quantity > 10) {
-                                                            alert('Quantity is not valid. Quantity cannot be greater than 10');
-                                                        } else {
-                                                            var form = document.getElementById('addItemFormModal');
-                                                            form.submit();
-                                                        }
-                                                    });
-</script>
-
-<script>
-    let isUpdating = false;
-    function updateRoomItems() {
-
-        if (isUpdating) {
-            return;
-        }
-
-        isUpdating = true;
-
-        console.log("Update Room Items button clicked.");
-        const rows = document.querySelectorAll("#itemTable tbody tr");
-        const updatedItems = [];
-        const roomID_updateItem = document.querySelector('input[name="roomID_updateItem"]').value;
-        let hasInvalidQuantity = false;
-
-        rows.forEach(row => {
-            const itemNameInput = row.querySelector('input[name="itemNames"]');
-            const quantityInput = row.querySelector('input[name="quantities"]');
-
-            if (itemNameInput && quantityInput) {
-                const itemName = itemNameInput.value;
-                const quantity = quantityInput.value;
-                const itemID = row.getAttribute("data-itemid");
-
-                if (quantity < 0) {
-                    hasInvalidQuantity = true;
-                    alert("Quantity cannot be less than 0 for item: " + itemName);
-                    return;
-                } 
-
-                updatedItems.push({itemID: itemID, itemName: itemName, quantity: quantity, roomID: roomID_updateItem});
-            }
-        });
-
-        if (hasInvalidQuantity) {
-            isUpdating = false;
-            return;
-        }
-
-        console.log("Updated items: ", updatedItems);
-
-
-
-        const xhr = new XMLHttpRequest();
-        xhr.open("POST", "OwnerController?service=updateRoomItem", true);
-        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4) {
-                if (xhr.status === 200) {
-                    console.log("Room items updated successfully!");
-                    window.location.href = "OwnerController?service=updateRoomItem";
+                if (!Number.isInteger(quantity) || quantity <= 0) {
+                    alert('Quantity is not valid. Please enter a positive integer');
+                } else if (quantity > 10) {
+                    alert('Quantity is not valid. Quantity cannot be greater than 10');
                 } else {
-                    console.log("Error: " + xhr.status);
+                    var form = document.getElementById('addItemFormModal');
+                    form.submit();
+                }
+            });
+        </script>
+        <script>
+            let isUpdating = false;
+            function updateRoomItems() {
+
+                if (isUpdating) {
+                    return;
+                }
+
+                isUpdating = true;
+
+                console.log("Update Room Items button clicked.");
+                const rows = document.querySelectorAll("#itemTable tbody tr");
+                const updatedItems = [];
+                const roomID_updateItem = document.querySelector('input[name="roomID_updateItem"]').value;
+                let hasInvalidQuantity = false;
+
+                rows.forEach(row => {
+                    const itemNameInput = row.querySelector('input[name="itemNames"]');
+                    const quantityInput = row.querySelector('input[name="quantities"]');
+
+                    if (itemNameInput && quantityInput) {
+                        const itemName = itemNameInput.value;
+                        const quantity = quantityInput.value;
+                        const itemID = row.getAttribute("data-itemid");
+
+                        if (quantity < 0) {
+                            hasInvalidQuantity = true;
+                            alert("Quantity cannot be less than 0 for item: " + itemName);
+                            return;
+                        }
+
+                        updatedItems.push({itemID: itemID, itemName: itemName, quantity: quantity, roomID: roomID_updateItem});
+                    }
+                });
+
+                if (hasInvalidQuantity) {
+                    isUpdating = false;
+                    return;
+                }
+
+                console.log("Updated items: ", updatedItems);
+
+
+
+                const xhr = new XMLHttpRequest();
+                xhr.open("POST", "OwnerController?service=updateRoomItem", true);
+                xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
+                            console.log("Room items updated successfully!");
+                            window.location.href = "OwnerController?service=updateRoomItem";
+                        } else {
+                            console.log("Error: " + xhr.status);
+                        }
+                    }
+                };
+                xhr.send(JSON.stringify(updatedItems));
+            }
+        </script>
+        <script>
+            function setUnderRepair() {
+                var form = document.getElementById("updateStatusForm");
+                var roomID = form.roomID.value;
+                var roomOccupant = form.roomOccupant.value;
+
+                document.getElementById("roomStatus").value = 2;
+
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "OwnerController", true);
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                xhr.send("service=updateRoomStatus&roomID=" + roomID + "&roomOccupant=" + roomOccupant + "&roomStatus=2");
+
+            }
+
+        </script>
+        <script>
+            function toggleButton() {
+                var checkbox = document.getElementById('toggle');
+                var form = document.getElementById('roomForm');
+                var roomStatusInput = document.getElementById('roomStatusInput');
+                var statusLabel = document.getElementById('status');
+
+                if (checkbox.checked) {
+                    // Checkbox was checked (turning ON)
+                    roomStatusInput.value = 2; // Set room status to "Available"
+                    statusLabel.textContent = 'Available';
+                    form.submit(); // Submit the form
+                } else {
+                    // Checkbox was unchecked (turning OFF)
+                    var confirmOff = confirm('Are you sure you want to set the status to Off?');
+                    if (confirmOff) {
+                        roomStatusInput.value = 1; // Set room status to "Occupied"
+                        statusLabel.textContent = 'Occupied';
+                        form.submit(); // Submit the form
+                    } else {
+                        checkbox.checked = true; // Keep the checkbox checked if cancelled
+                    }
                 }
             }
-        };
-        xhr.send(JSON.stringify(updatedItems));
-    }
-</script>
 
-<script>
-    function setUnderRepair() {
-        var form = document.getElementById("updateStatusForm");
-        var roomID = form.roomID.value;
-        var roomOccupant = form.roomOccupant.value;
-
-        document.getElementById("roomStatus").value = 2;
-
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "OwnerController", true);
-        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        xhr.send("service=updateRoomStatus&roomID=" + roomID + "&roomOccupant=" + roomOccupant + "&roomStatus=2");
-
-    }
-
-</script>
-<script>
-    function toggleButton() {
-        var checkbox = document.getElementById('toggle');
-        var form = document.getElementById('roomForm');
-        var roomStatusInput = document.getElementById('roomStatusInput');
-        var statusLabel = document.getElementById('status');
-
-        if (checkbox.checked) {
-            // Checkbox was checked (turning ON)
-            roomStatusInput.value = 2; // Set room status to "Available"
-            statusLabel.textContent = 'Available';
-            form.submit(); // Submit the form
-        } else {
-            // Checkbox was unchecked (turning OFF)
-            var confirmOff = confirm('Are you sure you want to set the status to Off?');
-            if (confirmOff) {
-                roomStatusInput.value = 1; // Set room status to "Occupied"
-                statusLabel.textContent = 'Occupied';
+            function setUnderRepair() {
+                var form = document.getElementById('roomForm');
+                var roomStatusInput = document.getElementById('roomStatusInput');
+                roomStatusInput.value = 2; // Set room status to "Under Repair"
+                document.getElementById('status').textContent = 'Under Repair';
                 form.submit(); // Submit the form
-            } else {
-                checkbox.checked = true; // Keep the checkbox checked if cancelled
             }
-        }
-    }
-
-    function setUnderRepair() {
-        var form = document.getElementById('roomForm');
-        var roomStatusInput = document.getElementById('roomStatusInput');
-        roomStatusInput.value = 2; // Set room status to "Under Repair"
-        document.getElementById('status').textContent = 'Under Repair';
-        form.submit(); // Submit the form
-    }
-</script>
-
-</body>
+        </script>
+    </body>
 </html>

@@ -1,5 +1,4 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<% String service = (String) request.getParameter("service"); %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -21,7 +20,7 @@
         <link rel="stylesheet" href="../css/tiny-slider.css">
         <link rel="stylesheet" href="../css/aos.css">
         <link rel="stylesheet" href="../css/style.css">
-        
+
         <!-- Include jQuery from a CDN -->
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.css" />
@@ -31,8 +30,8 @@
     </head>
     <body>        
         <ul class="js-clone-nav d-none d-lg-inline-block text-start site-menu float-end">
-            <li class="<%= (service == null || service.equals("OwnerHome")) ? "active" : "" %>"><a href="OwnerController?service=OwnerHome">Home</a></li>            
-            <li class="has-children <%= "pagingRoom".equals(service) ? "active" : "" %>">
+            <li class="${service == null || service == 'OwnerHome' ? 'active' : ''}"><a href="OwnerController?service=OwnerHome">Home</a></li>            
+            <li class="has-children ${service == 'pagingRoom' ? 'active' : ''}">
                 <a href="#">View</a>
                 <ul class="dropdown">
                     <li><a href="OwnerController?service=pagingRoom&index=1">List of rooms</a></li>
@@ -40,9 +39,14 @@
                     <li><a href="ownernews">List of News</a></li>
                 </ul>
             </li>               
-            <li><a class="<%= "addrenter".equals(service) ? "active" : "" %>" href="AddRenterController?service=addrenter">Add Renter</a></li>
+            <li><a href="OwnerController?service=addRoom">Add Room</a></li>
             <li><a href="ListRenterController">Renter Management</a></li>
-            <li class="has-children <%= (service != null && (service.equals("ownernews") || service.equals("ruleList") || service.equals("addGuideline") || service.equals("displayslider") || service.equals("penaltys"))) ? "active" : "" %>">
+            <li class="has-children ${service == 'ownernews' 
+                                      || service == 'ruleList'
+                                      || service == 'addGuideline'
+                                      || service == 'displayslider'
+                                      || service == 'penaltys'
+                                      ? 'active' : ''}">
                 <a href="#">Manage</a>
                 <ul class="dropdown">
                     <li><a href="ruleList?service=ruleList">Rule</a></li>
@@ -54,7 +58,10 @@
             <li><a href="logout">Logout</a></li>
             <li>
                 <a href="OwnerController?service=ownerProfile">
-                    <img src="images/firefly.jpg" alt="Profile Image" width="30px" height="30px" style="border-radius: 10px;">
+                    <img src="images/firefly.jpg" alt="Profile Image" 
+                         width="30px" height="30px" 
+                         style="border-radius: 10px;"
+                         />
                 </a>
             </li>
         </ul>
