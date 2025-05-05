@@ -49,6 +49,42 @@ public class NewDAO extends DBContext {
         }
         return news;
     }
+    public int getTotalNewsCount() {
+        int count = 0;
+        String sql = "SELECT COUNT(*) FROM [HL_Motel].[dbo].[news]";
+        try {
+            java.sql.Connection conn = connection;
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                count = rs.getInt(1);
+            }
+            rs.close();
+            ps.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+
+    public int getTotalNewsCountBySearch(String search) {
+        int count = 0;
+        String sql = "SELECT COUNT(*) FROM [HL_Motel].[dbo].[news] WHERE newTitle LIKE ?";
+        try {
+            java.sql.Connection conn = connection;
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, "%" + search + "%");
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                count = rs.getInt(1);
+            }
+            rs.close();
+            ps.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
 
     public int insertNews(News news) {
         int n = 0;

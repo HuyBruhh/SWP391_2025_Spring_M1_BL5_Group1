@@ -42,8 +42,6 @@
     <link rel="stylesheet" href="RenterCSS/css/icomoon.css">
     <!-- Magnific Popup -->
     <link rel="stylesheet" href="RenterCSS/css/magnific-popup.css">
-    <!-- Salvattore -->
-    <link rel="stylesheet" href="RenterCSS/css/salvattore.css">
     <!-- Theme Style -->
     <link rel="stylesheet" href="RenterCSS/css/style.css">
     <!-- Modernizr JS -->
@@ -53,22 +51,122 @@
     <script src="js/respond.min.js"></script>
     <![endif]-->
     <style>
-        .fh5co-board-img img {
+        .news-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .news-item {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: box-shadow 0.3s;
+        }
+        .news-item:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .news-img img {
             width: 100%;
             height: 200px;
             object-fit: cover;
         }
+        .news-content {
+            padding: 15px;
+        }
+        .news-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0 0 10px;
+        }
+        .news-title a {
+            color: #333;
+            text-decoration: none;
+        }
+        .news-title a:hover {
+            color: #28a745; /* Light green for consistency */
+        }
+        .news-description {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .news-date {
+            font-size: 12px;
+            color: #999;
+        }
         .search-bar {
             margin-bottom: 20px;
             text-align: center;
+            padding: 10px 0;
+        }
+        .search-bar form {
+            display: inline-block;
+            width: 100%;
+            max-width: 500px;
         }
         .search-bar input {
             width: 100%;
-            max-width: 500px;
             padding: 10px;
             font-size: 16px;
             border: 1px solid #ccc;
             border-radius: 5px;
+            outline: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .search-bar input:focus {
+            border-color: #28a745; /* Light green for consistency */
+            box-shadow: 0 0 8px rgba(40, 167, 69, 0.3);
+        }
+        .search-bar input::placeholder {
+            color: #999;
+        }
+        .pagination {
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        .pagination a {
+            display: inline-block;
+            padding: 8px 16px;
+            margin: 0 4px;
+            text-decoration: none !important;
+            color: #28a745 !important; /* Light green text */
+            border: 1px solid #28a745 !important; /* Light green border */
+            border-radius: 4px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .pagination a:hover {
+            background-color: #e6f4ea !important; /* Very light green background on hover */
+            color: #28a745 !important;
+        }
+        .pagination a.active {
+            background-color: #28a745 !important; /* Light green background for active */
+            color: white !important;
+            border: 1px solid #28a745 !important;
+        }
+        .pagination a.disabled {
+            color: #ccc !important;
+            border: 1px solid #ccc !important;
+            pointer-events: none;
+            cursor: default;
+        }
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .news-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 768px) {
+            .news-container {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -112,21 +210,38 @@
             <div class="row">
                 <!-- Search Bar -->
                 <div class="search-bar">
-                    <input type="text" id="searchInput" placeholder="Search news" onkeyup="searchNews()">
+                    <form action="ownernews" method="post">
+                        <input type="text" id="searchInput" name="search" placeholder="Search news" value="${search}">
+                    </form>
                 </div>
-                <div id="fh5co-board" data-columns>
+                <!-- News Grid -->
+                <div class="news-container">
                     <c:forEach items="${ListN}" var="n">
-                        <div class="item">
-                            <div class="animate-box">
-                                <a href="data:image/jpg;base64,${n.img}" class="image-popup fh5co-board-img" title="${n.description}">
+                        <div class="news-item">
+                            <div class="news-img">
+                                <a href="data:image/jpg;base64,${n.img}" class="image-popup" title="${n.description}">
                                     <img src="data:image/jpg;base64,${n.img}" alt="News Image">
                                 </a>
                             </div>
-                            <div class="fh5co-desc"><a href="ownernewsdetails?id=${n.newId}">${n.newTitle}</a></div>
-                            <div class="fh5co-desc">${n.description}</div>
-                            <div class="fh5co-desc">${n.createAt}</div>
+                            <div class="news-content">
+                                <h3 class="news-title"><a href="ownernewsdetails?id=${n.newId}">${n.newTitle}</a></h3>
+                                <p class="news-description">${n.description}</p>
+                                <p class="news-date">${n.createAt}</p>
+                            </div>
                         </div>
                     </c:forEach>
+                </div>
+                <!-- Pagination -->
+                <div class="pagination">
+                    <c:if test="${currentPage > 1}">
+                        <a href="ownernews?index=${currentPage - 1}&pageSize=${pageSize}<c:if test='${not empty search}'>&search=${search}</c:if>">Previous</a>
+                    </c:if>
+                    <c:forEach begin="1" end="${totalPages}" var="i">
+                        <a href="ownernews?index=${i}&pageSize=${pageSize}<c:if test='${not empty search}'>&search=${search}</c:if>" class="${i == currentPage ? 'active' : ''}">${i}</a>
+                    </c:forEach>
+                    <c:if test="${currentPage < totalPages}">
+                        <a href="ownernews?index=${currentPage + 1}&pageSize=${pageSize}<c:if test='${not empty search}'>&search=${search}</c:if>">Next</a>
+                    </c:if>
                 </div>
             </div>
         </div>
@@ -204,13 +319,12 @@
     <script src="RenterCSS/js/jquery.waypoints.min.js"></script>
     <!-- Magnific Popup -->
     <script src="RenterCSS/js/jquery.magnific-popup.min.js"></script>
-    <!-- Salvattore -->
-    <script src="RenterCSS/js/salvattore.min.js"></script>
     <!-- Main JS -->
     <script src="RenterCSS/js/main.js"></script>
-    <!-- Initialize Magnific Popup -->
+    <!-- Initialize Magnific Popup and Search Function -->
     <script>
         $(document).ready(function() {
+            // Initialize Magnific Popup for images
             $('.image-popup').magnificPopup({
                 type: 'image',
                 closeOnContentClick: true,
@@ -222,22 +336,31 @@
                     }
                 }
             });
-        });
 
-        // Search function
-        function searchNews() {
-            let input = document.getElementById('searchInput').value.toLowerCase();
-            let items = document.getElementsByClassName('item');
+            // Client-side search function
+            function searchNews() {
+                let input = $('#searchInput').val().toLowerCase();
+                let items = $('.news-item');
 
-            for (let i = 0; i < items.length; i++) {
-                let title = items[i].getElementsByClassName('fh5co-desc')[0].getElementsByTagName('a')[0].innerText.toLowerCase();
-                if (title.includes(input)) {
-                    items[i].style.display = '';
-                } else {
-                    items[i].style.display = 'none';
-                }
+                items.each(function() {
+                    let title = $(this).find('.news-title a').text().toLowerCase();
+                    if (title.includes(input)) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
             }
-        }
+
+            // Attach keyup event to search input
+            $('#searchInput').on('keyup', function() {
+                if ($(this).val() === '') {
+                    $(this).closest('form').submit();
+                } else {
+                    searchNews();
+                }
+            });
+        });
     </script>
 </body>
 </html>

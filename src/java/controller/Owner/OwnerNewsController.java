@@ -31,7 +31,7 @@ public class OwnerNewsController extends HttpServlet {
         }
 
         String pageSizeParam = request.getParameter("pageSize");
-        int pageSize = 5;
+        int pageSize = 6; // Changed from 5 to 6
         try {
             if (pageSizeParam != null && !pageSizeParam.isEmpty()) {
                 pageSize = Integer.parseInt(pageSizeParam);
@@ -41,6 +41,9 @@ public class OwnerNewsController extends HttpServlet {
         }
 
         List<News> ListN = newsDAO.getNewsList(index, pageSize);
+        int totalNews = newsDAO.getTotalNewsCount();
+        int totalPages = (int) Math.ceil((double) totalNews / pageSize);
+
         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-dd-MM HH:mm:ss.S");
         SimpleDateFormat sds = new SimpleDateFormat("dd-MM-yyyy");
         for (News news : ListN) {
@@ -57,6 +60,7 @@ public class OwnerNewsController extends HttpServlet {
         request.setAttribute("ListN", ListN);
         request.setAttribute("pageSize", pageSize);
         request.setAttribute("currentPage", index);
+        request.setAttribute("totalPages", totalPages);
         request.getRequestDispatcher("Owner/OwnerNews.jsp").forward(request, response);
     }
 
@@ -83,7 +87,7 @@ public class OwnerNewsController extends HttpServlet {
         }
 
         String pageSizeParam = request.getParameter("pageSize");
-        int pageSize = 5;
+        int pageSize = 6; // Changed from 5 to 6
         try {
             if (pageSizeParam != null && !pageSizeParam.isEmpty()) {
                 pageSize = Integer.parseInt(pageSizeParam);
@@ -93,6 +97,9 @@ public class OwnerNewsController extends HttpServlet {
         }
 
         List<News> ListN = newsDAO.searchByText(index, pageSize, search);
+        int totalNews = newsDAO.getTotalNewsCountBySearch(search);
+        int totalPages = (int) Math.ceil((double) totalNews / pageSize);
+
         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-dd-MM HH:mm:ss.S");
         SimpleDateFormat sds = new SimpleDateFormat("dd-MM-yyyy");
         for (News news : ListN) {
@@ -109,6 +116,7 @@ public class OwnerNewsController extends HttpServlet {
         request.setAttribute("ListN", ListN);
         request.setAttribute("pageSize", pageSize);
         request.setAttribute("currentPage", index);
+        request.setAttribute("totalPages", totalPages);
         request.setAttribute("search", search);
         request.getRequestDispatcher("Owner/OwnerNews.jsp").forward(request, response);
     }

@@ -46,7 +46,7 @@
             <div class="container">
                 <div class="menu-bg-wrap">
                     <div class="site-navigation">
-                        <a href="OwnerController?service=OwnerHome" class="logo m-0 float-start">Owner</a>
+                        <a href="rentercontroller?service=renterhome" class="logo m-0 float-start">Renter</a>
                         <jsp:include page="navbar.jsp"></jsp:include>
                         <a href="#" class="burger light me-auto float-end mt-1 site-menu-toggle js-menu-toggle d-inline-block d-lg-none" data-toggle="collapse" data-target="#main-navbar">
                             <span></span>
@@ -88,7 +88,7 @@
                             </div>
                             <div class="product-cart-thumb row">
                                 <div class="col-lg-6 col-12 mt-4 mt-lg-0">
-                                    <button type="button" class="btn custom-btn cart-btn" onclick="location.href='ownernews'">Back To List</button>
+                                    <button type="button" class="btn custom-btn cart-btn" onclick="location.href='news'">Back To List</button>
                                 </div>
                                 <p><br></p>
                             </div>
