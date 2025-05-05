@@ -51,7 +51,7 @@ public class VNPay_PaymentController extends HttpServlet {
         vnp_Params.put("vnp_Version", "2.1.0");
         vnp_Params.put("vnp_Command", "pay");
         vnp_Params.put("vnp_TmnCode", VNPayConfig.vnp_TmnCode);
-        vnp_Params.put("vnp_Amount", String.valueOf((int) Double.parseDouble(amount) * 100000)); // *100
+        vnp_Params.put("vnp_Amount", String.valueOf((int) Double.parseDouble(amount) * 100)); // *100
         vnp_Params.put("vnp_BankCode", "INTCARD");
         vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
         vnp_Params.put("vnp_CurrCode", "VND");

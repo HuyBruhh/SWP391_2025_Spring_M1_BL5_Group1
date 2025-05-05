@@ -290,7 +290,11 @@ List<Rooms> listRoom      = (List<Rooms>) request.getAttribute("roomList");
                     </div>
                 </div>
             </nav>
-
+<c:if test="${not empty message}">
+    <div class="alert alert-success" role="alert">
+        ${message}
+    </div>
+</c:if>
             <div class="hero page-inner overlay" style="background-image: url('images/hero_bg_1.jpg');">
                 <div class="container">
                     <div class="row justify-content-center align-items-center">
@@ -344,7 +348,7 @@ List<Rooms> listRoom      = (List<Rooms>) request.getAttribute("roomList");
                 </a>
                 <div class="property-content">
                   <div class="price mb-2">
-                    <span data-fee="<%= r.getRoomFee().longValue()* 1000 %>"></span>
+                    <span data-fee="<%= r.getRoomFee().longValue()%>"></span>
                   </div>
                   <span class="d-block mb-2 text-black-50">Thon 3, Tan Xa, Thach That</span>
                   <span class="city d-block mb-3">Room <%= r.getRoomNumber()%></span>
@@ -377,14 +381,14 @@ List<Rooms> listRoom      = (List<Rooms>) request.getAttribute("roomList");
                  if (r.getRoomStatus() == 1) { %>
             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4"
                  data-room-name="<%= r.getRoomNumber() %>"
-                 data-room-price="<%= r.getRoomFee().longValue()*1000 %>">
+                 data-room-price="<%= r.getRoomFee().longValue() %>">
               <div class="property-item mb-30">
                 <a href="OwnerController?service=roomDetail&roomID=<%= r.getRoomID()%>" class="img">
                   <img src="data:image/jpg;base64,<%= r.getRoomImg()%>" class="img-fluid" style="height:350px;width:100%">
                 </a>
                 <div class="property-content">
                   <div class="price mb-2">
-                    <span data-fee="<%= r.getRoomFee().longValue()*1000 %>"></span>
+                    <span data-fee="<%= r.getRoomFee().longValue() %>"></span>
                   </div>
                   <span class="d-block mb-2 text-black-50">Thon 3, Tan Xa, Thach That</span>
                   <span class="city d-block mb-3">Room <%= r.getRoomNumber()%></span>
@@ -548,9 +552,9 @@ List<Rooms> listRoom      = (List<Rooms>) request.getAttribute("roomList");
   rooms.forEach(room => {
     const price = parseInt(room.getAttribute('data-room-price'), 10);
     let show = false;
-    if (sel === 'below1M') show = price < 1_000_000;
-    if (sel === '1To2M')   show = price >= 1_000_000 && price <= 2_000_000;
-    if (sel === '2To3M')   show = price >  2_000_000 && price <= 3_000_000;
+    if (sel === 'below1M') show = price < 1000000;
+    if (sel === '1To2M')   show = price >= 1000000 && price <= 2000000;
+    if (sel === '2To3M')   show = price >  2000000 && price <= 3000000;
     room.style.display = show ? '' : 'none';
   });
 }

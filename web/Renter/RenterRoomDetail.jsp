@@ -84,23 +84,8 @@ Double livingTotal = (Double) request.getAttribute("livingTotal");
                     </div>
                 </div>
             </nav>
+<div style="height: 100px;"></div>
 
-            <div class="hero page-inner overlay" style="background-image: url('images/hero_bg_3.jpg');">
-                <div class="container">
-                    <div class="row justify-content-center align-items-center">
-                        <div class="col-lg-9 text-center mt-5">
-                            <h1 class="heading" >My Room</h1>
-
-                            <nav aria-label="breadcrumb" >
-                                <ol class="breadcrumb text-center justify-content-center">
-                                    <li class="breadcrumb-item "><a href="rentercontroller?service=renterhome">Home</a></li>
-
-                                </ol>
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
         <% 
             if (rentDetails != null && !rentDetails.isEmpty()) {
@@ -176,7 +161,7 @@ Double livingTotal = (Double) request.getAttribute("livingTotal");
                                 <h6 class="mb-0">Room Fee</h6>
                             </div>
                             <div class="col-sm-9 text-secondary">
-                                <%= roomFeeFormatted %> 000 VND / month
+                                <%= roomFeeFormatted %>  VND / month
                             </div>
                         </div>
                         <hr>

@@ -39,14 +39,16 @@
             }
 
 
-            function formatAllPrices() {
-                var priceElements = document.querySelectorAll('.price span');
-                priceElements.forEach(function (element) {
-                    var rawFee = element.getAttribute('data-fee');
-                    var formattedFee = formatNumber(rawFee);
-                    element.textContent = formattedFee + ' VND';
-                });
-            }
+  function formatAllPrices() {
+    const priceElements = document.querySelectorAll('.price span');
+    priceElements.forEach(element => {
+      const rawFee = element.getAttribute('data-fee');
+      if (rawFee) {
+        const formattedFee = formatNumber(rawFee);
+        element.textContent = formattedFee + ' VND';
+      }
+    });
+  }
 
 
             document.addEventListener('DOMContentLoaded', formatAllPrices);
@@ -368,7 +370,7 @@
                                             <img src="data:image/jpg;base64,<%= base64Image %>" class="img-fluid" style="height: 350px; width: 100%;">
                                         </a>
                                         <div class="property-content">
-                                            <div class="price mb-2"><span><%= room.getRoomFee().longValue() %>k VND</span></div>
+                                            <div class="price mb-2"><span data-fee="<%= room.getRoomFee().longValue()  %>"></span></div>
                                             <div>
                                                 <span class="d-block mb-2 text-black-50">Thon 3, Tan Xa, Thach That</span>
                                                 <span class="city d-block mb-3">Room <%= room.getRoomNumber() %></span>
@@ -665,11 +667,11 @@
 
                     if (selectedPriceRange === "all") {
                         room.style.display = "block";
-                    } else if (selectedPriceRange === "below1M" && price < 1000) {
+                    } else if (selectedPriceRange === "below1M" && price < 1000000) {
                         room.style.display = "block";
-                    } else if (selectedPriceRange === "1To2M" && price >= 1000 && price <= 2000) {
+                    } else if (selectedPriceRange === "1To2M" && price >= 1000000 && price <= 2000000) {
                         room.style.display = "block";
-                    } else if (selectedPriceRange === "2To3M" && price > 2000 && price <= 3000) {
+                    } else if (selectedPriceRange === "2To3M" && price > 2000000 && price <= 3000000) {
                         room.style.display = "block";
                     } else {
                         room.style.display = "none";

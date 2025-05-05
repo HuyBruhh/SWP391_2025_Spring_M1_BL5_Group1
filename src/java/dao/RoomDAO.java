@@ -44,7 +44,27 @@ public class RoomDAO extends DBContext {
         }
         return rooms;
     }
-    
+    public Room getLastestRoom() {
+         String query = "SELECT TOP 1 *\n"
+                 + "  FROM room\n"
+                 + " ORDER BY roomID DESC";
+         try {
+             PreparedStatement ps = connection.prepareStatement(query);
+             ResultSet rs = ps.executeQuery();
+             while (rs.next()) {
+                 int roomID = rs.getInt("roomID");
+                 int roomFloor = rs.getInt("roomFloor");
+                 int roomNumber = rs.getInt("roomNumber");
+                 int roomSize = rs.getInt("roomSize");
+                 String roomImg = rs.getString("roomImg");
+                 Room room = new Room(roomID, roomFloor, roomNumber, roomSize, roomImg, 0);
+                 return room;
+             }
+         } catch (SQLException e) {
+             System.out.println(e);
+         }
+         return null;
+     }
     public int countRoomsByOwnerId(int ownerID) {
     String sql = "SELECT COUNT(*) FROM room WHERE ownerID = ?";
     try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -143,26 +163,24 @@ public List<Rooms> getRoomsByOwnerId(int ownerID, int page, int pageSize) {
     }
 
     public boolean addRoom(Room r, int ownerID) {
-        String query = "INSERT INTO room (roomID, roomNumber, roomFloor, roomSize, roomFee, roomImg, roomDepartment, ownerID)\n"
-                + "VALUES ((SELECT MAX(roomID) + 1 AS maxRoomID\n"
-                + "  FROM room), ?, ?, ?, ?, ?, 'A', ?);";
-        try {
-            PreparedStatement ps = connection.prepareStatement(query);
-            ps.setInt(1, r.getRoomNumber());
-            ps.setInt(2, r.getRoomFloor());
-            ps.setInt(3, r.getRoomSize());
-            ps.setDouble(4, r.getRoomFee().doubleValue());
-            ps.setString(5, r.getRoomImg());
-            ps.setInt(6, ownerID);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return true;
-            }
-        } catch (SQLException e) {
-            System.out.println(e);
-        }
-        return false;
+    String query =
+      "INSERT INTO room (roomID, roomNumber, roomFloor, roomSize, roomFee, roomImg, roomDepartment, roomStatus, ownerID) " +
+      "VALUES ((SELECT COALESCE(MAX(roomID),0) + 1 FROM room), ?, ?, ?, ?, ?, 'A', 1, ?)";
+    try (PreparedStatement ps = connection.prepareStatement(query)) {
+        ps.setInt(1, r.getRoomNumber());
+        ps.setInt(2, r.getRoomFloor());
+        ps.setInt(3, r.getRoomSize());
+        ps.setBigDecimal(4, r.getRoomFee());      // đã là VND đầy đủ
+        ps.setString(5, r.getRoomImg());
+        ps.setInt(6, ownerID);
+
+        int affected = ps.executeUpdate();
+        return affected > 0;
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+    return false;
+}
 
     public List<Rooms> pagingRoom(int index, int flag) {
         List<Rooms> rooms = new ArrayList<>();
@@ -500,7 +518,22 @@ public List<Rooms> getRoomsByOwnerId(int ownerID, int page, int pageSize) {
         }
         return true;
     }
-
+    
+    public BigDecimal getRoomFee(int roomID) {
+        String query = "SELECT roomFee FROM room WHERE roomID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, roomID);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getBigDecimal("roomFee");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return BigDecimal.ZERO;
+    }
+    
     public boolean isExistRoom(int roomNumber, int roomFloor, int ownerID) {
         String query = "SELECT *\n"
                 + "  FROM room\n"

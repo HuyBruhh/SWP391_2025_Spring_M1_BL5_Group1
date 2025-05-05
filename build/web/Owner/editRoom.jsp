@@ -240,10 +240,10 @@
                                     </div>                              
                                     <div class="row mb-3">
                                         <div class="col-sm-3">
-                                            <h6 class="mb-0">Room Fee</h6>
+                                            <h6 class="mb-0">Room Fee (VND)</h6>
                                         </div>
                                         <div class="col-sm-9 text-secondary">
-                                            <input type="text" class="form-control" name="roomFee" value="${roomDetail.roomFee}">
+                                            <input type="text" class="form-control" name="roomFee" value="${formattedFee}">
                                         </div>
                                     </div>
                                     <div class="row mb-3">
@@ -259,9 +259,11 @@
                                             <h6 class="mb-0">Room Image</h6>
                                         </div>
                                         <div class="col-sm-9 text-secondary">                                           
-                                            <input type="file" class="form-control" name="roomImg" value="${roomDetail.roomImg}">
+                                            <input type="file" class="form-control" name="roomImg" id="roomImgInput" >
+                                            <span class="text-danger" id="roomImgError"></span>
+                                            <img id="roomImgPreview" style="max-width: 100%; margin-top: 10px; display: none;" alt="Preview ảnh phòng">
+  </div>
                                         </div>
-                                    </div>
                                     <div class="form-group">
                                         <h6 class="mb-0" style="padding-left: 220px; padding-bottom: 20px; padding-top: 10px; font-weight: 800">Items in the room</h6>
                                         <table id="itemTable" class="table table-bordered">
@@ -287,7 +289,7 @@
                                                 %>
                                                 <tr data-itemid="<%= itemID %>">
                                                     <td><input type="text" class="form-control" name="itemNames" value="<%= itemName %>" readonly="" ></td>
-                                                    <td><input type="text" class="form-control" name="quantities" value="<%= quantity %>" ></td>
+                                                    <td><input type="text" class="form-control" name="quantities" min="1" value="<%= quantity %> " ></td>
                                             <input type="hidden" name="roomID_updateItem" value="<%= roomID_updateItem %>"> 
                                             <td>
                                                 <a href="OwnerController?service=deleteItem&itemID=<%= itemID%>&roomID=<%= roomDetail.getRoomID()%>" class="btn btn-danger">Delete</a>
@@ -363,16 +365,8 @@
                             <form action="OwnerController" method="post" class="under-repair-form">
                                 <input type="hidden" name="service" value="setUnderRepair">
                                 <input type="hidden" name="roomID" value="${roomDetail.roomID}">
-                                <input type="hidden" name="roomStatus" value="${roomDetail.roomStatus}">
-                                <div class="form-group">
-                                    <label for="updateRoomStatus">Update Room Status</label>
-                                    <select name="updateRoomStatus" id="updateRoomStatus">
-                                        <option selected disabled hidden>Repair</option>
-                                        <option value="2">Under Repair</option>
-                                        <option value="0">Rented</option>
-                                    </select>
-                                </div>
-                                <input style="text-align: center" type="submit" value="Submit">
+
+          
                             </form>                
                             <div class="modal fade" id="addItemModal" tabindex="-1" aria-labelledby="addItemModalLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered">
@@ -420,6 +414,33 @@
         <script src="js/counter.js"></script>
         <script src="js/custom.js"></script>     
         <script>
+             const roomImgInput = document.getElementById("roomImgInput");
+  const roomImgPreview = document.getElementById("roomImgPreview");
+
+  roomImgInput.addEventListener("change", function () {
+    const file = this.files[0];
+    if (file) {
+      // Chỉ cho phép JPG/PNG
+      const allowedExtensions = /(\.jpg|\.jpeg|\.png)$/i;
+      if (!allowedExtensions.exec(file.name)) {
+        document.getElementById("roomImgError").textContent = "Chỉ cho phép JPG, JPEG hoặc PNG.";
+        this.value = "";
+        roomImgPreview.style.display = "none";
+      } else {
+        document.getElementById("roomImgError").textContent = ""; 
+        // Dùng FileReader để đọc và hiển thị
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          roomImgPreview.src = e.target.result;
+          roomImgPreview.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+      }
+    } else {
+      roomImgPreview.style.display = "none";
+    }
+  });
+            
             document.getElementById('btnSubmitNewItemModal').addEventListener('click', function () {
                 var quantityInput = document.getElementById('newQuantityModal').value.trim();
                 var quantity = parseFloat(quantityInput);
@@ -459,11 +480,11 @@
                         const quantity = quantityInput.value;
                         const itemID = row.getAttribute("data-itemid");
 
-                        if (quantity < 0) {
-                            hasInvalidQuantity = true;
-                            alert("Quantity cannot be less than 0 for item: " + itemName);
-                            return;
-                        }
+                      if (quantity <= 0) {
+    hasInvalidQuantity = true;
+    alert("Quantity must be greater than 0 for item: " + itemName);
+    return;
+}
 
                         updatedItems.push({itemID: itemID, itemName: itemName, quantity: quantity, roomID: roomID_updateItem});
                     }

@@ -167,6 +167,9 @@
                             <form action="OwnerController" method="post">
                                 <div class="card-body">                                    
                                     <div class="row mb-3">
+                                        <span class="text-danger">
+            <%= request.getAttribute("fullNameError") != null ? request.getAttribute("fullNameError") : "" %>
+        </span>        
                                         <div class="col-sm-3">
                                             <h6 class="mb-0">Full Name</h6>
                                         </div>
@@ -187,6 +190,10 @@
                                         </div>
                                     </div>
                                     <div class="row mb-3">
+                                        <span class="text-danger">
+            <%= request.getAttribute("dobError") != null ? request.getAttribute("dobError") : "" %>
+        </span>
+                                        
                                         <div class="col-sm-3">
                                             <h6 class="mb-0">Date of birth</h6>
                                         </div>
@@ -194,7 +201,9 @@
                                             <input type="date" class="form-control" name="dob" value="<%= ownerProfile.getUserBirth() %>" max="<%= new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date()) %>" required>
 
                                         </div>
+                                            
                                     </div>
+
                                     <div class="row mb-3">
                                         <div class="col-sm-3">
                                             <h6 class="mb-0">Email</h6>
@@ -204,6 +213,9 @@
                                         </div>
                                     </div>
                                     <div class="row mb-3">
+                                              <span class="text-danger">
+            <%= request.getAttribute("phoneError") != null ? request.getAttribute("phoneError") : "" %>
+        </span>
                                         <div class="col-sm-3">
                                             <h6 class="mb-0">Phone</h6>
                                         </div>
@@ -212,6 +224,9 @@
                                         </div>
                                     </div>
                                     <div class="row mb-3">
+                                                     <span class="text-danger">
+            <%= request.getAttribute("addressError") != null ? request.getAttribute("addressError") : "" %>
+        </span>
                                         <div class="col-sm-3">
                                             <h6 class="mb-0">Address</h6>
                                         </div>
@@ -223,6 +238,7 @@
                                         <div class="col-sm-3"></div>
                                         <div class="col-sm-9 text-secondary">
                                             <input type="submit" class="btn btn-primary px-4" value="Save Changes">
+                                            <center><a href="${pageContext.request.contextPath}/OwnerController?service=ownerProfile">Back To Profile</a></center>
                                         </div>
                                     </div>
                                     <div class="row">

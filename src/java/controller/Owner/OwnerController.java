@@ -25,7 +25,13 @@ import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeParseException;
 import java.util.Base64;
+import java.util.Locale;
 import model.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -139,8 +145,18 @@ public class OwnerController extends HttpServlet {
         RoomDAO dao = new RoomDAO();
         RenterDAO daoRenter = new RenterDAO();
         HttpSession session = request.getSession();
+        
         int roomID = Integer.parseInt(request.getParameter("roomID"));
         RoomDetailSe roomDetail = dao.getRoomDetail(roomID);
+        
+        BigDecimal rawFee = dao.getRoomFee(roomID);
+        BigDecimal displayFee = rawFee.multiply(BigDecimal.valueOf(1000));
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols(new Locale("vi","VN"));
+        symbols.setGroupingSeparator('.');
+        DecimalFormat df = new DecimalFormat("#,##0", symbols);
+        String formattedFee = df.format(displayFee); 
+        
+        request.setAttribute("formattedFee", formattedFee);
         List<String> listNameRenter = daoRenter.getRenterName(roomID);
         request.setAttribute("roomDetail", roomDetail);
         request.setAttribute("listNameRenter", listNameRenter);
@@ -170,17 +186,20 @@ public class OwnerController extends HttpServlet {
             }
 
             int roomSize = Integer.parseInt(request.getParameter("roomSize").trim());
-            double roomFee = Double.parseDouble(request.getParameter("roomFee").trim());
 
             Part photo = request.getPart("roomImg");
             byte[] roomImg_raw = convertInputStreamToByteArray(photo.getInputStream());
             String roomImg = Base64.getEncoder().encodeToString(roomImg_raw);
 
-            Room r = new Room(roomNumber, roomFloor, roomSize, BigDecimal.valueOf(roomFee), roomImg);
-            boolean success = dao.addRoom(r, ownerID);
-            request.getRequestDispatcher("Owner/OwnerHome.jsp").forward(request, response);
-            //OwnerController?service=roomDetail&roomID=
-            //OwnerController?service=OwnerHome
+            String feeInput = request.getParameter("roomFee").trim();       // e.g. "800.000" hoặc "1234500"
+            String cleaned  = feeInput.replace(".", "");                    // "800000" hoặc "1234500"
+            BigDecimal roomFee = new BigDecimal(cleaned);                   // 800000 hoặc 1234500
+
+            Room r = new Room(roomNumber, roomFloor, roomSize, roomFee, roomImg);
+            dao.addRoom(r, ownerID);
+             int roomID = dao.getLastestRoom().getRoomID();
+             request.getRequestDispatcher("OwnerController?service=roomDetail&roomID=" + roomID).forward(request, response);
+
         } else {
             request.getRequestDispatcher("Owner/add-room.jsp").forward(request, response);
         }
@@ -272,7 +291,10 @@ public class OwnerController extends HttpServlet {
         }
 
         try {
-            roomFee = Double.parseDouble(request.getParameter("roomFee").trim());
+            String s = request.getParameter("roomFee").trim();
+            String cleaned = s.replace(".", "");
+            double feeVND = Double.parseDouble(cleaned);
+            roomFee = feeVND / 1000;  // nếu bạn vẫn lưu theo nghìn VND
             if (roomFee <= 0) {
                 request.setAttribute("error", "Room Fee have to great than 0!!!");
                 request.getRequestDispatcher("OwnerController?service=editRoom&roomID=" + roomID).forward(request, response);
@@ -283,51 +305,113 @@ public class OwnerController extends HttpServlet {
             request.getRequestDispatcher("OwnerController?service=editRoom&roomID=" + roomID).forward(request, response);
             return;
         }
+        
+        String[] quantities = request.getParameterValues("quantities");
+    if (quantities != null) {
+        for (String qStr : quantities) {
+            try {
+                int q = Integer.parseInt(qStr.trim());
+                if (q <= 0) {
+                    request.setAttribute("error", "Item quantity must be greater than 0.");
+                    request.getRequestDispatcher("OwnerController?service=editRoom&roomID=" + roomID)
+                           .forward(request, response);
+                    return;
+                }
+            } catch (NumberFormatException ex) {
+                request.setAttribute("error", "Invalid quantity format.");
+                request.getRequestDispatcher("OwnerController?service=editRoom&roomID=" + roomID)
+                       .forward(request, response);
+                return;
+            }
+        }
+    }
 
         Part photo = request.getPart("roomImg");
-        String contentType = photo.getContentType();
-        byte[] roomImg_raw = null;
-        String roomImg = null;
-        if (!contentType.equals("image/jpeg")) {
-            request.setAttribute("error", "Invalid room image");
-            request.getRequestDispatcher("OwnerController?service=editRoom&roomID=" + roomID).forward(request, response);
-            return;
-        } else {
-            roomImg_raw = convertInputStreamToByteArray(photo.getInputStream());
-            roomImg = Base64.getEncoder().encodeToString(roomImg_raw);
-        }
+        String roomImg; 
+if (photo != null && photo.getSize() > 0) {
+    String contentType = photo.getContentType();
+    // chỉ chấp nhận định dạng ảnh
+    if (!(contentType.equals("image/jpeg")
+       || contentType.equals("image/png")
+       || contentType.equals("image/jpg"))) 
+    {
+        request.setAttribute("error", "Invalid room image format (chỉ JPG/PNG).");
+        request.getRequestDispatcher("OwnerController?service=editRoom&roomID=" + roomID)
+               .forward(request, response);
+        return;
+    }
+    byte[] roomImg_raw = convertInputStreamToByteArray(photo.getInputStream());
+    roomImg = Base64.getEncoder().encodeToString(roomImg_raw);
+} else {
+    // người dùng không upload ảnh mới => giữ nguyên ảnh cũ
+    roomImg = dao.getRoomDetail(roomID).getRoomImg();
+}
 
         int updateRoomDetail = dao.updateRoomDetail(roomID, roomFee, roomImg, roomNumber);
         request.getRequestDispatcher("OwnerController?service=roomDetail").forward(request, response);
     }
 
-    private void updateOwnerProfile(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        RoomDAO dao = new RoomDAO();
+    private void updateOwnerProfile(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+    RoomDAO dao = new RoomDAO();
+    HttpSession session = request.getSession();
+    int userID = (int) session.getAttribute("userID");
 
-        boolean hasError = false;
-        String fullName = request.getParameter("fullName").trim();
-        String dob = request.getParameter("dob");
-        String gender = request.getParameter("gender");
-        String phone = request.getParameter("phone");
-        String address = request.getParameter("address");
-        HttpSession session = request.getSession();
-        int userID = (int) session.getAttribute("userID");
-        if (fullName == null || fullName.isEmpty() || fullName.isBlank() || fullName.trim().isEmpty()) {
+    boolean hasError = false;
+    String fullName = request.getParameter("fullName").trim();
+    String dob      = request.getParameter("dob");
+    String gender   = request.getParameter("gender");
+    String phone    = request.getParameter("phone");
+    String address  = request.getParameter("address");
+
+    // Validate họ và tên
+    if (fullName.isEmpty()) {
+        hasError = true;
+        request.setAttribute("fullNameError", "Fullname is required.");
+    }
+    // Validate số điện thoại
+    if (phone == null || phone.length() != 10 || !phone.startsWith("0") || !phone.matches("\\d+")) {
+        hasError = true;
+        request.setAttribute("phoneError", "Invalid phone number.");
+    }
+    // Validate địa chỉ
+    if (address == null || address.isBlank()) {
+        hasError = true;
+        request.setAttribute("addressError", "Address is required.");
+    }
+    // Validate ngày sinh (tuổi 18–110)
+    if (dob != null && !dob.isEmpty()) {
+        try {
+            LocalDate birthDate = LocalDate.parse(dob);
+            int age = Period.between(birthDate, LocalDate.now()).getYears();
+            if (age < 18) {
+                hasError = true;
+                request.setAttribute("dobError", "You must be at least 18 years old");
+            } else if (age > 110) {
+                hasError = true;
+                request.setAttribute("dobError", "Your age must not exceed 110.");
+            }
+        } catch (DateTimeParseException ex) {
             hasError = true;
-        } else if (phone == null || phone.length() != 10 || !phone.startsWith("0") || !phone.matches("[0-9]+")) {
-            hasError = true;
-        } else if (address == null || address.isEmpty() || address.isBlank()) {
-            hasError = true;
+            request.setAttribute("dobError", "Invalid date of birth format.");
         }
+    }
 
-        if (hasError) {
-            request.setAttribute("error", "Invalid input information. Please check again.");
-            request.getRequestDispatcher("OwnerController?service=ownerProfile").forward(request, response);
-        } else {
-            int update = dao.updateOwnerProfile(new User(15, fullName, gender, dob, address, phone));
+    if (hasError) {
+        // Load lại profile để hiển thị form cùng lỗi
+        User ownerProfile = dao.getOwnerProfileByID(userID);
+        request.setAttribute("ownerProfile", ownerProfile);
+        request.getRequestDispatcher("/Owner/formOwnerProfile.jsp")
+               .forward(request, response);
+    } else {
+        // Thực hiện cập nhật
+        // Giả sử constructor của User: User(int userID, String fullName, String gender, String dob, String address, String phone)
+        User updated = new User(userID, fullName, gender, dob, address, phone);
+        dao.updateOwnerProfile(updated);
 
-            request.getRequestDispatcher("OwnerController?service=ownerProfile").forward(request, response);
-        }
+        // Chuyển về trang xem profile sau khi cập nhật thành công
+        response.sendRedirect(request.getContextPath() + "/OwnerController?service=ownerProfile");
+    }
     }
 
     private void updateRoomItem(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -360,9 +444,13 @@ public class OwnerController extends HttpServlet {
                     int itemID = Integer.parseInt(itemIDStr);
                     int quantity = Integer.parseInt(quantityStr);
                     int roomID = Integer.parseInt(roomIDStr);
-                    if (quantity == 0) {
-                        dao.deleteRoomItem(roomID, itemID);
-                    } else {
+                    if (quantity <= 0) {
+                // nếu quantity không hợp lệ, trả về editRoom với thông báo
+                request.setAttribute("error", "Quantity must be greater than 0");
+                request.getRequestDispatcher("OwnerController?service=editRoom&roomID=" + roomID)
+                       .forward(request, response);
+                return;
+            } else {
                         dao.updateItemQuantity(roomID, itemID, quantity);
                     }
 

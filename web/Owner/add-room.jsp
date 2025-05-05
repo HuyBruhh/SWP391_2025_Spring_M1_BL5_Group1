@@ -212,7 +212,6 @@
                             </div>
                         </nav>
                     </div>
-
                     <div class="row" style="margin-top: 120px;">                        
                         <div class="col-lg-8 mx-auto">                       
                             <div class="card">
@@ -223,14 +222,7 @@
                                    margin: 10px 0px;
                                    background: beige"
                                    >${error}</p>
-                            <c:if test="${not empty successMessage}">
-  <div class="alert alert-success alert-dismissible fade show" role="alert">
-    ${successMessage}
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-</c:if>
+
                             <form 
                                 id="addRoomForm"
                                 action="OwnerController" 
@@ -257,7 +249,7 @@
                                     </div> 
                                     <div class="row mb-3">
                                         <div class="col-sm-3">
-                                            <h6 class="mb-0">Room Fee</h6>
+                                            <h6 class="mb-0">Room Fee (VND)</h6>
                                         </div>
                                         <div class="col-sm-9 text-secondary">
                                             <input type="text" class="form-control" name="roomFee" value="" required>
@@ -278,8 +270,10 @@
                                             <h6 class="mb-0">Room Image</h6>
                                         </div>
                                         <div class="col-sm-9 text-secondary">                                           
-                                            <input type="file" class="form-control" name="roomImg" value="" required>
+                                            <input type="file" class="form-control" name="roomImg" id="roomImgInput" required>
                                             <span class="text-danger" id="roomImgError"></span>
+                                            <img id="roomImgPreview" style="max-width: 100%; margin-top: 10px; display: none;" alt="Preview ảnh phòng">
+  </div>
                                         </div>
                                     </div>
                                     <div class="row button-group">
@@ -309,6 +303,33 @@
             </div>
         </div>
         <script>
+              const roomImgInput = document.getElementById("roomImgInput");
+  const roomImgPreview = document.getElementById("roomImgPreview");
+
+  roomImgInput.addEventListener("change", function () {
+    const file = this.files[0];
+    if (file) {
+      // Chỉ cho phép JPG/PNG
+      const allowedExtensions = /(\.jpg|\.jpeg|\.png)$/i;
+      if (!allowedExtensions.exec(file.name)) {
+        document.getElementById("roomImgError").textContent = "Chỉ cho phép JPG, JPEG hoặc PNG.";
+        this.value = "";
+        roomImgPreview.style.display = "none";
+      } else {
+        document.getElementById("roomImgError").textContent = ""; 
+        // Dùng FileReader để đọc và hiển thị
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          roomImgPreview.src = e.target.result;
+          roomImgPreview.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+      }
+    } else {
+      roomImgPreview.style.display = "none";
+    }
+  });
+
             document.getElementById("addRoomForm").addEventListener("submit", function (event) {
                 let roomNumber = document.querySelector('input[name="roomNumber"]').value.trim();
                 let roomFloor = document.querySelector('input[name="roomFloor"]').value.trim();
@@ -324,7 +345,7 @@
                 document.getElementById("roomSizeError").textContent = "";
 
                 let valid = true;
-
+                
                 // Validate Room Number
                 if (!/^\d+$/.test(roomNumber)) {
                     document.getElementById("roomNumberError").textContent = "Room number must be numeric.";

@@ -68,8 +68,8 @@
             <div class="container" style="margin-top: 2em">
                 <form action="createPayment" method="post">
                     <div class="mb-3 mt-3">
-                        <label for="guide-name" style="font-weight: 700" class="form-label">Input money you want to deposit to system(For example: 100,000 VND, just enter 100): </label>
-                        <input type="number" class="form-control" id="money" placeholder="Enter money" name="money" max="10000" required>
+                        <label for="guide-name" style="font-weight: 700" class="form-label">Input money you want to deposit to system: </label>
+                        <input type="number" class="form-control" id="money" placeholder="Enter money" name="money" max="100000000" required>
                     </div>
                     <button class="btn btn-sucess">Create Payment</button>
                 </form>

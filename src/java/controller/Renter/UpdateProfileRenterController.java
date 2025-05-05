@@ -82,7 +82,8 @@ public class UpdateProfileRenterController extends HttpServlet {
         String gender = request.getParameter("gender");
         String phone = request.getParameter("phone");
         String address = request.getParameter("address");
-        
+                String email = (String) session.getAttribute("email");
+        String password = (String) session.getAttribute("password");
         if (fullName == null || fullName.isEmpty() || fullName.trim().isEmpty()) {
         hasError = true;
         request.setAttribute("fullNameError", "Tên đầy đủ là bắt buộc.");
@@ -107,12 +108,18 @@ public class UpdateProfileRenterController extends HttpServlet {
         if (age < 18) {
             hasError = true;
             request.setAttribute("dobError", "Bạn phải ít nhất 18 tuổi.");
-        }
+        } else if (age > 110) {
+        hasError = true;
+        request.setAttribute("dobError", "Tuổi không được vượt quá 110.");
+    }
     }
     
     if (hasError) {
+        UserDetail userDetail = dao.RenterBasicDetail(email, password);
+    request.setAttribute("userDetail", userDetail);
+
         request.setAttribute("error", "Vui lòng sửa các lỗi.");
-        request.getRequestDispatcher("renterprofile").forward(request, response);
+        request.getRequestDispatcher("/Renter/RenterUpdateProfile.jsp").forward(request, response);
     } else {
         boolean updateRenterProfile = dao.updateUser(userID, gender, address, phone, dob, fullName);
         request.getRequestDispatcher("renterprofile").forward(request, response);

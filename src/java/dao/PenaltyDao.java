@@ -197,7 +197,7 @@ public class PenaltyDao extends DBContext {
 
     public int updateStatus(Penalty model) {
         try {
-            String sql = "update penalty set penStatus = ? where penID = ?";
+            String sql = "update penaltys set penStatus = ? where penID = ?";
             PreparedStatement ps;
             ps = connection.prepareStatement(sql);
             ps.setInt(1, model.getPenStatus());
@@ -234,7 +234,7 @@ public class PenaltyDao extends DBContext {
     public ArrayList<Penalty> findByRuleId(int ruleId) {
         ArrayList<Penalty> penaltys = new ArrayList<>();
         try {
-            String sql = "select * from penalty where ruleID = ?";
+            String sql = "select * from penaltys where ruleID = ?";
             PreparedStatement ps;
             ResultSet rs;
             ps = connection.prepareStatement(sql);
@@ -277,17 +277,7 @@ public class PenaltyDao extends DBContext {
 
     }
 
-    // Test getPenList
-//        System.out.println("Testing getPenList()...");
-//        List<PenaltyList> penalties = penaltyDao.getPenList();
-//        for (PenaltyList p : penalties) {
-//            System.out.println(p);
-//        }
-    // Test updatePenalty
-//        System.out.println("Testing updatePenalty()...");
-//        int penId = 64; // Get the last added penalty ID
-//        penaltyDao.updatePenalty("Updated description", "2024-07-06", 1, true, penId);
-//        System.out.println("Penalty updated.");
+
     public List<PenaltyList> getRenterPenList(int renterID) {
         List<PenaltyList> lpen = new ArrayList<>();
         String sql = "SELECT \n"

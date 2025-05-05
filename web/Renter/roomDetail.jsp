@@ -109,7 +109,7 @@
                             <h2 class="heading text-primary" style="font-weight: 700"> Room <%= roomDetail.getRoomNumber()%></h2>
                             <%
                                DecimalFormat df = new DecimalFormat("#,###");
-                               String formattedFee = df.format(roomDetail.getRoomFee() * 1000);
+                               String formattedFee = df.format(roomDetail.getRoomFee());
                             %>
                             <p class="meta" style="color: #c90927; font-size: 18px; font-weight: 600"><%= formattedFee %> VND/Month</p>
                             <label class="textDetail" style="font-size: 20px; font-weight: 500">Detailed description</label>

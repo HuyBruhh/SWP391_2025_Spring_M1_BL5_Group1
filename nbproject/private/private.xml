@@ -7,6 +7,13 @@
             <file>file:/D:/SWP391_2025_Spring_M1_BL5_Group1/web/Admin/Tables.jsp</file>
             <file>file:/D:/SWP391_2025_Spring_M1_BL5_Group1/src/java/controller/Admin/Manage.java</file>
         </group>
-        <group/>
+        <group>
+            <file>file:/C:/Users/MSI/Documents/NetBeansProjects/SWP391_2025_Spring_M1_BL5_Group1/web/Renter/listRoom.jsp</file>
+            <file>file:/C:/Users/MSI/Documents/NetBeansProjects/SWP391_2025_Spring_M1_BL5_Group1/web/Owner/rooms.jsp</file>
+            <file>file:/C:/Users/MSI/Documents/NetBeansProjects/SWP391_2025_Spring_M1_BL5_Group1/src/java/dao/RoomDAO.java</file>
+            <file>file:/C:/Users/MSI/Documents/NetBeansProjects/SWP391_2025_Spring_M1_BL5_Group1/web/Owner/editRoom.jsp</file>
+            <file>file:/C:/Users/MSI/Documents/NetBeansProjects/SWP391_2025_Spring_M1_BL5_Group1/web/Owner/add-room.jsp</file>
+            <file>file:/C:/Users/MSI/Documents/NetBeansProjects/SWP391_2025_Spring_M1_BL5_Group1/src/java/controller/Owner/OwnerController.java</file>
+        </group>
     </open-files>
 </project-private>
