@@ -1,4 +1,3 @@
-<% String message = (String) request.getAttribute("message"); %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -46,8 +45,8 @@
     <body>
         <div class="container">
             <h1>Payment Result</h1>
-            <p><%= message %></p>
-            <a href="rentercontroller?service=renterhome">Back To Home</a>
+            <p>${message}</p>
+             <a href="WalletController">Back</a>
         </div>
     </body>
 </html>

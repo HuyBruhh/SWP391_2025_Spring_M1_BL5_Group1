@@ -84,7 +84,13 @@
                         <c:forEach var="payment" items="${payments}">
                             <tr>
                                 <td>${payment.id}</td>
-                                <td><p class="text-center">${payment.money}</p></td>
+                                <td><p class="text-center">
+                                         <fmt:formatNumber 
+                                             type = "number" 
+                                             maxFractionDigits = "0" 
+                                             value = "${payment.money}" />
+                                     </p>
+                                 </td>
                                 <td>
                                     <c:choose>
                                         <c:when test="${payment.status == 0}">
