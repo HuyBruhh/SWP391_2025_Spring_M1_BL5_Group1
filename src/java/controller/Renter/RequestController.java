@@ -86,8 +86,9 @@ public class RequestController extends HttpServlet {
 
         if (action != null) {
             if (action.equals("delete")) {
-                int requestId = 329;
-                RequestList requestDetails = requestDAO.getRequestByReqID(requestId);
+                int requestId = Integer.parseInt(request.getParameter("id"));  // Lấy requestId từ form
+    
+    RequestList requestDetails = requestDAO.getRequestByReqID(requestId);
 
                 if (requestDetails != null && "Pending".equals(requestDetails.getResStatus())) {
                     boolean deleteSuccess = requestDAO.deleteRequest(requestId);

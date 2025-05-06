@@ -83,7 +83,6 @@
                     <tbody>
                         <c:forEach items="${requests}" var="request">
                             <tr>
-                                <td>${request.requestID}</td>
                                 <td>${request.title}</td>
                                 <td>${request.description}</td>
                                 <td>${request.typeName}</td>

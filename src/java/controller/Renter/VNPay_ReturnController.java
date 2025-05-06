@@ -45,7 +45,7 @@ public class VNPay_ReturnController extends HttpServlet {
         if ("00".equals(vnp_ResponseCode)) {
             if (flag == 0) {
                 double money = (double) session.getAttribute("money");
-                int addMoney = payment.addMoney(money * 1000, renterID);
+                int addMoney = payment.addMoney(money, renterID);
                 int idPayment = (int) session.getAttribute("idPayment");
                 int updatePaymentStatus = payment.updatePaymentStatus(idPayment);
                 request.setAttribute("message", "Payment success");

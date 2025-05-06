@@ -42,7 +42,7 @@
             <div class="container">
                 <div class="menu-bg-wrap">
                     <div class="site-navigation">
-                        <a href="GuestController?service=GuestHome" class="logo m-0 float-start">HL-Apartment</a>
+                        <a href="GuestController?service=GuestHome" class="logo m-0 float-start">HL-Motel</a>
 
                         <jsp:include page = "navbar.jsp"></jsp:include>
 
@@ -64,7 +64,7 @@
             <div class="container">
                 <div class="row justify-content-center align-items-center">
                     <div class="col-lg-9 text-center">
-                        <h1 class="heading" data-aos="fade-up">Hoa Lac Apartment - The Apartment For college student</h1>
+                        <h1 class="heading" data-aos="fade-up">Hoa Lac Motel - The Solution For college student</h1>
 
                         </form>
                     </div>
@@ -238,14 +238,7 @@
                 </div>
             </div>
         </div>
-        <div class="section">
-            <div class="row justify-content-center footer-cta" data-aos="fade-up">
-                <div class="col-lg-7 mx-auto text-center">
-                    <h2 class="mb-4 ">Join Zalo Group to get help better</h2>
-                    <p><a href="https://zalo.me/g/pimjmz442" target="_blank" class="btn btn-primary text-white py-3 px-4">Click here to Join</a></p>
-                </div> <!-- /.col-lg-7 -->
-            </div> <!-- /.row -->
-        </div>
+
 
         <div class="site-footer">
             <div class="container">

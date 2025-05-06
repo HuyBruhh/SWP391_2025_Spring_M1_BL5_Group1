@@ -201,7 +201,7 @@
                                     
                                     <tr>
                                         <td>Deposit:</td>
-                                        <td>2000000  VND</td>
+                                        <td><%= deposit%>  VND</td>
                                     </tr>
                                     <tr>
                                         <td>Total Amount:</td>

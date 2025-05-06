@@ -486,7 +486,7 @@ public List<Rooms> getRoomsByOwnerId(int ownerID, int page, int pageSize) {
         return n;
     }
 
-    public int updateRoomDetail(int roomID, double roomFee, String roomImg, int roomNumber) {
+    public int updateRoomDetail(int roomID, BigDecimal roomFee, String roomImg, int roomNumber) {
         String query = "UPDATE [dbo].[room]\n"
                 + "   SET [roomNumber] = ?\n"
                 + "      ,[roomFee] = ?\n"
@@ -495,7 +495,7 @@ public List<Rooms> getRoomsByOwnerId(int ownerID, int page, int pageSize) {
         int n = 0;
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setInt(1, roomNumber);
-            ps.setDouble(2, roomFee);
+            ps.setBigDecimal(2, roomFee);
             ps.setString(3, roomImg);
             ps.setInt(4, roomID);
             n = ps.executeUpdate();

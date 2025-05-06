@@ -29,7 +29,7 @@ public class VNPay_PaymentController extends HttpServlet {
         int id = 0; // id payment
         if (flag == 0) { // add balance
             id = Integer.parseInt(request.getParameter("id"));
-            double money_convert = Double.parseDouble(amount);
+            double money_convert = Double.parseDouble(amount);  
             session.setAttribute("money", money_convert);
             session.setAttribute("idPayment", id);
             session.setAttribute("flag", 0);

@@ -150,7 +150,7 @@ public class OwnerController extends HttpServlet {
         RoomDetailSe roomDetail = dao.getRoomDetail(roomID);
         
         BigDecimal rawFee = dao.getRoomFee(roomID);
-        BigDecimal displayFee = rawFee.multiply(BigDecimal.valueOf(1000));
+        BigDecimal displayFee = rawFee;
         DecimalFormatSymbols symbols = new DecimalFormatSymbols(new Locale("vi","VN"));
         symbols.setGroupingSeparator('.');
         DecimalFormat df = new DecimalFormat("#,##0", symbols);
@@ -266,7 +266,7 @@ public class OwnerController extends HttpServlet {
         int roomID = Integer.parseInt(request.getParameter("roomID"));
         RoomDetailSe roomDetail = dao.getRoomDetail(roomID);
         int currentRoomNumber = roomDetail.getRoomNumber();
-        double roomFee = 0;
+        BigDecimal roomFee = BigDecimal.ZERO;
         int roomNumber = 0;
 
         try {
@@ -293,13 +293,15 @@ public class OwnerController extends HttpServlet {
         try {
             String s = request.getParameter("roomFee").trim();
             String cleaned = s.replace(".", "");
-            double feeVND = Double.parseDouble(cleaned);
-            roomFee = feeVND / 1000;  // nếu bạn vẫn lưu theo nghìn VND
-            if (roomFee <= 0) {
-                request.setAttribute("error", "Room Fee have to great than 0!!!");
-                request.getRequestDispatcher("OwnerController?service=editRoom&roomID=" + roomID).forward(request, response);
-                return;
-            }
+            roomFee = new BigDecimal(cleaned);
+            
+            if (roomFee.compareTo(BigDecimal.ZERO) <= 0) {
+    request.setAttribute("error", "Room fee must be greater than 0!");
+    request.getRequestDispatcher(
+        "OwnerController?service=editRoom&roomID=" + roomID
+    ).forward(request, response);
+    return;
+}
         } catch (NumberFormatException e) {
             request.setAttribute("error", "Invalid room fee");
             request.getRequestDispatcher("OwnerController?service=editRoom&roomID=" + roomID).forward(request, response);
