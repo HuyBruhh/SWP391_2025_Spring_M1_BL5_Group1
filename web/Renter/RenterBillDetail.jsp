@@ -1,10 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix = "fmt" uri = "http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page import="model.Bill, java.text.DecimalFormat" %>
-
-<% Bill bill = (Bill) request.getAttribute("bill"); %>
-<% double balanceRenter = (double) request.getAttribute("balanceRenter"); 
-   int roomID = (int) request.getAttribute("roomID");
-%>
 
 <!doctype html>
 <html lang="en">
@@ -187,91 +184,115 @@
                 </div>
             </div>
 
-
-        <% 
-            String message = "";
-            if (bill == null) {
-                message = "You have no charges yet!";
-        %>
-        <div class="notification">
-            <%= message %>
-        </div>
-
-        <%
-            }else if (bill != null) {                
-                DecimalFormat decimalFormat = new DecimalFormat("#,###");
-                String electricFormatted = decimalFormat.format(bill.getElectric() * 1000);
-                String waterFormatted = decimalFormat.format(bill.getWater() * 1000);
-                String serviceFormatted = decimalFormat.format(bill.getService() * 1000);
-                String penaltyFormatted = decimalFormat.format(bill.getPenMoney() * 1000);
-                String otherFormatted = decimalFormat.format(bill.getOther() * 1000);
-                String totalFormatted = decimalFormat.format(bill.getTotal());
-        %>
-        <div class="container rounded bg-white" id="printableArea">
-            <div class="row d-flex justify-content-center pb-5">
-                <div class="col-sm-3 col-md-4 offset-md-1 mobile">
-                    <div class="py-4 d-flex justify-content-end">
-                        <h6><a href="RenterRoomDetail">Return to room</a></h6>
+        <c:choose>
+            <c:when test="${bill == null}">
+                <div class="notification">
+                    You have no charges yet!
+                </div>
+            </c:when>
+            <c:otherwise>
+                <div class="container rounded bg-white" id="printableArea">
+                    <div class="row d-flex justify-content-center pb-5">
+                        <div class="col-sm-3 col-md-4 offset-md-1 mobile">
+                            <div class="py-4 d-flex justify-content-end">
+                                <h6><a href="RenterRoomDetail">Return to room</a></h6>
+                            </div>
+                            <div class="bg-light rounded d-flex flex-column">
+                                <div class="p-2 d-flex">
+                                    <div class="col-8">Electric Bill</div>
+                                    <div class="ml-auto">
+                                        <fmt:formatNumber 
+                                            type = "number" 
+                                            maxFractionDigits = "0" 
+                                            value = "${bill.electric}" /> VND
+                                    </div>
+                                </div>
+                                <div class="p-2 d-flex">
+                                    <div class="col-8">Water Bill</div>
+                                    <div class="ml-auto">
+                                        <fmt:formatNumber 
+                                            type = "number" 
+                                            maxFractionDigits = "0" 
+                                            value = "${bill.water}" /> VND
+                                    </div>
+                                </div>
+                                <div class="p-2 d-flex">
+                                    <div class="col-8">Service</div>
+                                    <div class="ml-auto">
+                                        <fmt:formatNumber 
+                                            type = "number" 
+                                            maxFractionDigits = "0" 
+                                            value = "${bill.service}" /> VND
+                                    </div>
+                                </div>
+                                <div class="border-top px-4 mx-3">
+                                </div>
+                                <div class="p-2 d-flex pt-3">
+                                    <div class="col-8">Penalty Money</div>
+                                    <div class="ml-auto">
+                                        <fmt:formatNumber 
+                                            type = "number" 
+                                            maxFractionDigits = "0" 
+                                            value = "${bill.penMoney}" /> VND
+                                    </div>
+                                </div>
+                                <div class="p-2 d-flex">
+                                    <div class="col-8">Other Pay</div>
+                                    <div class="ml-auto">
+                                        <fmt:formatNumber 
+                                            type = "number" 
+                                            maxFractionDigits = "0" 
+                                            value = "${bill.other}" /> VND
+                                    </div>
+                                </div>
+                                <div class="border-top px-4 mx-3"></div>
+                                <div class="p-2 d-flex pt-3">
+                                    <div class="col-8"><b>Total</b></div>
+                                    <div class="ml-auto">
+                                        <b id="totalAmount" class="green">
+                                            <fmt:formatNumber 
+                                                type = "number" 
+                                                maxFractionDigits = "0" 
+                                                value = "${bill.total}" /> VND
+                                        </b>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>    
+                        <div class="col-sm-5 col-md-5 ml-1">
+                            <div class="py-4 d-flex flex-row">
+                                <h5><span style="color: #005555" class="fa fa-check-square-o"></span><b style="color: #005555">HL_Motel</b> | </h5><span class="pl-2">Pay</span>
+                            </div>
+                            <h4 class="green">Bill Recap</h4>
+                            <div class="d-flex pt-2">
+                                <div><p><b>This Bill Are From HL-Motel.</b><span class="green"></span></p></div>
+                            </div>
+                            <p>Hoa Lac</p>
+                            <hr>
+                            <div class="pt-2">
+                                <c:if test="${bill.payAt != null}">
+                                    <div class="d-flex">
+                                        <div>
+                                            <p>
+                                                <b>Please notice and pay after: ${bill.deadline}</b><span class="green"></span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </c:if>
+                            </div>
+                        </div>    
                     </div>
-                    <div class="bg-light rounded d-flex flex-column">
-                        <div class="p-2 d-flex">
-                            <div class="col-8">Electric Bill</div>
-                            <div class="ml-auto"><%= electricFormatted %> VND</div>
-                        </div>
-                        <div class="p-2 d-flex">
-                            <div class="col-8">Water Bill</div>
-                            <div class="ml-auto"><%= waterFormatted %> VND</div>
-                        </div>
-                        <div class="p-2 d-flex">
-                            <div class="col-8">Service</div>
-                            <div class="ml-auto"><%= serviceFormatted %> VND</div>
-                        </div>
-                        <div class="border-top px-4 mx-3">
-                        </div>
-                        <div class="p-2 d-flex pt-3">
-                            <div class="col-8">Penalty Money</div>
-                            <div class="ml-auto"><%= penaltyFormatted %> VND</div>
-                        </div>
-                        <div class="p-2 d-flex">
-                            <div class="col-8">Other Pay</div>
-                            <div class="ml-auto"><%= otherFormatted %> VND</div>
-                        </div>
-                        <div class="border-top px-4 mx-3"></div>
-                        <div class="p-2 d-flex pt-3">
-                            <div class="col-8"><b>Total</b></div>
-                            <div class="ml-auto"><b id="totalAmount" class="green"><%= totalFormatted %> VND</b></div>
-                        </div>
-                    </div>
-                </div>    
-                <div class="col-sm-5 col-md-5 ml-1">
-                    <div class="py-4 d-flex flex-row">
-                        <h5><span style="color: #005555" class="fa fa-check-square-o"></span><b style="color: #005555">HL_Motel</b> | </h5><span class="pl-2">Pay</span>
-                    </div>
-                    <h4 class="green">Bill Recap</h4>
-                    <div class="d-flex pt-2">
-                        <div><p><b>This Bill Are From HL-Motel.</b><span class="green"></span></p></div>
-                    </div>
-                    <p>Hoa Lac</p>
-                    <hr>
-                    <div class="pt-2">
-                        <% if (bill.getPayAt() == null) { %>
-                        <div class="d-flex">
-                            <div><p><b>Please notice and pay after: <%= bill.getDeadline() %> </b><span class="green"></span></p></div>
-                        </div>
-                        <%}%>
-                    </div>
-                </div>    
-            </div>
-        </div>
-        <%}%>
+                </div>
+            </c:otherwise>
+        </c:choose>
         <div class="container rounded bg-white" id="printableArea">
             <!-- Your existing content here -->
         </div>
-        <% if (bill != null) { %>
-        <div class="p-2" style="display: grid; place-items: center;">
-            <button class="btn btn-primary" data-toggle="modal" data-target="#paymentModal">Pay</button>
-        </div>
-        <%}%>
+        <c:if test="${bill != null}">
+            <div class="p-2" style="display: grid; place-items: center;">
+                <button class="btn btn-primary" data-toggle="modal" data-target="#paymentModal">Pay</button>
+            </div>
+        </c:if>
         <!-- Modal -->
         <div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -284,13 +305,17 @@
                     </div>
                     <form id="paymentForm" action="PayBillController" method="post">
                         <div class="modal-body" style="text-align: center; font-size: 22px;">
-                            <p><strong>Your Balance:</strong> <br>
-                                
-                                <span id="walletBalance"><%= balanceRenter %></span> VND</p>
-                            <input type="hidden" name="balance" value="<%= balanceRenter %>">
-                            <input type="hidden" name="totalAmountToPay" value="<%= bill.getTotal() %>">
-                            <input type="hidden" name="roomID" value="<%= roomID %>">
-                            
+                            <p>
+                                <strong>Your Balance:</strong><br>
+                                <span id="walletBalance">
+                                    <fmt:formatNumber 
+                                        type = "number" 
+                                        maxFractionDigits = "0" 
+                                        value = "${balanceRenter}" /></span> VND
+                            </p>
+                            <input type="hidden" name="balance" value="${balanceRenter}">
+                            <input type="hidden" name="totalAmountToPay" value="${bill.total}">
+                            <input type="hidden" name="roomID" value="${roomID}">
                         </div>
                         <div class="modal-footer">
                             <div class="d-flex justify-content-between w-100">

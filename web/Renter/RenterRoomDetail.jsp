@@ -1,4 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix = "fmt" uri = "http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page import="java.util.List" %>
 <%@ page import="model.RentDetail" %>
 <%@ page import="model.Bill" %>
@@ -84,118 +86,111 @@ Double livingTotal = (Double) request.getAttribute("livingTotal");
                     </div>
                 </div>
             </nav>
-<div style="height: 100px;"></div>
+            <div style="height: 100px;"></div>
 
+        <c:if test="${not empty rentDetails}">
+            <c:forEach var="detail" items="${rentDetails}">
+                <c:if test="${message !=null}">
+                    <p style="margin: 0px; text-align: center; color: red; margin: 10px 0px; background: beige">${message}</p>
+                </c:if>
+                <div class="section">
+                    <div class="container">
+                        <div class="row justify-content-between">
+                            <div class="col-lg-7">
+                                <div class="img-property-slide-wrap">
+                                    <div class="img-property-slide">
+                                        <img src="data:image/jpg;base64,${detail.roomImg}" alt="Room Image" class="img-fluid">
+                                    </div>
+                                </div>
+                            </div>
+                            <c:if test="${message !=null}">
+                                alert("${message}");
+                            </c:if>
+                            <c:if test="${paymentSuccess !=null}">
+                                <script>
+                                    alert("Payment was successful!");
+                                </script>
+                            </c:if>
+                            <div class="col-lg-4">
+                                <h4 class="text-center">Room Details</h4>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <h6 class="mb-0">Room Floor</h6>
+                                    </div>
+                                    <div class="col-sm-9 text-secondary">
+                                        ${detail.roomFloor}
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <h6 class="mb-0">Room Number</h6>
+                                    </div>
+                                    <div class="col-sm-9 text-secondary">
+                                        ${detail.roomNumber}
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <h6 class="mb-0">Room Size</h6>
+                                    </div>
+                                    <div class="col-sm-9 text-secondary">
+                                        <fmt:formatNumber 
+                                            type = "number" 
+                                            maxFractionDigits = "0" 
+                                            value = "${detail.roomSize}" />
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <h6 class="mb-0">Room Fee</h6>
+                                    </div>
+                                    <div class="col-sm-9 text-secondary">
+                                        <fmt:formatNumber 
+                                            type = "number" 
+                                            maxFractionDigits = "0" 
+                                            value = "${detail.roomFee}" /> VND / month
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <h6 class="mb-0">Balance</h6>
+                                    </div>
+                                    <div class="col-sm-9 text-secondary">
+                                        <fmt:formatNumber 
+                                            type = "number" 
+                                            maxFractionDigits = "0" 
+                                            value = "${detail.balance}" /> VND
+                                    </div>
 
-        <% 
-            if (rentDetails != null && !rentDetails.isEmpty()) {
-                String billFormatted = "0";
-                if (bill != null) {
-                    billFormatted = String.format("%.0f", bill.getTotal());
-                }
-                for (RentDetail detail : rentDetails) {
-                    String roomFeeFormatted = String.format("%.0f", detail.getRoomFee());
-                    String roomSizeFormatted = String.format("%.0f", detail.getRoomSize());
-                    String roomBalanceFormatted = String.format("%.0f", detail.getBalance());
-        %>
-
-        <% if (message != null) { %>
-        <p style="margin: 0px; text-align: center; color: red; margin: 10px 0px; background: beige"><%= message %></p>
-        <%}%>
-        <div class="section">
-            <div class="container">
-                <div class="row justify-content-between">
-                    <div class="col-lg-7">
-                        <div class="img-property-slide-wrap">
-                            <div class="img-property-slide">
-                                <img src="data:image/jpg;base64,<%= detail.getRoomImg() %>" alt="Room Image" class="img-fluid">
-                            </div>
-                        </div>
-                    </div>
-                    <% if (message != null) { %>
-                    alert("<%= message %>");
-                    <%}%>
-
-                    <%
-                        Boolean paymentSuccess = (Boolean) request.getAttribute("paymentSuccess");
-                        if (paymentSuccess != null) {
-                    %>
-                    <script>
-                        alert("Payment was successful!");
-                    </script>
-                    <%
-                        }
-                    %>
-                    <div class="col-lg-4">
-                        <h4 class="text-center">Room Details</h4>
-                        <hr>
-                        <div class="row">
-                            <div class="col-sm-3">
-                                <h6 class="mb-0">Room Floor</h6>
-                            </div>
-                            <div class="col-sm-9 text-secondary">
-                                <%= detail.getRoomFloor() %>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-sm-3">
-                                <h6 class="mb-0">Room Number</h6>
-                            </div>
-                            <div class="col-sm-9 text-secondary">
-                                <%= detail.getRoomNumber() %>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-sm-3">
-                                <h6 class="mb-0">Room Size</h6>
-                            </div>
-                            <div class="col-sm-9 text-secondary">
-                                <%= roomSizeFormatted %> 
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-sm-3">
-                                <h6 class="mb-0">Room Fee</h6>
-                            </div>
-                            <div class="col-sm-9 text-secondary">
-                                <%= roomFeeFormatted %>  VND / month
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-sm-3">
-                                <h6 class="mb-0">Balance</h6>
-                            </div>
-                            <div class="col-sm-9 text-secondary">
-                                <%= roomBalanceFormatted %> VND
-                            </div>
-
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <div  class="col-sm-3">
-                                <h6 class="mb-0">Living expenses</h6>
-                            </div>
-                            <div class="col-sm-6 text-secondary" id="livingExpensesValue">
-                                <%= String.format("%.0f", livingTotal) %> VND
-                            </div>
-                            <div class="col-sm-3 text-secondary">
-                                <a href="RenterBillDetailController?roomID=<%= detail.getRoomID() %>" class="pay-button">Pay</a>
-                            </div>
-                        </div>
-                        <div style="margin-top: 50px" class="text-center">
-                            <form id="cancelForm" action="CancleRoom" method="get">
-                                <input type="hidden" name="roomId" value="<%= detail.getRoomID() %>" />
-                                <button type="button" class="btn btn-danger" onclick="confirmCancellation()">Cancel Room</button>
-                            </form>
-                        </div>
-                        <% 
-                    } // End for loop
-                } // End if
-                        %>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div  class="col-sm-3">
+                                        <h6 class="mb-0">Living expenses</h6>
+                                    </div>
+                                    <div class="col-sm-6 text-secondary" id="livingExpensesValue">
+                                        <fmt:formatNumber 
+                                            type = "number" 
+                                            maxFractionDigits = "0" 
+                                            value = "${livingTotal}" /> VND
+                                    </div>
+                                    <div class="col-sm-3 text-secondary">
+                                        <a href="RenterBillDetailController?roomID=${detail.roomID}" class="pay-button">Pay</a>
+                                    </div>
+                                </div>
+                                <div style="margin-top: 50px" class="text-center">
+                                    <form id="cancelForm" action="CancleRoom" method="get">
+                                        <input type="hidden" name="roomId" value="${detail.roomID}" />
+                                        <button type="button" class="btn btn-danger" onclick="confirmCancellation()">Cancel Room</button>
+                                    </form>
+                                </div>
+                            </c:forEach>
+                        </c:if>
                     </div>
                 </div>
             </div>
@@ -257,19 +252,19 @@ Double livingTotal = (Double) request.getAttribute("livingTotal");
         <script src="js/aos.js"></script>
         <script src="js/main.js"></script>
         <script>
-                                    function confirmCancellation() {
-                                        var livingExpensesText = document.getElementById("livingExpensesValue").innerText;
-                                        var livingExpenses = parseFloat(livingExpensesText.replace(/[^0-9.-]/g, '')); // Chuyển đổi giá trị sang số
+                                            function confirmCancellation() {
+                                                var livingExpensesText = document.getElementById("livingExpensesValue").innerText;
+                                                var livingExpenses = parseFloat(livingExpensesText.replace(/[^0-9.-]/g, '')); // Chuyển đổi giá trị sang số
 
-                                        if (livingExpenses > 0) {
-                                            alert("You need to pay living expenses before checking out");
-                                        } else {
-                                            var confirmation = confirm("Are you sure you want to cancel this room?");
-                                            if (confirmation) {
-                                                document.getElementById("cancelForm").submit();
+                                                if (livingExpenses > 0) {
+                                                    alert("You need to pay living expenses before checking out");
+                                                } else {
+                                                    var confirmation = confirm("Are you sure you want to cancel this room?");
+                                                    if (confirmation) {
+                                                        document.getElementById("cancelForm").submit();
+                                                    }
+                                                }
                                             }
-                                        }
-                                    }
         </script>
     </body>
 

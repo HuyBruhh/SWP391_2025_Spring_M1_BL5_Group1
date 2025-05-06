@@ -1,11 +1,5 @@
-<%@page import="dao.RoomDAO,java.util.List"%>
-<%@page import="model.RoomDetailSe"%>
-<%@ page import="java.util.Base64" %>
-<%@ page import="java.text.DecimalFormat" %>
-
-<% RoomDetailSe roomDetail = (RoomDetailSe) request.getAttribute("roomDetail");  
-   int userID = (int) request.getAttribute("userID"); 
-%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix = "fmt" uri = "http://java.sun.com/jsp/jstl/fmt" %>
 
 <!doctype html>
 <html lang="en">
@@ -80,10 +74,10 @@
             .payment-options button[name="paymentMethod"][value="cash"]:hover {
                 background-color: #218838;
             }
-/*            .payment-options button[name="paymentMethod"][value="online"] {
-                background-color: #007bff;
-                color: white;
-            }*/
+            /*            .payment-options button[name="paymentMethod"][value="online"] {
+                            background-color: #007bff;
+                            color: white;
+                        }*/
             .payment-options button[name="paymentMethod"][value="online"]:hover {
                 background-color: #0056b3;
             }
@@ -174,19 +168,12 @@
                         <div class="col-lg-7">
                             <div class="img-property-slide-wrap">
                                 <div class="img-property-slide">
-                                <% String base64Image = roomDetail.getRoomImg(); %>
-                                <img style="margin-top: 50px;" src="data:image/jpg;base64, <%= base64Image %>" alt="Image" class="img-fluid">
+                                <img style="margin-top: 50px;" src="data:image/jpg;base64, ${roomDetail.roomImg}" alt="Image" class="img-fluid">
                             </div>
                         </div>
                     </div>
 
-                    <% 
-                        double deposit = 2000;
-                        DecimalFormat df = new DecimalFormat("#.##");
-                        String formattedFeePerMonth = df.format(roomDetail.getRoomFee());
-                        String formattedFeePerQuarterly = df.format(roomDetail.getRoomFee() * 4);
-                        String formattedFeeTotal = df.format(roomDetail.getRoomFee() * 4 + 2000);
-                    %>        
+                           
                     <div class="col-lg-4">
                         <div class="d-block agent-box p-5">
                             <h2 class="heading text-primary heading-center" style="font-weight: 700">Confirm Rent</h2>
@@ -195,27 +182,42 @@
                             <div class="confirm-rent">
                                 <table class="payment-table">
                                     <tr>
-                                        <td>Rent Price (4 months):</td>
-                                        <td><%= formattedFeePerQuarterly %> VND</td> 
+                                        <td>Rent Price (3 months):</td>
+                                        <td>
+                                            <fmt:formatNumber 
+                                                type = "number" 
+                                                maxFractionDigits = "0" 
+                                                value = "${roomDetail.roomFee*3}" /> VND
+                                        </td> 
                                     </tr>
-                                    
+
                                     <tr>
-                                        <td>Deposit:</td>
-                                        <td><%= deposit%>  VND</td>
+                                        <td>Deposit (50% of a month):</td>
+                                        <td>
+                                            <fmt:formatNumber 
+                                                type = "number" 
+                                                maxFractionDigits = "0" 
+                                                value = "${roomDetail.roomFee/2}" /> VND
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td>Total Amount:</td>
-                                        <td><%= formattedFeeTotal %> VND</td> 
+                                        <td>
+                                            <fmt:formatNumber 
+                                                type = "number" 
+                                                maxFractionDigits = "0" 
+                                                value = "${roomDetail.roomFee*3.5}" /> VND
+                                        </td> 
                                     </tr>
                                 </table>
                                 <div class="payment-options">
                                     <form action="VNPay_PaymentController" method="post">
-                                        <input type="hidden" name="roomID" value="<%= roomDetail.getRoomID() %>">
-                                        <input type="hidden" name="amount" value="<%= formattedFeeTotal %>">
-                                        <input type="hidden" name="userID" value="<%= userID %>">
+                                        <input type="hidden" name="roomID" value="${roomDetail.roomID}">
+                                        <input type="hidden" name="amount" value="${roomDetail.roomFee*3.5}">
+                                        <input type="hidden" name="userID" value="${userID}">
                                         <input type="hidden" name="flag" value="1">
                                         <button type="submit" name="paymentMethod" value="online">Pay Online</button>
-                                        <a href="RenterRoomController?service=cancelRoom&roomID=<%= roomDetail.getRoomID() %>" class="cancel-link">Cancel</a>
+                                        <a href="RenterRoomController?service=cancelRoom&roomID=${roomDetail.roomID}" class="cancel-link">Cancel</a>
                                     </form>
                                 </div>
                             </div>
