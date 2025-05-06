@@ -203,13 +203,14 @@
                                         <h3 class="mb-4">Get a fee</h3>
                                         <form method="POST" action="addroomfee">
                                             <div class="row">
-                                                <div class="col-md-6"> 
+                                                                                                        <input type="hidden"  id="roomID" name="roomID" value="<%= request.getParameter("id") %>">
+
+<!--                                                <div class="col-md-6"> 
                                                     <div class="form-group">
-                                                        <input type="hidden"  id="roomID" name="roomID" value="<%= request.getParameter("id") %>">
                                                         <label class="label" for="subject">Room Fee: </label>
                                                         <input type="number" class="form-control positive-number" name="roomFee" id="roomFee" value="${r.roomFee}" readonly>
                                                     </div>
-                                                </div>
+                                                </div>-->
                                                 <div class="col-md-6"> 
                                                     <div class="form-group">
                                                         <label class="label" for="subject">Service: </label>

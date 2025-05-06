@@ -128,7 +128,7 @@ public class AddRoomFeeControler extends HttpServlet {
         String deadline = formatter.format(calendar.getTime());
         request.setCharacterEncoding("UTF-8");
         try {
-            boolean success = dao.addFeeById(id, serviceM, etotal, wtotal, roomfee, otherM, penmoney, createAt, deadline, null);
+            boolean success = dao.addFeeById(id, serviceM, etotal, wtotal, otherM, penmoney, createAt, deadline, null);
             String updateMessage = "updateMessage";
             if (success) {
                 session.setAttribute("successMessage", "Add Successful");

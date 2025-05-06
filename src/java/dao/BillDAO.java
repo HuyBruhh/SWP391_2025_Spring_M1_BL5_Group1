@@ -133,11 +133,11 @@ public class BillDAO extends MyDAO {
         return null;
     }
 
-    public boolean addFeeById(int roomID, double service, double electric, double water, BigDecimal roomFee, double other, double penMoney, String createAt,
+    public boolean addFeeById(int roomID, double service, double electric, double water, double other, double penMoney, String createAt,
             String deadline, String payAt) {
-        String sql = "INSERT INTO [HL_Motel].[dbo].[bill] ([roomID], [service], [electric], [water], [roomFee], [other],"
+        String sql = "INSERT INTO [HL_Motel].[dbo].[bill] ([roomID], [service], [electric], [water], [roomFee] ,[other],"
                 + " [penMoney], [createAt], [deadline], [payAt])\n"
-                + "VALUES (? , ? , ? , ? , ? , ? , ? , ? , ? , ?)";
+                + "VALUES (? , ? , ? , ? ,0, ? , ? , ? , ? , ? )";
 
         try {
             ps = con.prepareStatement(sql);
@@ -145,12 +145,11 @@ public class BillDAO extends MyDAO {
             ps.setDouble(2, service);
             ps.setDouble(3, electric);
             ps.setDouble(4, water);
-            ps.setBigDecimal(5, roomFee);
-            ps.setDouble(6, other);
-            ps.setDouble(7, penMoney);
-            ps.setString(8, createAt);
-            ps.setString(9, deadline);
-            ps.setString(10, payAt);
+            ps.setDouble(5, other);
+            ps.setDouble(6, penMoney);
+            ps.setString(7, createAt);
+            ps.setString(8, deadline);
+            ps.setString(9, payAt);
             int rowsAffected = ps.executeUpdate();
 
             if (rowsAffected > 0) {
